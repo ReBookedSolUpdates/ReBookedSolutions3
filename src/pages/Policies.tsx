@@ -1213,7 +1213,7 @@ const Policies = () => {
                         <ul className="list-disc pl-6 space-y-1 text-gray-700 text-sm sm:text-base">
                           <li>Fraudulent or counterfeit book listings.</li>
                           <li>Intentional scams or repeated misrepresentation.</li>
-                          <li>Attempts to bypass or abuse ReBooked Systems.</li>
+                          <li>Attempts to bypass or abuse ReBooked Solutions’ systems.</li>
                         </ul>
                         <p className="font-semibold text-gray-900">Penalty for Zero-Tolerance Violations:</p>
                         <ul className="list-disc pl-6 space-y-1 text-gray-700 text-sm sm:text-base">
