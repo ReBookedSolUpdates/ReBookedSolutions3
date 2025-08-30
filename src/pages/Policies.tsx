@@ -67,80 +67,88 @@ const Policies = () => {
 
         <div className="w-full">
           <div className="mb-8 sm:mb-12">
-            <div className="flex flex-wrap gap-3 sm:gap-4 p-4 sm:p-6 bg-gray-50 rounded-xl shadow-sm border border-gray-200">
-              <Button
-                onClick={() => setActiveTab("privacy")}
-                variant={activeTab === "privacy" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <Shield className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Privacy Policy</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("terms")}
-                variant={activeTab === "terms" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <Scale className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Terms & Conditions</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("refunds")}
-                variant={activeTab === "refunds" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Refund Policy</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("cancellation")}
-                variant={activeTab === "cancellation" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <Gavel className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Cancellation Policy</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("shipping")}
-                variant={activeTab === "shipping" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <Package className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Shipping & Delivery</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("returns")}
-                variant={activeTab === "returns" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <Undo2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Return Policy</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("sellers")}
-                variant={activeTab === "sellers" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <Gavel className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Seller’s Policy</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("disputes")}
-                variant={activeTab === "disputes" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Dispute Resolution</span>
-              </Button>
-            </div>
+            <Card className="shadow-sm border-gray-200">
+              <CardHeader className="pb-4 sm:pb-6">
+                <CardTitle className="text-xl sm:text-2xl">All Policies & Terms</CardTitle>
+                <p className="text-gray-600 text-sm">Select a policy to view details</p>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                  <Button
+                    onClick={() => setActiveTab("privacy")}
+                    variant={activeTab === "privacy" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Shield className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Privacy Policy</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("terms")}
+                    variant={activeTab === "terms" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Scale className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Terms & Conditions</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("refunds")}
+                    variant={activeTab === "refunds" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Refund Policy</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("cancellation")}
+                    variant={activeTab === "cancellation" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Gavel className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Cancellation Policy</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("shipping")}
+                    variant={activeTab === "shipping" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Package className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Shipping & Delivery</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("returns")}
+                    variant={activeTab === "returns" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Undo2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Return Policy</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("sellers")}
+                    variant={activeTab === "sellers" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Gavel className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Seller’s Policy</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("disputes")}
+                    variant={activeTab === "disputes" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Dispute Resolution</span>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Privacy Policy Tab */}
@@ -1128,7 +1136,7 @@ const Policies = () => {
                         <span>
                           <strong>Platform Operator:</strong> ReBooked Solutions (Pty) Ltd
                         </span>
-                        <span className="mx-2">•</span>
+                        <span className="mx-2">��</span>
                         <span>
                           <strong>Support:</strong>{" "}
                           <span className="break-all">legal@rebookedsolutions.co.za</span>
