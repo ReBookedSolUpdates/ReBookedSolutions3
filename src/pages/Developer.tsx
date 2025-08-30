@@ -1261,28 +1261,25 @@ const Developer = () => {
       toast.success(`Supabase connection working! Query time: ${basicTestTime}ms`);
 
     } catch (error) {
-      console.error("❌ Supabase connection test failed:", error);
-
-      const errorDetails = {
-        error_type: error instanceof Error ? error.name : typeof error,
-        error_message: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
+      const { formatErrorForDisplay } = await import("@/utils/errorDisplayUtils");
+      const formatted = formatErrorForDisplay(error, "Supabase Connection Test");
+      console.error(formatted.developerMessage, {
         environment: {
           supabase_url: ENV.VITE_SUPABASE_URL ? "Set" : "Missing",
           supabase_key: ENV.VITE_SUPABASE_ANON_KEY ? "Set" : "Missing"
         },
         network_status: navigator.onLine ? "Online" : "Offline"
-      };
+      });
 
       setTestResults(prev => [...prev, {
         function: 'Supabase Connection Test',
         status: 'error',
-        error: JSON.stringify(errorDetails, null, 2),
+        error: formatted.developerMessage,
         duration: 0
       }]);
 
       toast.error("Supabase connection failed!", {
-        description: error instanceof Error ? error.message : String(error)
+        description: formatted.userMessage
       });
     }
   };
