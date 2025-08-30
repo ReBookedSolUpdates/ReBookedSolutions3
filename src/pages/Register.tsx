@@ -48,7 +48,7 @@ const Register = () => {
 
       if (!termsAccepted) {
         throw new Error(
-          "You must accept the Terms & Conditions and Privacy Policy",
+          "You must accept the Terms & Conditions and All Policies",
         );
       }
 
@@ -347,8 +347,8 @@ const Register = () => {
                     <Link
                       to="/policies"
                       className="text-book-600 hover:text-book-800 underline"
-                    >
-                      Terms & Conditions and Privacy Policy
+>
+                      Terms & Conditions and All Policies
                     </Link>
                   </Label>
                 </div>

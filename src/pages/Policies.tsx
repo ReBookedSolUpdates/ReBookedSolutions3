@@ -3,7 +3,7 @@ import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Scale, Shield, Mail, RefreshCw, Package, Undo2, Gavel } from "lucide-react";
+import { FileText, Scale, Shield, Mail, RefreshCw, Package, Undo2, Gavel, ShoppingCart } from "lucide-react";
 
 const Policies = () => {
   const [activeTab, setActiveTab] = useState("privacy");
@@ -67,71 +67,97 @@ const Policies = () => {
 
         <div className="w-full">
           <div className="mb-8 sm:mb-12">
-            <div className="flex flex-wrap gap-3 sm:gap-4 p-4 sm:p-6 bg-gray-50 rounded-xl shadow-sm border border-gray-200">
-              <Button
-                onClick={() => setActiveTab("privacy")}
-                variant={activeTab === "privacy" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <Shield className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Privacy Policy</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("terms")}
-                variant={activeTab === "terms" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <Scale className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Terms & Conditions</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("refunds")}
-                variant={activeTab === "refunds" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Refund Policy</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("cancellation")}
-                variant={activeTab === "cancellation" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <Gavel className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Cancellation Policy</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("shipping")}
-                variant={activeTab === "shipping" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <Package className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Shipping & Delivery</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("returns")}
-                variant={activeTab === "returns" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <Undo2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Return Policy</span>
-              </Button>
-              <Button
-                onClick={() => setActiveTab("disputes")}
-                variant={activeTab === "disputes" ? "default" : "outline"}
-                size="lg"
-                className="text-sm sm:text-base flex-shrink-0 font-medium px-4 py-2 transition-all duration-200 hover:shadow-md"
-              >
-                <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                <span>Dispute Resolution</span>
-              </Button>
-            </div>
+            <Card className="shadow-sm border-gray-200">
+              <CardHeader className="pb-4 sm:pb-6">
+                <CardTitle className="text-xl sm:text-2xl">All Policies & Terms</CardTitle>
+                <p className="text-gray-600 text-sm">Select a policy to view details</p>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                  <Button
+                    onClick={() => setActiveTab("privacy")}
+                    variant={activeTab === "privacy" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Shield className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Privacy Policy</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("terms")}
+                    variant={activeTab === "terms" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Scale className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Terms & Conditions</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("refunds")}
+                    variant={activeTab === "refunds" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Refund Policy</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("cancellation")}
+                    variant={activeTab === "cancellation" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Gavel className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Cancellation Policy</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("shipping")}
+                    variant={activeTab === "shipping" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Package className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Shipping & Delivery</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("returns")}
+                    variant={activeTab === "returns" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Undo2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Return Policy</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("sellers")}
+                    variant={activeTab === "sellers" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <Gavel className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Seller’s Policy</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("buyers")}
+                    variant={activeTab === "buyers" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Buyer’s Policy</span>
+                  </Button>
+                  <Button
+                    onClick={() => setActiveTab("disputes")}
+                    variant={activeTab === "disputes" ? "default" : "outline"}
+                    size="lg"
+                    className="w-full justify-start font-medium px-4 py-2"
+                  >
+                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                    <span>Dispute Resolution</span>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Privacy Policy Tab */}
@@ -1087,6 +1113,263 @@ const Policies = () => {
                           Africa
                         </p>
                       </div>
+                    </section>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Seller’s Policy Tab */}
+          {activeTab === "sellers" && (
+            <div className="space-y-4 sm:space-y-6">
+              <Card className="shadow-md border-gray-200">
+                <CardHeader className="pb-6 sm:pb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg">
+                  <CardTitle className="text-2xl sm:text-3xl lg:text-4xl flex items-center gap-3 mb-3 sm:mb-4 text-gray-800">
+                    <Gavel className="h-7 w-7 sm:h-8 sm:w-8 lg:h-9 lg:w-9 flex-shrink-0 text-blue-600" />
+                    <span>Seller’s Policy</span>
+                  </CardTitle>
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 sm:p-6 shadow-sm">
+                    <div className="text-blue-800 text-xs sm:text-sm space-y-2">
+                      <div className="text-center">
+                        <span>
+                          <strong>Effective Date:</strong> 10 June 2025
+                        </span>
+                        <span className="mx-2">•</span>
+                        <span>
+                          <strong>Platform:</strong>{" "}
+                          <span className="break-all">www.rebookedsolutions.co.za</span>
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <span>
+                          <strong>Platform Operator:</strong> ReBooked Solutions (Pty) Ltd
+                        </span>
+                        <span className="mx-2">•</span>
+                        <span>
+                          <strong>Support:</strong>{" "}
+                          <span className="break-all">legal@rebookedsolutions.co.za</span>
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <span>
+                          <strong>Jurisdiction:</strong> Republic of South Africa
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <span>
+                          <strong>Regulatory Compliance:</strong> Consumer Protection Act (Act 68 of 2008), Electronic Communications and Transactions Act (Act 25 of 2002), Protection of Personal Information Act (Act 4 of 2013)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="px-4 sm:px-6">
+                  <div className="prose max-w-none space-y-4 sm:space-y-6">
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">1. Listing Requirements</h3>
+                      <ul className="list-disc pl-6 space-y-2 text-gray-700 text-sm sm:text-base">
+                        <li>Sellers must provide accurate and complete information about each book, including title, author, edition, condition, and any defects.</li>
+                        <li>Clear photos must be uploaded to verify the book’s condition.</li>
+                        <li>Misleading or false listings are strictly prohibited.</li>
+                      </ul>
+                    </section>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">2. Pricing & Fees</h3>
+                      <ul className="list-disc pl-6 space-y-2 text-gray-700 text-sm sm:text-base">
+                        <li>Sellers set their own prices for books.</li>
+                        <li>ReBooked Solutions charges a 10% service fee on every successful sale.</li>
+                        <li>A delivery/shipping fee is added at checkout and paid by the buyer.</li>
+                      </ul>
+                    </section>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">3. Order Process & Payouts</h3>
+                      <ul className="list-disc pl-6 space-y-2 text-gray-700 text-sm sm:text-base">
+                        <li>Once an order is placed, the seller must package the book securely for collection.</li>
+                        <li>Funds from sales are held for 24–48 hours after successful delivery to allow buyers time to confirm the book matches the listing.</li>
+                        <li>If a buyer raises a complaint, funds are held until the case is resolved.</li>
+                        <li>If the seller is at fault, the buyer receives a full refund, the seller forfeits the payout, and a fine may apply.</li>
+                      </ul>
+                    </section>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">4. Fine System (Incorrect or Misleading Books)</h3>
+                      <p className="text-gray-700 leading-relaxed text-sm sm:text-base mb-2">To protect buyers and maintain trust, a tiered penalty system applies for sellers who provide incorrect or misleading books:</p>
+                      <div className="space-y-2">
+                        <div>
+                          <p className="font-semibold text-gray-900">First Offense</p>
+                          <ul className="list-disc pl-6 space-y-1 text-gray-700 text-sm sm:text-base">
+                            <li>Buyer receives a full refund.</li>
+                            <li>Seller receives no payout for the sale.</li>
+                            <li>Seller is fined the delivery fee from their address to the buyer’s address.</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900">Second Offense</p>
+                          <ul className="list-disc pl-6 space-y-1 text-gray-700 text-sm sm:text-base">
+                            <li>Buyer receives a full refund.</li>
+                            <li>Seller receives no payout for the sale.</li>
+                            <li>Seller is fined the delivery fee plus R100 for misuse of ReBooked Solutions’ services.</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900">Third Offense</p>
+                          <ul className="list-disc pl-6 space-y-1 text-gray-700 text-sm sm:text-base">
+                            <li>Buyer receives a full refund.</li>
+                            <li>Seller receives no payout for the sale.</li>
+                            <li>Seller is fined the delivery fee plus R250.</li>
+                            <li>Seller account may be suspended or permanently banned, pending review.</li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div className="mt-3 space-y-2">
+                        <p className="font-semibold text-gray-900">Zero-Tolerance Clause</p>
+                        <p className="text-gray-700 text-sm sm:text-base">The following are treated as an immediate Level 3 offense:</p>
+                        <ul className="list-disc pl-6 space-y-1 text-gray-700 text-sm sm:text-base">
+                          <li>Fraudulent or counterfeit book listings.</li>
+                          <li>Intentional scams or repeated misrepresentation.</li>
+                          <li>Attempts to bypass or abuse ReBooked Solutions’ systems.</li>
+                        </ul>
+                        <p className="font-semibold text-gray-900">Penalty for Zero-Tolerance Violations:</p>
+                        <ul className="list-disc pl-6 space-y-1 text-gray-700 text-sm sm:text-base">
+                          <li>Buyer receives a full refund.</li>
+                          <li>Seller receives no payout for the sale.</li>
+                          <li>Seller is fined the delivery fee plus R250.</li>
+                          <li>Seller is permanently banned. Any new accounts created by the seller will also be banned.</li>
+                        </ul>
+                      </div>
+                    </section>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">5. Book Return & Donation Policy in Disputes</h3>
+                      <ul className="list-disc pl-6 space-y-2 text-gray-700 text-sm sm:text-base">
+                        <li>If the buyer wants the incorrect book returned to the seller, the buyer must cover the return delivery cost.</li>
+                        <li>If neither party wants the book back, ReBooked Solutions may donate the book to partner charities that support students in need.</li>
+                      </ul>
+                      <p className="text-gray-700 leading-relaxed text-sm sm:text-base mt-2">This ensures that even disputes can have a positive impact.</p>
+                    </section>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">6. Dispute Resolution</h3>
+                      <p className="text-gray-700 leading-relaxed text-sm sm:text-base">ReBooked Solutions will act as mediator in disputes and its decision will be final within the platform. Sellers may submit additional evidence if they believe a claim is unfair.</p>
+                    </section>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">7. Policy Enforcement</h3>
+                      <p className="text-gray-700 leading-relaxed text-sm sm:text-base">ReBooked Solutions reserves the right to withhold payouts, apply fines, or suspend seller accounts for any breach of this policy. By selling on ReBooked Solutions, you agree to these rules to help maintain a fair, safe, and socially impactful marketplace.</p>
+                    </section>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Buyer’s Policy Tab */}
+          {activeTab === "buyers" && (
+            <div className="space-y-4 sm:space-y-6">
+              <Card className="shadow-md border-gray-200">
+                <CardHeader className="pb-6 sm:pb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg">
+                  <CardTitle className="text-2xl sm:text-3xl lg:text-4xl flex items-center gap-3 mb-3 sm:mb-4 text-gray-800">
+                    <ShoppingCart className="h-7 w-7 sm:h-8 sm:w-8 lg:h-9 lg:w-9 flex-shrink-0 text-blue-600" />
+                    <span>Buyer’s Policy</span>
+                  </CardTitle>
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 sm:p-6 shadow-sm">
+                    <div className="text-blue-800 text-xs sm:text-sm space-y-2">
+                      <div className="text-center">
+                        <span>
+                          <strong>Effective Date:</strong> 10 June 2025
+                        </span>
+                        <span className="mx-2">•</span>
+                        <span>
+                          <strong>Platform:</strong>{" "}
+                          <span className="break-all">www.rebookedsolutions.co.za</span>
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <span>
+                          <strong>Platform Operator:</strong> ReBooked Solutions (Pty) Ltd
+                        </span>
+                        <span className="mx-2">•</span>
+                        <span>
+                          <strong>Support:</strong>{" "}
+                          <span className="break-all">legal@rebookedsolutions.co.za</span>
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <span>
+                          <strong>Jurisdiction:</strong> Republic of South Africa
+                        </span>
+                      </div>
+                      <div className="text-center">
+                        <span>
+                          <strong>Regulatory Compliance:</strong> Consumer Protection Act (Act 68 of 2008), Electronic Communications and Transactions Act (Act 25 of 2002), Protection of Personal Information Act (Act 4 of 2013)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="px-4 sm:px-6">
+                  <div className="prose max-w-none space-y-4 sm:space-y-6">
+                    <p className="text-gray-700 leading-relaxed text-sm sm:text-base">This Buyer’s Policy outlines the responsibilities and rules all buyers agree to when using ReBooked Solutions. By purchasing on our platform, you agree to comply with this policy.</p>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">1. Accuracy of Information</h3>
+                      <ul className="list-disc pl-6 space-y-2 text-gray-700 text-sm sm:text-base">
+                        <li>Buyers must provide complete and accurate delivery details, including address, phone number, and email.</li>
+                        <li>Any failed deliveries resulting from incorrect or incomplete information are the buyer’s responsibility.</li>
+                      </ul>
+                    </section>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">2. Order Process</h3>
+                      <ul className="list-disc pl-6 space-y-2 text-gray-700 text-sm sm:text-base">
+                        <li>Once an order is placed and marked as “Dispatched” by the seller, it cannot be cancelled.</li>
+                        <li>Buyers must accept delivery within reasonable timeframes or collect from designated courier pickup points where applicable.</li>
+                      </ul>
+                    </section>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">3. Refunds & Returns</h3>
+                      <p className="text-gray-700 leading-relaxed text-sm sm:text-base mb-2">Buyers may request a refund within 3 calendar days of delivery if:</p>
+                      <ul className="list-disc pl-6 space-y-1 text-gray-700 text-sm sm:text-base">
+                        <li>The book received is the wrong edition, title, or author.</li>
+                        <li>The book has undisclosed major defects (e.g., missing pages, water damage).</li>
+                        <li>The book is counterfeit or fraudulent.</li>
+                      </ul>
+                      <p className="text-gray-700 leading-relaxed text-sm sm:text-base mt-2">All refund requests must include photographic evidence and a clear description of the issue.</p>
+                      <div className="mt-3">
+                        <p className="font-semibold text-gray-900">Refunds will not be granted for:</p>
+                        <ul className="list-disc pl-6 space-y-1 text-gray-700 text-sm sm:text-base">
+                          <li>Buyer’s remorse (e.g., “changed mind”).</li>
+                          <li>Normal wear and tear of secondhand books.</li>
+                          <li>Courier delays beyond the seller’s control.</li>
+                        </ul>
+                      </div>
+                    </section>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">4. Return Responsibilities</h3>
+                      <ul className="list-disc pl-6 space-y-2 text-gray-700 text-sm sm:text-base">
+                        <li>If a refund is approved and the buyer chooses to return the book, the buyer is responsible for the return delivery cost.</li>
+                        <li>If the buyer does not return the book, ReBooked Solutions may arrange to collect and donate it to charity.</li>
+                      </ul>
+                    </section>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">5. Buyer Misconduct</h3>
+                      <p className="text-gray-700 leading-relaxed text-sm sm:text-base">ReBooked Solutions reserves the right to suspend or permanently ban buyers who:</p>
+                      <ul className="list-disc pl-6 space-y-1 text-gray-700 text-sm sm:text-base">
+                        <li>Submit fraudulent or false refund claims.</li>
+                        <li>Repeatedly fail to accept deliveries.</li>
+                        <li>Attempt to abuse the platform’s refund or dispute system.</li>
+                      </ul>
+                    </section>
+
+                    <section>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">6. Dispute Resolution</h3>
+                      <p className="text-gray-700 leading-relaxed text-sm sm:text-base">In the event of a disagreement, ReBooked Solutions will mediate based on evidence provided by both buyer and seller. Our decision is final within the platform unless escalated externally (e.g., Ombud, NCC).</p>
                     </section>
                   </div>
                 </CardContent>
