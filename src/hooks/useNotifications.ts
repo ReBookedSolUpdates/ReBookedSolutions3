@@ -136,7 +136,7 @@ class NotificationManager {
             "[NotificationManager] Received event:",
             payload.eventType,
           );
-          if (payload.eventType === "INSERT") {
+          if (payload.eventType === "INSERT" || payload.eventType === "UPDATE" || payload.eventType === "DELETE") {
             clearNotificationCache(userId);
             refreshCallback().catch((err) => {
               const safeMessage = getSafeErrorMessage(err, 'Refresh callback failed');
