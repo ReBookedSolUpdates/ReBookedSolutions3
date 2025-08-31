@@ -157,7 +157,7 @@ const ContactUs = () => {
               Get in Touch
             </h2>
 
-            <div className="space-y-6">
+            <div className="divide-y divide-gray-100">
               <div className="flex items-start">
                 <div className="bg-book-100 p-3 rounded-full mr-4">
                   <Mail className="h-6 w-6 text-book-600" />
