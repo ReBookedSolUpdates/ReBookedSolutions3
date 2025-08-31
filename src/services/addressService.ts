@@ -192,7 +192,7 @@ export const getSellerPickupAddress = async (sellerId: string) => {
       .single();
 
     if (bookError || !bookData) {
-      const message = (bookError && (bookError.message || bookError.details || bookError.hint)) || 'Unknown error';
+      const message = getSafeErrorMessage(bookError, 'Unknown error');
       console.error("Error fetching book from books table:", {
         message,
         code: bookError?.code,
