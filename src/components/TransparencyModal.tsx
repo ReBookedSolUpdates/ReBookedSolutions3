@@ -31,7 +31,7 @@ interface TransparencyModalProps {
 const TransparencyModal = ({ isOpen, onClose }: TransparencyModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto rounded-xl sm:rounded-lg">
+      <DialogContent className="w-[92vw] max-w-sm sm:w-auto sm:max-w-md md:max-w-lg max-h-[80vh] overflow-y-auto rounded-lg p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg sm:text-2xl">
             <Eye className="h-6 w-6 text-book-600" />
