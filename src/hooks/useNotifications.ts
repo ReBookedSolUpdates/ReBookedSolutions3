@@ -401,7 +401,7 @@ export const useNotifications = (): NotificationHookReturn => {
 
         // Set user-friendly error state
         setHasError(true);
-        setLastError(new Error(errorMessage));
+        setLastError(errorMessage);
 
         // Only retry on network or temporary errors, not on auth errors
         if (
