@@ -1440,6 +1440,164 @@ export const COMPLETE_ALL_UNIVERSITIES_2025: University[] = [
         ]
       }
     ]
+  },
+
+  // Tshwane University of Technology (TUT)
+  {
+    id: "tut",
+    name: "Tshwane University of Technology",
+    abbreviation: "TUT",
+    fullName: "Tshwane University of Technology",
+    type: "University of Technology",
+    location: "Pretoria",
+    province: "Gauteng",
+    website: "https://www.tut.ac.za",
+    logo: "/university-logos/tut.svg",
+    overview: "One of South Africa's largest Universities of Technology, offering comprehensive career-focused programs.",
+    establishedYear: 2004,
+    studentPopulation: 60000,
+    faculties: [
+      {
+        id: "tut-arts-design",
+        name: "Faculty of Arts and Design",
+        description: "Creative arts, design, and performing arts programs.",
+        degrees: [
+          createDegree("Bachelor of Arts in Fine Art", 24, "Faculty of Arts and Design", "Fine arts and visual arts", "4 years"),
+          createDegree("Bachelor of Arts in Fashion Design and Technology", 24, "Faculty of Arts and Design", "Fashion design", "4 years"),
+          createDegree("Bachelor of Arts in Integrated Communication Design", 24, "Faculty of Arts and Design", "Communication design", "4 years"),
+          createDegree("Bachelor of Arts in Jewellery Design and Manufacture", 24, "Faculty of Arts and Design", "Jewellery design", "4 years"),
+          createDegree("Bachelor of Arts in Performing Arts", 24, "Faculty of Arts and Design", "Performing arts", "4 years"),
+          createDegree("Bachelor of Arts in Visual Communication", 24, "Faculty of Arts and Design", "Visual communication", "4 years"),
+          createDegree("Bachelor of Arts in Interior Design", 24, "Faculty of Arts and Design", "Interior design", "4 years"),
+          createDegree("Higher Certificate in Performing Arts", 18, "Faculty of Arts and Design", "Performing arts certificate", "1 year")
+        ]
+      },
+      {
+        id: "tut-economics-finance",
+        name: "Faculty of Economics and Finance",
+        description: "Economics, accounting, and finance programs.",
+        degrees: [
+          createDegree("Bachelor of Accounting", 28, "Faculty of Economics and Finance", "Professional accounting", "4 years"),
+          createDegree("Diploma in Accounting", 22, "Faculty of Economics and Finance", "Accounting diploma", "3 years"),
+          createDegree("Bachelor of Economics", 28, "Faculty of Economics and Finance", "Economic science", "4 years"),
+          createDegree("Diploma in Economics", 22, "Faculty of Economics and Finance", "Economics diploma", "3 years"),
+          createDegree("Diploma in Public Finance and Accounting", 22, "Faculty of Economics and Finance", "Public sector finance", "3 years"),
+          createDegree("Diploma in Taxation", 22, "Faculty of Economics and Finance", "Tax accounting", "3 years"),
+          createDegree("Higher Certificate in Accounting", 18, "Faculty of Economics and Finance", "Accounting certificate", "1 year")
+        ]
+      },
+      {
+        id: "tut-engineering-built-environment",
+        name: "Faculty of Engineering and the Built Environment",
+        description: "Engineering and construction technology programs.",
+        degrees: [
+          createDegree("Bachelor of Engineering Technology in Civil Engineering", 30, "Faculty of Engineering and the Built Environment", "Civil engineering", "4 years"),
+          createDegree("Bachelor of Engineering Technology in Electrical Engineering", 30, "Faculty of Engineering and the Built Environment", "Electrical engineering", "4 years"),
+          createDegree("Bachelor of Engineering Technology in Mechanical Engineering", 30, "Faculty of Engineering and the Built Environment", "Mechanical engineering", "4 years"),
+          createDegree("Bachelor of Engineering Technology in Chemical Engineering", 30, "Faculty of Engineering and the Built Environment", "Chemical engineering", "4 years"),
+          createDegree("Bachelor of Engineering Technology in Industrial Engineering", 30, "Faculty of Engineering and the Built Environment", "Industrial engineering", "4 years"),
+          createDegree("Bachelor of Engineering Technology in Computer Engineering", 30, "Faculty of Engineering and the Built Environment", "Computer engineering", "4 years"),
+          createDegree("Diploma in Civil Engineering", 26, "Faculty of Engineering and the Built Environment", "Civil engineering technology", "3 years"),
+          createDegree("Diploma in Electrical Engineering", 26, "Faculty of Engineering and the Built Environment", "Electrical engineering technology", "3 years"),
+          createDegree("Diploma in Mechanical Engineering", 26, "Faculty of Engineering and the Built Environment", "Mechanical engineering technology", "3 years"),
+          createDegree("Diploma in Industrial Engineering", 26, "Faculty of Engineering and the Built Environment", "Industrial engineering technology", "3 years"),
+          createDegree("Diploma in Computer Systems Engineering", 26, "Faculty of Engineering and the Built Environment", "Computer systems technology", "3 years"),
+          createDegree("Diploma in Architecture", 26, "Faculty of Engineering and the Built Environment", "Architectural technology", "3 years"),
+          createDegree("Diploma in Building", 26, "Faculty of Engineering and the Built Environment", "Building technology", "3 years"),
+          createDegree("Diploma in Geomatics", 26, "Faculty of Engineering and the Built Environment", "Geomatics and surveying", "3 years")
+        ]
+      },
+      {
+        id: "tut-humanities",
+        name: "Faculty of Humanities",
+        description: "Education, languages, and humanities programs.",
+        degrees: [
+          createDegree("Bachelor of Education in Foundation Phase Teaching", 25, "Faculty of Humanities", "Foundation phase teaching", "4 years"),
+          createDegree("Bachelor of Education in Senior Phase and FET Teaching", 25, "Faculty of Humanities", "Senior phase teaching", "4 years"),
+          createDegree("Diploma in Correctional and Rehabilitation Studies", 22, "Faculty of Humanities", "Correctional services", "3 years"),
+          createDegree("Diploma in Language Practice", 22, "Faculty of Humanities", "Language services", "3 years"),
+          createDegree("Diploma in Policing", 22, "Faculty of Humanities", "Police science", "3 years"),
+          createDegree("Diploma in Traffic Safety and Municipal Policing", 22, "Faculty of Humanities", "Traffic law enforcement", "3 years"),
+          createDegree("Diploma in Integrated Communication", 22, "Faculty of Humanities", "Communication studies", "3 years"),
+          createDegree("Diploma in Journalism", 22, "Faculty of Humanities", "Journalism", "3 years"),
+          createDegree("Diploma in Public Relations Management", 22, "Faculty of Humanities", "Public relations", "3 years")
+        ]
+      },
+      {
+        id: "tut-ict",
+        name: "Faculty of Information and Communication Technology",
+        description: "Information technology and computing programs.",
+        degrees: [
+          createDegree("Bachelor of Information Technology", 28, "Faculty of Information and Communication Technology", "Information technology", "4 years"),
+          createDegree("Diploma in Computer Science", 24, "Faculty of Information and Communication Technology", "Computer science", "3 years"),
+          createDegree("Diploma in Computer Systems Engineering", 26, "Faculty of Information and Communication Technology", "Computer systems", "3 years"),
+          createDegree("Diploma in Multimedia Computing", 24, "Faculty of Information and Communication Technology", "Multimedia technology", "3 years"),
+          createDegree("Diploma in Software Development", 24, "Faculty of Information and Communication Technology", "Software development", "3 years"),
+          createDegree("Diploma in Informatics", 24, "Faculty of Information and Communication Technology", "Business informatics", "3 years"),
+          createDegree("Diploma in Information Technology", 24, "Faculty of Information and Communication Technology", "Information technology", "3 years"),
+          createDegree("Diploma in Web and Application Development", 24, "Faculty of Information and Communication Technology", "Web development", "3 years"),
+          createDegree("Higher Certificate in Information and Communication Technology", 18, "Faculty of Information and Communication Technology", "ICT certificate", "1 year")
+        ]
+      },
+      {
+        id: "tut-management-sciences",
+        name: "Faculty of Management Sciences",
+        description: "Business management and administration programs.",
+        degrees: [
+          createDegree("Bachelor of Management Sciences in Business Administration", 26, "Faculty of Management Sciences", "Business administration", "4 years"),
+          createDegree("Bachelor of Management Sciences in Human Resource Management", 26, "Faculty of Management Sciences", "Human resource management", "4 years"),
+          createDegree("Bachelor of Management Sciences in Marketing", 26, "Faculty of Management Sciences", "Marketing management", "4 years"),
+          createDegree("Bachelor of Management Sciences in Retail Business Management", 26, "Faculty of Management Sciences", "Retail management", "4 years"),
+          createDegree("Diploma in Administrative Information Management", 22, "Faculty of Management Sciences", "Administrative management", "3 years"),
+          createDegree("Diploma in Business Administration", 22, "Faculty of Management Sciences", "Business administration", "3 years"),
+          createDegree("Diploma in Human Resource Management", 22, "Faculty of Management Sciences", "Human resources", "3 years"),
+          createDegree("Diploma in Marketing", 22, "Faculty of Management Sciences", "Marketing", "3 years"),
+          createDegree("Diploma in Public Management", 22, "Faculty of Management Sciences", "Public management", "3 years"),
+          createDegree("Diploma in Retail Business Management", 22, "Faculty of Management Sciences", "Retail business", "3 years"),
+          createDegree("Diploma in Supply Chain Management", 22, "Faculty of Management Sciences", "Supply chain management", "3 years")
+        ]
+      },
+      {
+        id: "tut-science",
+        name: "Faculty of Science",
+        description: "Natural sciences and technology programs.",
+        degrees: [
+          createDegree("Bachelor of Science in Chemistry", 26, "Faculty of Science", "Chemistry", "4 years"),
+          createDegree("Bachelor of Science in Industrial Physics", 26, "Faculty of Science", "Industrial physics", "4 years"),
+          createDegree("Bachelor of Science in Mathematical Technology", 26, "Faculty of Science", "Mathematical technology", "4 years"),
+          createDegree("Bachelor of Science in Statistics", 26, "Faculty of Science", "Statistics", "4 years"),
+          createDegree("Bachelor of Science in Biotechnology", 26, "Faculty of Science", "Biotechnology", "4 years"),
+          createDegree("Diploma in Analytical Chemistry", 24, "Faculty of Science", "Analytical chemistry", "3 years"),
+          createDegree("Diploma in Biotechnology", 24, "Faculty of Science", "Biotechnology", "3 years"),
+          createDegree("Diploma in Environmental Sciences", 24, "Faculty of Science", "Environmental science", "3 years"),
+          createDegree("Diploma in Food Technology", 24, "Faculty of Science", "Food technology", "3 years"),
+          createDegree("Diploma in Geology", 24, "Faculty of Science", "Geological sciences", "3 years"),
+          createDegree("Diploma in Industrial Physics", 24, "Faculty of Science", "Industrial physics", "3 years"),
+          createDegree("Diploma in Mathematical Technology", 24, "Faculty of Science", "Mathematical technology", "3 years"),
+          createDegree("Diploma in Nature Conservation", 24, "Faculty of Science", "Conservation science", "3 years"),
+          createDegree("Diploma in Polymer Technology", 24, "Faculty of Science", "Polymer science", "3 years"),
+          createDegree("Diploma in Water Care", 24, "Faculty of Science", "Water treatment technology", "3 years")
+        ]
+      },
+      {
+        id: "tut-health-sciences",
+        name: "Faculty of Health Sciences",
+        description: "Health sciences and medical technology programs.",
+        degrees: [
+          createDegree("Bachelor of Health Sciences in Dental Technology", 28, "Faculty of Health Sciences", "Dental technology", "4 years"),
+          createDegree("Bachelor of Health Sciences in Medical Orthotics and Prosthetics", 28, "Faculty of Health Sciences", "Orthotics and prosthetics", "4 years"),
+          createDegree("Bachelor of Health Sciences in Nursing", 28, "Faculty of Health Sciences", "Nursing science", "4 years"),
+          createDegree("Bachelor of Health Sciences in Radiography", 28, "Faculty of Health Sciences", "Medical radiography", "4 years"),
+          createDegree("Bachelor of Health Sciences in Biomedical Sciences", 28, "Faculty of Health Sciences", "Biomedical sciences", "4 years"),
+          createDegree("Bachelor of Health Sciences in Environmental Health", 28, "Faculty of Health Sciences", "Environmental health", "4 years"),
+          createDegree("Bachelor of Health Sciences in Clinical Technology", 28, "Faculty of Health Sciences", "Clinical technology", "4 years"),
+          createDegree("Bachelor of Health Sciences in Somatology", 28, "Faculty of Health Sciences", "Somatology", "4 years"),
+          createDegree("Diploma in Dental Assisting", 24, "Faculty of Health Sciences", "Dental assisting", "3 years"),
+          createDegree("Diploma in Nursing", 26, "Faculty of Health Sciences", "Nursing", "3 years"),
+          createDegree("Diploma in Somatology", 24, "Faculty of Health Sciences", "Beauty therapy", "3 years")
+        ]
+      }
+    ]
   }
 
   // Continue with ALL remaining universities from user document...
