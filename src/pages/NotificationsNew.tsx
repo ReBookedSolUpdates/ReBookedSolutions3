@@ -439,6 +439,34 @@ const NotificationsNew = () => {
             })),
           };
         }
+        if (category.id === "account") {
+          return {
+            ...category,
+            notifications: categorizedNotifications.account.map((n) => ({
+              id: n.id,
+              type: n.type || "account",
+              title: n.title,
+              message: n.message,
+              timestamp: n.created_at || n.createdAt,
+              read: n.read,
+              priority: "medium" as const,
+            })),
+          };
+        }
+        if (category.id === "general") {
+          return {
+            ...category,
+            notifications: categorizedNotifications.general.map((n) => ({
+              id: n.id,
+              type: n.type || "general",
+              title: n.title,
+              message: n.message,
+              timestamp: n.created_at || n.createdAt,
+              read: n.read,
+              priority: "low" as const,
+            })),
+          };
+        }
 
         return category;
       }),
