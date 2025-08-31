@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { getSafeErrorMessage } from "@/utils/errorMessageUtils";
 
 export const testSupabaseConnection = async () => {
   try {
@@ -11,7 +12,12 @@ export const testSupabaseConnection = async () => {
       .limit(1);
     
     if (healthError) {
-      console.error("❌ Supabase connection failed:", healthError);
+      console.error("❌ Supabase connection failed:", {
+        message: getSafeErrorMessage(healthError, "Connection error"),
+        code: (healthError as any)?.code,
+        details: (healthError as any)?.details,
+        hint: (healthError as any)?.hint,
+      });
       return false;
     }
     
@@ -43,7 +49,10 @@ export const testSupabaseConnection = async () => {
     
     return true;
   } catch (error) {
-    console.error("💥 Supabase test failed with exception:", error);
+    console.error("💥 Supabase test failed with exception:", {
+      message: getSafeErrorMessage(error, "Unknown error"),
+      error,
+    });
     return false;
   }
 };
