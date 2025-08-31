@@ -503,6 +503,12 @@ const EnhancedModerationDashboard = () => {
           )}
         </CardContent>
       </Card>
+
+      <div className="flex justify-center">
+        <Button variant="outline" onClick={() => setPageSize(ps => ps + 100)} disabled={isLoading}>
+          Load More
+        </Button>
+      </div>
     </div>
   );
 };
