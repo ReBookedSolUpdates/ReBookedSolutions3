@@ -22,35 +22,46 @@ export interface GeneralReportData {
 
 export const submitReport = async (
   reportData: GeneralReportData,
-): Promise<void> => {
+): Promise<{ id: string }> => {
   try {
-    console.log("Submitting general report:", reportData);
-    
-    const { error } = await supabase.from("contact_messages").insert({
-      name: reportData.name,
-      email: reportData.email,
-      subject: `${reportData.category}: ${reportData.subject}`,
-      message: reportData.description,
-      status: reportData.status === "open" ? "unread" : reportData.status,
+    if (!reportData.userId) {
+      throw new Error("You must be logged in to submit a report");
+    }
+
+    console.log("Submitting general report to reports table:", reportData);
+
+    const id = (globalThis.crypto && 'randomUUID' in globalThis.crypto)
+      ? globalThis.crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+    // Map general report into reports schema
+    const { error } = await supabase.from("reports").insert({
+      id,
+      reporter_user_id: reportData.userId,
+      reported_user_id: reportData.userId, // general issue (no target user)
+      book_id: null,
+      book_title: reportData.subject || "General Issue",
+      seller_name: reportData.name || "Unknown",
+      reason: `${reportData.category.toUpperCase()}: ${reportData.description}`,
+      status: "pending",
+      updated_at: new Date().toISOString(),
     });
 
     if (error) {
-      console.error("Error submitting general report:", {
-        message: error.message || String(error),
-        code: error.code,
-        details: error.details
+      console.error("Error submitting general report to reports:", {
+        code: (error as any)?.code,
+        message: (error as any)?.message,
+        details: (error as any)?.details,
+        hint: (error as any)?.hint,
       });
-      throw error;
+      throw new Error((error as any)?.message || "Failed to submit report");
     }
 
-    console.log("General report submitted successfully");
+    console.log("General report saved in reports with id:", id);
+    return { id };
   } catch (error) {
-    console.error("Error in submitReport:", {
-      message: error instanceof Error ? error.message : String(error),
-      code: error?.code,
-      details: error?.details
-    });
-    throw error;
+    console.error("Error in submitReport:", error);
+    throw new Error((error as any)?.message || "Failed to submit report");
   }
 };
 
