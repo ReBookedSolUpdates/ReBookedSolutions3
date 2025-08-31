@@ -158,7 +158,7 @@ const ContactUs = () => {
             </h2>
 
             <div className="divide-y divide-gray-100">
-              <div className="flex items-start">
+              <div className="flex items-start py-4">
                 <div className="bg-book-100 p-3 rounded-full mr-4">
                   <Mail className="h-6 w-6 text-book-600" />
                 </div>
@@ -176,7 +176,7 @@ const ContactUs = () => {
                 </div>
               </div>
 
-              <div className="flex items-start">
+              <div className="flex items-start py-4">
                 <div className="bg-book-100 p-3 rounded-full mr-4">
                   <Clock className="h-6 w-6 text-book-600" />
                 </div>
@@ -187,16 +187,16 @@ const ContactUs = () => {
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 py-4">
                 <h3 className="text-lg font-semibold text-gray-800">
                   Follow Us
                 </h3>
-                <div className="flex space-x-4">
+                <div className="grid grid-cols-3 gap-3">
                   <a
                     href="https://www.instagram.com/rebooked.solutions?igsh=M2ZsNjd2aTNmZmRh"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 bg-book-100 hover:bg-book-200 text-book-600 px-4 py-2 rounded-lg transition-colors"
+                    className="inline-flex items-center gap-2 border border-book-200 hover:bg-book-50 text-gray-700 px-3 py-2 rounded-lg transition-colors"
                   >
                     <Instagram className="h-5 w-5" />
                     <span>Instagram</span>
@@ -205,7 +205,7 @@ const ContactUs = () => {
                     href="https://www.facebook.com/share/16ngKMps6U/?mibextid=wwXIfr"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 bg-book-100 hover:bg-book-200 text-book-600 px-4 py-2 rounded-lg transition-colors"
+                    className="inline-flex items-center gap-2 border border-book-200 hover:bg-book-50 text-gray-700 px-3 py-2 rounded-lg transition-colors"
                   >
                     <Facebook className="h-5 w-5" />
                     <span>Facebook</span>
@@ -214,7 +214,7 @@ const ContactUs = () => {
                     href="https://www.tiktok.com/@rebooked.solution"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 bg-book-100 hover:bg-book-200 text-book-600 px-4 py-2 rounded-lg transition-colors"
+                    className="inline-flex items-center gap-2 border border-book-200 hover:bg-book-50 text-gray-700 px-3 py-2 rounded-lg transition-colors"
                   >
                     <TikTokIcon className="h-5 w-5" />
                     <span>TikTok</span>
