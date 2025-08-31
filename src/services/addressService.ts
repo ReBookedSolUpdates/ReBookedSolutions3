@@ -191,7 +191,15 @@ export const getSellerPickupAddress = async (sellerId: string) => {
       .single();
 
     if (bookError || !bookData) {
-      console.error("Error fetching book from books table:", bookError);
+      const message = (bookError && (bookError.message || bookError.details || bookError.hint)) || 'Unknown error';
+      console.error("Error fetching book from books table:", {
+        message,
+        code: bookError?.code,
+        details: bookError?.details,
+        hint: bookError?.hint,
+        sellerId,
+        timestamp: new Date().toISOString()
+      });
       console.log("❌ No book found for seller");
       return null;
     }
