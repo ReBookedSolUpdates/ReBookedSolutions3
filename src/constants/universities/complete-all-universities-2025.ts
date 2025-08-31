@@ -1598,6 +1598,420 @@ export const COMPLETE_ALL_UNIVERSITIES_2025: University[] = [
         ]
       }
     ]
+  },
+
+  // Vaal University of Technology (VUT)
+  {
+    id: "vut",
+    name: "Vaal University of Technology",
+    abbreviation: "VUT",
+    fullName: "Vaal University of Technology",
+    type: "University of Technology",
+    location: "Vanderbijlpark",
+    province: "Gauteng",
+    website: "https://www.vut.ac.za",
+    logo: "/university-logos/vut.svg",
+    overview: "A comprehensive University of Technology serving the Vaal Triangle region.",
+    establishedYear: 1966,
+    studentPopulation: 21000,
+    faculties: [
+      {
+        id: "vut-applied-computer-sciences",
+        name: "Faculty of Applied and Computer Sciences",
+        description: "Applied sciences, chemistry, biotechnology, and information technology.",
+        degrees: [
+          createDegree("Diploma in Analytical Chemistry", 21, "Faculty of Applied and Computer Sciences", "Chemical analysis", "3 years"),
+          createDegree("Diploma in Agricultural Management", 21, "Faculty of Applied and Computer Sciences", "Agricultural management", "3 years"),
+          createDegree("Diploma in Biotechnology", 23, "Faculty of Applied and Computer Sciences", "Biotechnology", "3 years"),
+          createDegree("Diploma in Non-Destructive Testing", 19, "Faculty of Applied and Computer Sciences", "Non-destructive testing", "3 years"),
+          createDegree("Diploma in Information Technology", 26, "Faculty of Applied and Computer Sciences", "Information technology", "3 years"),
+          createDegree("Extended Diploma in Information Technology", 24, "Faculty of Applied and Computer Sciences", "Extended IT program", "4 years")
+        ]
+      },
+      {
+        id: "vut-engineering-technology",
+        name: "Faculty of Engineering and Technology",
+        description: "Engineering disciplines and technology programs.",
+        degrees: [
+          createDegree("Diploma in Chemical Engineering", 24, "Faculty of Engineering and Technology", "Chemical engineering", "3 years"),
+          createDegree("Diploma in Civil Engineering", 24, "Faculty of Engineering and Technology", "Civil engineering", "3 years"),
+          createDegree("Diploma in Industrial Engineering", 24, "Faculty of Engineering and Technology", "Industrial engineering", "3 years"),
+          createDegree("Diploma in Mechanical Engineering", 24, "Faculty of Engineering and Technology", "Mechanical engineering", "3 years"),
+          createDegree("Diploma in Metallurgical Engineering", 24, "Faculty of Engineering and Technology", "Metallurgical engineering", "3 years"),
+          createDegree("Diploma in Electronic Engineering", 24, "Faculty of Engineering and Technology", "Electronic engineering", "3 years"),
+          createDegree("Diploma in Power Engineering", 24, "Faculty of Engineering and Technology", "Power engineering", "3 years"),
+          createDegree("Diploma in Process Control Engineering", 24, "Faculty of Engineering and Technology", "Process control", "3 years"),
+          createDegree("Diploma in Computer Systems Engineering", 24, "Faculty of Engineering and Technology", "Computer systems", "3 years"),
+          createDegree("Diploma in Operations Management", 23, "Faculty of Engineering and Technology", "Operations management", "3 years")
+        ]
+      },
+      {
+        id: "vut-human-sciences",
+        name: "Faculty of Human Sciences",
+        description: "Arts, design, tourism, and education programs.",
+        degrees: [
+          createDegree("Diploma in Fashion, Photography, Graphic Design & Fine Art", 21, "Faculty of Human Sciences", "Creative arts", "3 years"),
+          createDegree("Diploma in Food Service Management", 20, "Faculty of Human Sciences", "Food service management", "3 years"),
+          createDegree("Diploma in Public Relations", 20, "Faculty of Human Sciences", "Public relations", "3 years"),
+          createDegree("Diploma in Tourism Management", 20, "Faculty of Human Sciences", "Tourism management", "3 years"),
+          createDegree("Diploma in Ecotourism Management", 20, "Faculty of Human Sciences", "Ecotourism", "3 years"),
+          createDegree("Diploma in Labour Law", 23, "Faculty of Human Sciences", "Labour law", "3 years"),
+          createDegree("Diploma in Legal Assistance", 21, "Faculty of Human Sciences", "Legal assistance", "3 years"),
+          createDegree("Diploma in Safety Management", 20, "Faculty of Human Sciences", "Safety management", "3 years"),
+          createDegree("Diploma in Policing", 20, "Faculty of Human Sciences", "Police science", "3 years"),
+          createDegree("Bachelor of Communication Studies", 20, "Faculty of Human Sciences", "Communication studies", "4 years"),
+          createDegree("Bachelor of Education in Senior Phase & FET Teaching", 22, "Faculty of Human Sciences", "Teaching", "4 years")
+        ]
+      },
+      {
+        id: "vut-management-sciences",
+        name: "Faculty of Management Sciences",
+        description: "Management, accounting, and business programs.",
+        degrees: [
+          createDegree("Diploma in Financial Information Systems", 20, "Faculty of Management Sciences", "Financial information systems", "3 years"),
+          createDegree("Diploma in Cost and Management Accounting", 20, "Faculty of Management Sciences", "Management accounting", "3 years"),
+          createDegree("Diploma in Internal Auditing", 20, "Faculty of Management Sciences", "Internal auditing", "3 years"),
+          createDegree("Diploma in Human Resource Management", 20, "Faculty of Management Sciences", "Human resources", "3 years"),
+          createDegree("Diploma in Logistics and Supply Chain Management", 20, "Faculty of Management Sciences", "Logistics", "3 years"),
+          createDegree("Diploma in Marketing", 20, "Faculty of Management Sciences", "Marketing", "3 years"),
+          createDegree("Diploma in Retail Business Management", 20, "Faculty of Management Sciences", "Retail management", "3 years"),
+          createDegree("Diploma in Sport Management", 20, "Faculty of Management Sciences", "Sport management", "3 years")
+        ]
+      },
+      {
+        id: "vut-health-sciences",
+        name: "Faculty of Health Sciences",
+        description: "Health sciences and medical laboratory science.",
+        degrees: [
+          createDegree("Bachelor of Health Sciences in Medical Laboratory Sciences", 27, "Faculty of Health Sciences", "Medical laboratory science", "4 years")
+        ]
+      }
+    ]
+  },
+
+  // University of Fort Hare (UFH)
+  {
+    id: "ufh",
+    name: "University of Fort Hare",
+    abbreviation: "UFH",
+    fullName: "University of Fort Hare",
+    type: "Traditional University",
+    location: "Alice",
+    province: "Eastern Cape",
+    website: "https://www.ufh.ac.za",
+    logo: "/university-logos/ufh.svg",
+    overview: "A prestigious traditional university with a rich history of academic excellence.",
+    establishedYear: 1916,
+    studentPopulation: 12000,
+    faculties: [
+      {
+        id: "ufh-education",
+        name: "Faculty of Education",
+        description: "Teacher education and training programs.",
+        degrees: [
+          createDegree("Bachelor of Education in Foundation Phase Teaching", 28, "Faculty of Education", "Foundation phase teaching", "4 years"),
+          createDegree("Bachelor of Education in Intermediate Phase Teaching", 28, "Faculty of Education", "Intermediate phase teaching", "4 years"),
+          createDegree("Bachelor of Education in Senior and FET Phase Teaching", 30, "Faculty of Education", "Senior phase teaching", "4 years"),
+          createDegree("Higher Certificate in Education", 20, "Faculty of Education", "Teaching certificate", "1 year")
+        ]
+      },
+      {
+        id: "ufh-health-sciences",
+        name: "Faculty of Health Sciences",
+        description: "Health sciences and medical programs.",
+        degrees: [
+          createDegree("Bachelor of Nursing", 32, "Faculty of Health Sciences", "Nursing science", "4 years"),
+          createDegree("Bachelor of Science in Human Movement Science", 30, "Faculty of Health Sciences", "Human movement science", "4 years"),
+          createDegree("Bachelor of Science in Dietetics", 34, "Faculty of Health Sciences", "Dietetics", "4 years"),
+          createDegree("Bachelor of Science in Speech-Language Pathology", 32, "Faculty of Health Sciences", "Speech-language pathology", "4 years"),
+          createDegree("Bachelor of Science in Occupational Therapy", 34, "Faculty of Health Sciences", "Occupational therapy", "4 years")
+        ]
+      },
+      {
+        id: "ufh-law",
+        name: "Faculty of Law",
+        description: "Legal studies and jurisprudence.",
+        degrees: [
+          createDegree("Bachelor of Laws (LLB)", 32, "Faculty of Law", "Law degree", "4 years")
+        ]
+      },
+      {
+        id: "ufh-management-commerce",
+        name: "Faculty of Management & Commerce",
+        description: "Business, management, and commerce programs.",
+        degrees: [
+          createDegree("Bachelor of Commerce in Accounting", 30, "Faculty of Management & Commerce", "Accounting", "4 years"),
+          createDegree("Bachelor of Commerce in Business Management", 28, "Faculty of Management & Commerce", "Business management", "4 years"),
+          createDegree("Bachelor of Commerce in Economics", 28, "Faculty of Management & Commerce", "Economics", "4 years"),
+          createDegree("Bachelor of Administration (Public Administration)", 26, "Faculty of Management & Commerce", "Public administration", "4 years"),
+          createDegree("Bachelor of Commerce in Information Systems", 28, "Faculty of Management & Commerce", "Information systems", "4 years"),
+          createDegree("Bachelor of Commerce in Industrial Psychology", 28, "Faculty of Management & Commerce", "Industrial psychology", "4 years"),
+          createDegree("Bachelor of Commerce (Extended)", 24, "Faculty of Management & Commerce", "Extended commerce program", "4 years"),
+          createDegree("Bachelor of Administration (Extended)", 24, "Faculty of Management & Commerce", "Extended administration program", "4 years")
+        ]
+      },
+      {
+        id: "ufh-science-agriculture",
+        name: "Faculty of Science and Agriculture",
+        description: "Natural sciences and agricultural programs.",
+        degrees: [
+          createDegree("Bachelor of Science in Agriculture: Agricultural Economics", 28, "Faculty of Science and Agriculture", "Agricultural economics", "4 years"),
+          createDegree("Bachelor of Science in Agriculture: Agronomy", 28, "Faculty of Science and Agriculture", "Agronomy", "4 years"),
+          createDegree("Bachelor of Science in Agriculture: Animal Production", 28, "Faculty of Science and Agriculture", "Animal production", "4 years"),
+          createDegree("Bachelor of Science in Agriculture: Soil Science", 28, "Faculty of Science and Agriculture", "Soil science", "4 years"),
+          createDegree("Bachelor of Science in Agriculture: Extension and Rural Development", 28, "Faculty of Science and Agriculture", "Agricultural extension", "4 years"),
+          createDegree("Bachelor of Science (General)", 28, "Faculty of Science and Agriculture", "General science", "4 years"),
+          createDegree("BSc (Extended): Agriculture", 26, "Faculty of Science and Agriculture", "Extended agriculture program", "4 years"),
+          createDegree("BSc (Extended): General", 26, "Faculty of Science and Agriculture", "Extended science program", "4 years")
+        ]
+      },
+      {
+        id: "ufh-social-sciences-humanities",
+        name: "Faculty of Social Sciences and Humanities",
+        description: "Arts, social sciences, and humanities programs.",
+        degrees: [
+          createDegree("Bachelor of Social Science", 26, "Faculty of Social Sciences and Humanities", "Social science", "4 years"),
+          createDegree("Bachelor of Arts", 26, "Faculty of Social Sciences and Humanities", "Arts degree", "4 years"),
+          createDegree("Bachelor of Psychology", 28, "Faculty of Social Sciences and Humanities", "Psychology", "4 years"),
+          createDegree("Bachelor of Library and Information Science", 26, "Faculty of Social Sciences and Humanities", "Library science", "4 years"),
+          createDegree("Bachelor of Theology", 26, "Faculty of Social Sciences and Humanities", "Theology", "4 years"),
+          createDegree("Bachelor of Social Science (Extended)", 24, "Faculty of Social Sciences and Humanities", "Extended social science program", "4 years"),
+          createDegree("Bachelor of Arts (Extended)", 24, "Faculty of Social Sciences and Humanities", "Extended arts program", "4 years")
+        ]
+      }
+    ]
+  },
+
+  // University of Free State (UFS)
+  {
+    id: "ufs",
+    name: "University of the Free State",
+    abbreviation: "UFS",
+    fullName: "University of the Free State",
+    type: "Traditional University",
+    location: "Bloemfontein",
+    province: "Free State",
+    website: "https://www.ufs.ac.za",
+    logo: "/university-logos/ufs.svg",
+    overview: "A leading traditional university committed to academic excellence and community engagement.",
+    establishedYear: 1904,
+    studentPopulation: 37000,
+    faculties: [
+      {
+        id: "ufs-economic-management",
+        name: "Faculty of Economic and Management Sciences",
+        description: "Economics, business, and management programs.",
+        degrees: [
+          createDegree("Bachelor of Chartered Accountancy", 34, "Faculty of Economic and Management Sciences", "Chartered accountancy", "4 years"),
+          createDegree("Bachelor of Commerce in Management", 28, "Faculty of Economic and Management Sciences", "Management", "4 years"),
+          createDegree("Bachelor of Commerce in Economics", 28, "Faculty of Economic and Management Sciences", "Economics", "4 years"),
+          createDegree("Bachelor of Commerce in Marketing", 28, "Faculty of Economic and Management Sciences", "Marketing", "4 years"),
+          createDegree("Bachelor of Commerce in Business and Financial Analytics", 34, "Faculty of Economic and Management Sciences", "Business analytics", "4 years"),
+          createDegree("Bachelor of Commerce in Human Resource Management", 28, "Faculty of Economic and Management Sciences", "Human resources", "4 years"),
+          createDegree("Bachelor of Administration", 28, "Faculty of Economic and Management Sciences", "Administration", "4 years"),
+          createDegree("Extended Curriculum Programmes (Commerce and Administration)", 28, "Faculty of Economic and Management Sciences", "Extended programs", "4 years"),
+          createDegree("Bachelor of Commerce in Accounting", 28, "Faculty of Economic and Management Sciences", "Accounting", "4 years"),
+          createDegree("Bachelor of Commerce", 28, "Faculty of Economic and Management Sciences", "General commerce", "4 years")
+        ]
+      },
+      {
+        id: "ufs-education",
+        name: "Faculty of Education",
+        description: "Teacher education and educational leadership.",
+        degrees: [
+          createDegree("Bachelor of Education in Foundation Phase Teaching", 30, "Faculty of Education", "Foundation phase teaching", "4 years"),
+          createDegree("Bachelor of Education in Intermediate Phase Teaching", 30, "Faculty of Education", "Intermediate phase teaching", "4 years"),
+          createDegree("Bachelor of Education in Senior Phase and FET Teaching", 30, "Faculty of Education", "Senior phase teaching", "4 years"),
+          createDegree("Extended Curriculum Programmes (Education)", 28, "Faculty of Education", "Extended education programs", "4 years")
+        ]
+      },
+      {
+        id: "ufs-health-sciences",
+        name: "Faculty of Health Sciences",
+        description: "Medical and health sciences programs.",
+        degrees: [
+          createDegree("Bachelor of Medicine and Bachelor of Surgery (MBChB)", 38, "Faculty of Health Sciences", "Medicine", "6 years"),
+          createDegree("Bachelor of Occupational Therapy", 33, "Faculty of Health Sciences", "Occupational therapy", "4 years"),
+          createDegree("Bachelor of Optometry", 33, "Faculty of Health Sciences", "Optometry", "4 years"),
+          createDegree("Bachelor of Physiotherapy", 33, "Faculty of Health Sciences", "Physiotherapy", "4 years"),
+          createDegree("Bachelor of Medicine specialising in Radiation Science", 30, "Faculty of Health Sciences", "Radiation science", "4 years"),
+          createDegree("Bachelor of Biokinetics", 30, "Faculty of Health Sciences", "Biokinetics", "4 years"),
+          createDegree("Bachelor of Nursing", 30, "Faculty of Health Sciences", "Nursing", "4 years"),
+          createDegree("Bachelor of Dietetics", 33, "Faculty of Health Sciences", "Dietetics", "4 years"),
+          createDegree("Bachelor of Sport Coaching", 30, "Faculty of Health Sciences", "Sport coaching", "4 years")
+        ]
+      },
+      {
+        id: "ufs-humanities",
+        name: "Faculty of the Humanities",
+        description: "Arts, humanities, and social sciences.",
+        degrees: [
+          createDegree("Bachelor of Social Sciences", 30, "Faculty of the Humanities", "Social sciences", "4 years"),
+          createDegree("Bachelor of Arts", 30, "Faculty of the Humanities", "Arts", "4 years"),
+          createDegree("Bachelor of Community Development", 30, "Faculty of the Humanities", "Community development", "4 years"),
+          createDegree("Bachelor of Governance and Political Transformation", 30, "Faculty of the Humanities", "Governance", "4 years"),
+          createDegree("Bachelor of Language Practice", 30, "Faculty of the Humanities", "Language practice", "4 years"),
+          createDegree("Bachelor of Drama and Theatre Arts", 30, "Faculty of the Humanities", "Drama and theatre", "4 years"),
+          createDegree("Bachelor of Music", 30, "Faculty of the Humanities", "Music", "4 years"),
+          createDegree("Bachelor of Fine Arts", 30, "Faculty of the Humanities", "Fine arts", "4 years"),
+          createDegree("Bachelor of Theology", 30, "Faculty of the Humanities", "Theology", "4 years"),
+          createDegree("Extended Curriculum Programmes (Humanities)", 28, "Faculty of the Humanities", "Extended humanities programs", "4 years"),
+          createDegree("Higher Certificate in Music Performance", 20, "Faculty of the Humanities", "Music performance", "1 year"),
+          createDegree("Diploma in Music", 25, "Faculty of the Humanities", "Music diploma", "3 years")
+        ]
+      },
+      {
+        id: "ufs-law",
+        name: "Faculty of Law",
+        description: "Legal studies and jurisprudence.",
+        degrees: [
+          createDegree("Bachelor of Laws (LLB)", 33, "Faculty of Law", "Law degree", "4 years")
+        ]
+      },
+      {
+        id: "ufs-natural-agricultural",
+        name: "Faculty of Natural and Agricultural Sciences",
+        description: "Natural sciences and agricultural programs.",
+        degrees: [
+          createDegree("Bachelor of Science (with Actuarial Science)", 34, "Faculty of Natural and Agricultural Sciences", "Actuarial science", "4 years"),
+          createDegree("Bachelor of Science (with Agricultural Economics)", 32, "Faculty of Natural and Agricultural Sciences", "Agricultural economics", "4 years"),
+          createDegree("Bachelor of Science (with Animal Science)", 32, "Faculty of Natural and Agricultural Sciences", "Animal science", "4 years"),
+          createDegree("Bachelor of Science (with Biochemistry)", 32, "Faculty of Natural and Agricultural Sciences", "Biochemistry", "4 years"),
+          createDegree("Bachelor of Science (with Chemistry)", 32, "Faculty of Natural and Agricultural Sciences", "Chemistry", "4 years"),
+          createDegree("Bachelor of Science (with Consumer Sciences)", 32, "Faculty of Natural and Agricultural Sciences", "Consumer sciences", "4 years"),
+          createDegree("Bachelor of Science (with Environmental Geography)", 32, "Faculty of Natural and Agricultural Sciences", "Environmental geography", "4 years"),
+          createDegree("Bachelor of Science (with Genetics)", 32, "Faculty of Natural and Agricultural Sciences", "Genetics", "4 years"),
+          createDegree("Bachelor of Science (with Geology)", 32, "Faculty of Natural and Agricultural Sciences", "Geology", "4 years"),
+          createDegree("Bachelor of Science (with Geography)", 32, "Faculty of Natural and Agricultural Sciences", "Geography", "4 years"),
+          createDegree("Bachelor of Science (with Human Physiology)", 32, "Faculty of Natural and Agricultural Sciences", "Human physiology", "4 years"),
+          createDegree("Bachelor of Science (with Mathematics)", 32, "Faculty of Natural and Agricultural Sciences", "Mathematics", "4 years"),
+          createDegree("Bachelor of Science (with Microbiology)", 32, "Faculty of Natural and Agricultural Sciences", "Microbiology", "4 years"),
+          createDegree("Bachelor of Science (with Physics)", 32, "Faculty of Natural and Agricultural Sciences", "Physics", "4 years"),
+          createDegree("Bachelor of Science (with Plant Sciences)", 32, "Faculty of Natural and Agricultural Sciences", "Plant sciences", "4 years"),
+          createDegree("Bachelor of Science (with Quantity Surveying)", 34, "Faculty of Natural and Agricultural Sciences", "Quantity surveying", "4 years"),
+          createDegree("Bachelor of Science (with Soil Science)", 32, "Faculty of Natural and Agricultural Sciences", "Soil science", "4 years"),
+          createDegree("Bachelor of Science (with Zoology)", 32, "Faculty of Natural and Agricultural Sciences", "Zoology", "4 years"),
+          createDegree("Bachelor of Science (with Computer Science and Informatics)", 32, "Faculty of Natural and Agricultural Sciences", "Computer science", "4 years"),
+          createDegree("Extended Curriculum Programmes (BSc)", 28, "Faculty of Natural and Agricultural Sciences", "Extended science programs", "4 years"),
+          createDegree("Bachelor of Architecture", 30, "Faculty of Natural and Agricultural Sciences", "Architecture", "5 years")
+        ]
+      },
+      {
+        id: "ufs-theology-religion",
+        name: "Faculty of Theology and Religion",
+        description: "Theological and religious studies.",
+        degrees: [
+          createDegree("Bachelor of Divinity", 28, "Faculty of Theology and Religion", "Theology", "4 years")
+        ]
+      }
+    ]
+  },
+
+  // University of KwaZulu-Natal (UKZN)
+  {
+    id: "ukzn",
+    name: "University of KwaZulu-Natal",
+    abbreviation: "UKZN",
+    fullName: "University of KwaZulu-Natal",
+    type: "Traditional University",
+    location: "Durban, Pietermaritzburg",
+    province: "KwaZulu-Natal",
+    website: "https://www.ukzn.ac.za",
+    logo: "/university-logos/ukzn.svg",
+    overview: "A premier African research university committed to academic excellence.",
+    establishedYear: 2004,
+    studentPopulation: 47000,
+    faculties: [
+      {
+        id: "ukzn-agriculture-engineering-science",
+        name: "College of Agriculture, Engineering and Science",
+        description: "Agriculture, engineering, and natural sciences programs.",
+        degrees: [
+          createDegree("Bachelor of Science in Agriculture (Agricultural Economics)", 28, "College of Agriculture, Engineering and Science", "Agricultural economics", "4 years"),
+          createDegree("Bachelor of Science in Agriculture (Agronomy)", 28, "College of Agriculture, Engineering and Science", "Agronomy", "4 years"),
+          createDegree("Bachelor of Science in Agriculture (Animal and Poultry Science)", 28, "College of Agriculture, Engineering and Science", "Animal science", "4 years"),
+          createDegree("Bachelor of Science in Agriculture (Plant Pathology)", 28, "College of Agriculture, Engineering and Science", "Plant pathology", "4 years"),
+          createDegree("Bachelor of Science in Agriculture (Soil Science)", 30, "College of Agriculture, Engineering and Science", "Soil science", "4 years"),
+          createDegree("Bachelor of Science in Dietetics", 33, "College of Agriculture, Engineering and Science", "Dietetics", "4 years"),
+          createDegree("Bachelor of Science in Environmental Earth Science", 28, "College of Agriculture, Engineering and Science", "Environmental earth science", "4 years"),
+          createDegree("Bachelor of Science in Geological Sciences", 28, "College of Agriculture, Engineering and Science", "Geological sciences", "4 years"),
+          createDegree("Bachelor of Science in Industrial and Applied Biotechnology", 30, "College of Agriculture, Engineering and Science", "Biotechnology", "4 years"),
+          createDegree("Bachelor of Science in Life and Earth Sciences", 28, "College of Agriculture, Engineering and Science", "Life and earth sciences", "4 years"),
+          createDegree("Bachelor of Science in Marine Biology", 30, "College of Agriculture, Engineering and Science", "Marine biology", "4 years"),
+          createDegree("Bachelor of Science in Mathematics, Statistics and Computer Science", 30, "College of Agriculture, Engineering and Science", "Mathematics and computer science", "4 years"),
+          createDegree("Bachelor of Science in Physics and Chemistry", 30, "College of Agriculture, Engineering and Science", "Physics and chemistry", "4 years"),
+          createDegree("Bachelor of Science in Applied Chemistry", 30, "College of Agriculture, Engineering and Science", "Applied chemistry", "4 years"),
+          createDegree("Bachelor of Science in Biological Sciences", 30, "College of Agriculture, Engineering and Science", "Biological sciences", "4 years"),
+          createDegree("Bachelor of Science in Crop and Horticultural Sciences", 28, "College of Agriculture, Engineering and Science", "Crop science", "4 years"),
+          createDegree("Bachelor of Science in Computer Science and IT", 30, "College of Agriculture, Engineering and Science", "Computer science", "4 years"),
+          createDegree("Bachelor of Science in Engineering (Agricultural)", 33, "College of Agriculture, Engineering and Science", "Agricultural engineering", "4 years"),
+          createDegree("Bachelor of Science in Engineering (Chemical)", 33, "College of Agriculture, Engineering and Science", "Chemical engineering", "4 years"),
+          createDegree("Bachelor of Science in Engineering (Civil)", 33, "College of Agriculture, Engineering and Science", "Civil engineering", "4 years"),
+          createDegree("Bachelor of Science in Engineering (Computer)", 35, "College of Agriculture, Engineering and Science", "Computer engineering", "4 years"),
+          createDegree("Bachelor of Science in Engineering (Electrical)", 35, "College of Agriculture, Engineering and Science", "Electrical engineering", "4 years"),
+          createDegree("Bachelor of Science in Engineering (Electronic)", 35, "College of Agriculture, Engineering and Science", "Electronic engineering", "4 years"),
+          createDegree("Bachelor of Science in Engineering (Mechanical)", 36, "College of Agriculture, Engineering and Science", "Mechanical engineering", "4 years"),
+          createDegree("Diploma in Music Performance", 28, "College of Agriculture, Engineering and Science", "Music performance", "3 years")
+        ]
+      },
+      {
+        id: "ukzn-health-sciences",
+        name: "College of Health Sciences",
+        description: "Medical and health sciences programs.",
+        degrees: [
+          createDegree("Bachelor of Medicine and Bachelor of Surgery (MBChB)", 48, "College of Health Sciences", "Medicine", "6 years"),
+          createDegree("Bachelor of Dental Therapy", 33, "College of Health Sciences", "Dental therapy", "4 years"),
+          createDegree("Bachelor of Medical Science in Physiology", 33, "College of Health Sciences", "Medical physiology", "4 years"),
+          createDegree("Bachelor of Medical Science in Anatomy", 33, "College of Health Sciences", "Medical anatomy", "4 years"),
+          createDegree("Bachelor of Nursing", 30, "College of Health Sciences", "Nursing", "4 years"),
+          createDegree("Bachelor of Occupational Therapy", 36, "College of Health Sciences", "Occupational therapy", "4 years"),
+          createDegree("Bachelor of Optometry", 36, "College of Health Sciences", "Optometry", "4 years"),
+          createDegree("Bachelor of Pharmacy", 36, "College of Health Sciences", "Pharmacy", "4 years"),
+          createDegree("Bachelor of Physiotherapy", 36, "College of Health Sciences", "Physiotherapy", "4 years"),
+          createDegree("Bachelor of Speech Language Therapy", 36, "College of Health Sciences", "Speech language therapy", "4 years")
+        ]
+      },
+      {
+        id: "ukzn-humanities",
+        name: "College of Humanities",
+        description: "Arts, humanities, and social sciences programs.",
+        degrees: [
+          createDegree("Bachelor of Arts (General)", 28, "College of Humanities", "Arts", "4 years"),
+          createDegree("Bachelor of Arts in Cultural and Heritage Tourism", 30, "College of Humanities", "Cultural tourism", "4 years"),
+          createDegree("Bachelor of Arts in Criminology and Forensic Studies", 30, "College of Humanities", "Criminology", "4 years"),
+          createDegree("Bachelor of Arts in Philosophy, Politics and Law", 30, "College of Humanities", "Philosophy, politics and law", "4 years"),
+          createDegree("Bachelor of Arts in Visual Art", 30, "College of Humanities", "Visual art", "4 years"),
+          createDegree("Bachelor of Arts in Music", 30, "College of Humanities", "Music", "4 years"),
+          createDegree("Bachelor of Education (Foundation Phase)", 30, "College of Humanities", "Foundation phase teaching", "4 years"),
+          createDegree("Bachelor of Education (Intermediate Phase)", 30, "College of Humanities", "Intermediate phase teaching", "4 years"),
+          createDegree("Bachelor of Education (Senior and FET Phase)", 30, "College of Humanities", "Senior phase teaching", "4 years"),
+          createDegree("Bachelor of Social Science (General)", 30, "College of Humanities", "Social science", "4 years"),
+          createDegree("Bachelor of Social Science in Criminology and Forensic Studies", 30, "College of Humanities", "Criminology", "4 years"),
+          createDegree("Bachelor of Social Work", 30, "College of Humanities", "Social work", "4 years"),
+          createDegree("Bachelor of Theology", 28, "College of Humanities", "Theology", "4 years"),
+          createDegree("Diploma in Music Performance", 28, "College of Humanities", "Music performance", "3 years"),
+          createDegree("Higher Certificate in Music", 25, "College of Humanities", "Music certificate", "1 year")
+        ]
+      },
+      {
+        id: "ukzn-law-management",
+        name: "College of Law and Management Studies",
+        description: "Law, business, and management programs.",
+        degrees: [
+          createDegree("Bachelor of Business Administration", 32, "College of Law and Management Studies", "Business administration", "4 years"),
+          createDegree("Bachelor of Commerce (Accounting)", 32, "College of Law and Management Studies", "Accounting", "4 years"),
+          createDegree("Bachelor of Commerce (Economics)", 32, "College of Law and Management Studies", "Economics", "4 years"),
+          createDegree("Bachelor of Commerce (Finance)", 32, "College of Law and Management Studies", "Finance", "4 years"),
+          createDegree("Bachelor of Commerce (Information Systems)", 32, "College of Law and Management Studies", "Information systems", "4 years"),
+          createDegree("Bachelor of Commerce (Marketing)", 32, "College of Law and Management Studies", "Marketing", "4 years"),
+          createDegree("Bachelor of Commerce (Supply Chain)", 32, "College of Law and Management Studies", "Supply chain management", "4 years"),
+          createDegree("Bachelor of Commerce (Human Resources)", 32, "College of Law and Management Studies", "Human resources", "4 years"),
+          createDegree("Bachelor of Commerce in Accounting (Chartered Accountancy stream)", 38, "College of Law and Management Studies", "Chartered accountancy", "4 years"),
+          createDegree("Bachelor of Laws (LLB)", 32, "College of Law and Management Studies", "Law", "4 years"),
+          createDegree("Higher Certificate in Business Administration", 28, "College of Law and Management Studies", "Business administration certificate", "1 year")
+        ]
+      }
+    ]
   }
 
   // Continue with ALL remaining universities from user document...
