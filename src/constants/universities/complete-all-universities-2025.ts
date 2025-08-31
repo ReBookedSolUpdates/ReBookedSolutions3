@@ -1241,6 +1241,140 @@ export const COMPLETE_ALL_UNIVERSITIES_2025: University[] = [
         ]
       }
     ]
+  },
+
+  // Durban University of Technology (DUT)
+  {
+    id: "dut",
+    name: "Durban University of Technology",
+    abbreviation: "DUT",
+    fullName: "Durban University of Technology",
+    type: "University of Technology",
+    location: "Durban",
+    province: "KwaZulu-Natal",
+    website: "https://www.dut.ac.za",
+    logo: "/university-logos/dut.svg",
+    overview: "A leading University of Technology providing innovative and industry-relevant education in KwaZulu-Natal.",
+    establishedYear: 2002,
+    studentPopulation: 31000,
+    faculties: [
+      {
+        id: "dut-accounting-informatics",
+        name: "Faculty of Accounting and Informatics",
+        description: "Information technology, business informatics, and accounting programs.",
+        degrees: [
+          createDegree("Bachelor of Information and Communications Technology", 30, "Faculty of Accounting and Informatics", "ICT and computer science", "4 years"),
+          createDegree("Bachelor of ICT: Internet of Things (IoT)", 30, "Faculty of Accounting and Informatics", "IoT and connected systems", "4 years"),
+          createDegree("Diploma ICT: Applications Development", 23, "Faculty of Accounting and Informatics", "Software development", "3 years"),
+          createDegree("Diploma ICT: Business Analysis", 23, "Faculty of Accounting and Informatics", "Business systems analysis", "3 years"),
+          createDegree("Diploma Business & Information Management", 23, "Faculty of Accounting and Informatics", "Business information systems", "3 years"),
+          createDegree("Diploma in Accounting", 23, "Faculty of Accounting and Informatics", "Financial accounting", "3 years"),
+          createDegree("Diploma in Internal Auditing", 23, "Faculty of Accounting and Informatics", "Internal auditing", "3 years"),
+          createDegree("Diploma in Library and Information Studies", 23, "Faculty of Accounting and Informatics", "Library science", "3 years"),
+          createDegree("Diploma in Management Accounting", 23, "Faculty of Accounting and Informatics", "Management accounting", "3 years"),
+          createDegree("Diploma in Taxation", 23, "Faculty of Accounting and Informatics", "Tax accounting", "3 years")
+        ]
+      },
+      {
+        id: "dut-applied-sciences",
+        name: "Faculty of Applied Sciences",
+        description: "Applied sciences, biotechnology, and technical sciences.",
+        degrees: [
+          createDegree("Bachelor of Applied Science in Biotechnology", 28, "Faculty of Applied Sciences", "Biotechnology and life sciences", "4 years"),
+          createDegree("Bachelor of Applied Science in Food Science and Technology", 28, "Faculty of Applied Sciences", "Food technology", "4 years"),
+          createDegree("Bachelor of Applied Science in Industrial Chemistry", 28, "Faculty of Applied Sciences", "Industrial chemistry", "4 years"),
+          createDegree("Bachelor of Applied Science in Textile Science", 28, "Faculty of Applied Sciences", "Textile technology", "4 years"),
+          createDegree("Bachelor of Sport Science and Management", 28, "Faculty of Applied Sciences", "Sport science", "4 years"),
+          createDegree("Diploma in Shipping & Logistics", 23, "Faculty of Applied Sciences", "Maritime logistics", "3 years"),
+          createDegree("Diploma in Analytical Chemistry", 23, "Faculty of Applied Sciences", "Chemical analysis", "3 years"),
+          createDegree("Diploma in Clothing Management", 23, "Faculty of Applied Sciences", "Clothing production", "3 years"),
+          createDegree("Diploma in Consumer Sciences in Food and Nutrition", 23, "Faculty of Applied Sciences", "Food and nutrition", "3 years"),
+          createDegree("Diploma in Nautical Science", 23, "Faculty of Applied Sciences", "Maritime navigation", "3 years"),
+          createDegree("Diploma in Sustainable Horticulture and Landscaping", 23, "Faculty of Applied Sciences", "Horticulture", "3 years")
+        ]
+      },
+      {
+        id: "dut-arts-design",
+        name: "Faculty of Arts and Design",
+        description: "Creative arts, design, journalism, and education programs.",
+        degrees: [
+          createDegree("Bachelor of Applied Arts in Commercial Photography", 26, "Faculty of Arts and Design", "Commercial photography", "4 years"),
+          createDegree("Bachelor of Applied Arts in Screen Arts and Technology", 36, "Faculty of Arts and Design", "Film and digital media", "4 years"),
+          createDegree("Bachelor of Design in Visual Communication Design", 26, "Faculty of Arts and Design", "Graphic design", "4 years"),
+          createDegree("Bachelor of Education in Senior Phase & FET: Economic and Management Sciences", 28, "Faculty of Arts and Design", "EMS teaching", "4 years"),
+          createDegree("Bachelor of Education in Senior Phase & FET: Languages", 28, "Faculty of Arts and Design", "Language teaching", "4 years"),
+          createDegree("Bachelor of Education in Senior Phase & FET: Natural Sciences", 28, "Faculty of Arts and Design", "Science teaching", "4 years"),
+          createDegree("Bachelor of Journalism", 26, "Faculty of Arts and Design", "Journalism and media", "4 years"),
+          createDegree("Diploma in Drama", 24, "Faculty of Arts and Design", "Performing arts", "3 years"),
+          createDegree("Diploma in Fashion Design", 23, "Faculty of Arts and Design", "Fashion design", "3 years"),
+          createDegree("Diploma in Fine Art", 23, "Faculty of Arts and Design", "Fine arts", "3 years"),
+          createDegree("Diploma in Interior Design", 23, "Faculty of Arts and Design", "Interior design", "3 years"),
+          createDegree("Diploma in Jewellery Design and Manufacture", 23, "Faculty of Arts and Design", "Jewellery design", "3 years"),
+          createDegree("Diploma in Language Practice", 23, "Faculty of Arts and Design", "Language services", "3 years")
+        ]
+      },
+      {
+        id: "dut-engineering-built-environment",
+        name: "Faculty of Engineering and the Built Environment",
+        description: "Engineering and built environment programs.",
+        degrees: [
+          createDegree("Bachelor of the Built Environment: Urban and Regional Planning", 26, "Faculty of Engineering and the Built Environment", "Urban planning", "4 years"),
+          createDegree("Bachelor of Engineering Technology in Chemical Engineering", 26, "Faculty of Engineering and the Built Environment", "Chemical engineering", "4 years"),
+          createDegree("Bachelor of Engineering Technology in Electronic Engineering", 26, "Faculty of Engineering and the Built Environment", "Electronic engineering", "4 years"),
+          createDegree("Bachelor of Engineering Technology in Industrial Engineering", 26, "Faculty of Engineering and the Built Environment", "Industrial engineering", "4 years"),
+          createDegree("Bachelor of Engineering Technology in Mechanical Engineering", 26, "Faculty of Engineering and the Built Environment", "Mechanical engineering", "4 years"),
+          createDegree("Bachelor of Engineering Technology in Power Engineering", 26, "Faculty of Engineering and the Built Environment", "Power engineering", "4 years"),
+          createDegree("Bachelor of the Built Environment in Architecture", 26, "Faculty of Engineering and the Built Environment", "Architecture", "4 years"),
+          createDegree("Bachelor of the Built Environment in Construction Studies", 26, "Faculty of Engineering and the Built Environment", "Construction management", "4 years"),
+          createDegree("Bachelor of the Built Environment in Geomatics", 26, "Faculty of Engineering and the Built Environment", "Geomatics and surveying", "4 years"),
+          createDegree("Bachelor of Engineering Technology in Civil Engineering", 26, "Faculty of Engineering and the Built Environment", "Civil engineering", "4 years"),
+          createDegree("Diploma in Engineering Technology in Civil Engineering", 26, "Faculty of Engineering and the Built Environment", "Civil engineering technology", "3 years"),
+          createDegree("Diploma in the Built Environment in Construction Studies", 26, "Faculty of Engineering and the Built Environment", "Construction studies", "3 years"),
+          createDegree("Diploma in Pulp and Paper Technology", 23, "Faculty of Engineering and the Built Environment", "Paper technology", "3 years")
+        ]
+      },
+      {
+        id: "dut-health-sciences",
+        name: "Faculty of Health Sciences",
+        description: "Health sciences and medical programs.",
+        degrees: [
+          createDegree("Bachelor of Child & Youth Care", 26, "Faculty of Health Sciences", "Child and youth care", "4 years"),
+          createDegree("Bachelor of Health Sciences in Environmental Health", 26, "Faculty of Health Sciences", "Environmental health", "4 years"),
+          createDegree("Bachelor of Health Sciences in Radiography: Diagnostic", 28, "Faculty of Health Sciences", "Diagnostic radiography", "4 years"),
+          createDegree("Bachelor of Health Sciences in Radiography: Sonography", 28, "Faculty of Health Sciences", "Medical sonography", "4 years"),
+          createDegree("Bachelor of Health Sciences in Radiography: Therapy and Oncology", 28, "Faculty of Health Sciences", "Radiation therapy", "4 years"),
+          createDegree("Bachelor of Health Sciences in Clinical Technology", 26, "Faculty of Health Sciences", "Clinical technology", "4 years"),
+          createDegree("Bachelor of Health Sciences in Emergency Medical Care", 30, "Faculty of Health Sciences", "Emergency medical care", "4 years"),
+          createDegree("Bachelor of Health Sciences in Homeopathy", 26, "Faculty of Health Sciences", "Homeopathy", "4 years"),
+          createDegree("Bachelor of Health Sciences in Chiropractic", 26, "Faculty of Health Sciences", "Chiropractic", "4 years"),
+          createDegree("Bachelor of Health Sciences in Medical Laboratory Science", 26, "Faculty of Health Sciences", "Medical laboratory science", "4 years"),
+          createDegree("Bachelor in Nursing", 28, "Faculty of Health Sciences", "Nursing science", "4 years"),
+          createDegree("Diploma in Somatology", 23, "Faculty of Health Sciences", "Somatology and aesthetics", "3 years")
+        ]
+      },
+      {
+        id: "dut-management-sciences",
+        name: "Faculty of Management Sciences",
+        description: "Business management, administration, and tourism programs.",
+        degrees: [
+          createDegree("Diploma in Management Sciences: Business Administration", 25, "Faculty of Management Sciences", "Business administration", "3 years"),
+          createDegree("Diploma in Management Sciences: Business Law", 25, "Faculty of Management Sciences", "Business law", "3 years"),
+          createDegree("Diploma in Management Sciences: Human Resources", 25, "Faculty of Management Sciences", "Human resource management", "3 years"),
+          createDegree("Diploma in Management Sciences: Marketing", 25, "Faculty of Management Sciences", "Marketing management", "3 years"),
+          createDegree("Diploma in Management Sciences: Operations", 25, "Faculty of Management Sciences", "Operations management", "3 years"),
+          createDegree("Diploma in Management Sciences: Public Relations and Communication", 25, "Faculty of Management Sciences", "Public relations", "3 years"),
+          createDegree("Diploma in Management Sciences: Retail", 25, "Faculty of Management Sciences", "Retail management", "3 years"),
+          createDegree("Diploma in Public Administration: Disaster & Risk Management", 25, "Faculty of Management Sciences", "Disaster management", "3 years"),
+          createDegree("Diploma in Public Administration: Local Government", 25, "Faculty of Management Sciences", "Local government", "3 years"),
+          createDegree("Diploma in Public Administration: Public Management", 25, "Faculty of Management Sciences", "Public management", "3 years"),
+          createDegree("Diploma in Public Administration: Supply Chain Management", 25, "Faculty of Management Sciences", "Supply chain management", "3 years"),
+          createDegree("Diploma in Catering Management", 23, "Faculty of Management Sciences", "Catering management", "3 years"),
+          createDegree("Diploma in Hospitality Management", 23, "Faculty of Management Sciences", "Hospitality management", "3 years"),
+          createDegree("Diploma in Tourism Management", 26, "Faculty of Management Sciences", "Tourism management", "3 years"),
+          createDegree("Diploma in Eco Tourism", 25, "Faculty of Management Sciences", "Eco tourism", "3 years")
+        ]
+      }
+    ]
   }
 
   // Continue with ALL remaining universities from user document...
