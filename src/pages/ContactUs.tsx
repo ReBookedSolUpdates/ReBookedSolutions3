@@ -26,14 +26,14 @@ const ContactUs = () => {
     setIsSubmitting(true);
 
     try {
-      await submitContactMessage({
+      const saved = await submitContactMessage({
         name,
         email,
         subject,
         message,
       });
 
-      toast.success("Your message has been sent! We'll get back to you soon.");
+      toast.success(`Your message has been sent! Ref: ${saved.id}`);
       setSubject("");
       setMessage("");
     } catch (error) {
