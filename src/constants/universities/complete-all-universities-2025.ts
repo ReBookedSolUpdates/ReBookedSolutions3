@@ -1127,6 +1127,52 @@ export const COMPLETE_ALL_UNIVERSITIES_2025: University[] = [
       }
       // Continue with more UNISA faculties...
     ]
+  },
+
+  // Cape Peninsula University of Technology (CPUT)
+  {
+    id: "cput",
+    name: "Cape Peninsula University of Technology",
+    abbreviation: "CPUT",
+    fullName: "Cape Peninsula University of Technology",
+    type: "University of Technology",
+    location: "Cape Town",
+    province: "Western Cape",
+    website: "https://www.cput.ac.za",
+    logo: "/university-logos/cput.svg",
+    overview: "A leading University of Technology committed to academic excellence and innovation in the Western Cape.",
+    establishedYear: 2005,
+    studentPopulation: 32000,
+    faculties: [
+      {
+        id: "cput-agriculture-natural-sciences",
+        name: "Faculty of Applied Sciences",
+        description: "Agriculture, analytical chemistry, biotechnology, and environmental sciences.",
+        degrees: [
+          createDegree("Diploma in Agriculture", 28, "Faculty of Applied Sciences", "Agricultural science and management program", "3 years"),
+          createDegree("Diploma in Agriculture (Mainstream)", 30, "Faculty of Applied Sciences", "Advanced agricultural science program", "3 years"),
+          createDegree("Diploma in Agricultural Management", 28, "Faculty of Applied Sciences", "Farm and agricultural business management", "3 years"),
+          createDegree("Diploma in Agricultural Management (Mainstream)", 30, "Faculty of Applied Sciences", "Advanced agricultural management program", "3 years"),
+          createDegree("Diploma in Analytical Chemistry", 28, "Faculty of Applied Sciences", "Chemical analysis and laboratory techniques", "3 years"),
+          createDegree("Diploma in Analytical Chemistry (Mainstream)", 30, "Faculty of Applied Sciences", "Advanced analytical chemistry program", "3 years"),
+          createDegree("Diploma in Biotechnology", 28, "Faculty of Applied Sciences", "Biotechnology and life sciences applications", "3 years"),
+          createDegree("Diploma in Biotechnology (Mainstream)", 30, "Faculty of Applied Sciences", "Advanced biotechnology program", "3 years"),
+          createDegree("Diploma in Consumer Science: Food & Nutrition", 26, "Faculty of Applied Sciences", "Food science and nutritional studies", "3 years"),
+          createDegree("Diploma in Consumer Science: Food & Nutrition (Mainstream)", 28, "Faculty of Applied Sciences", "Advanced food and nutrition program", "3 years"),
+          createDegree("Diploma in Environmental Management", 26, "Faculty of Applied Sciences", "Environmental science and sustainability management", "3 years"),
+          createDegree("Diploma in Environmental Management (Mainstream)", 28, "Faculty of Applied Sciences", "Advanced environmental management program", "3 years")
+        ]
+      },
+      {
+        id: "cput-health-wellness",
+        name: "Faculty of Health and Wellness Sciences",
+        description: "Health sciences with focus on medical laboratory science and healthcare.",
+        degrees: [
+          createDegree("Bachelor of Health Sciences: Medical Laboratory Science", 38, "Faculty of Health and Wellness Sciences", "Medical laboratory technology and diagnostics", "4 years"),
+          createDegree("Bachelor of Health Sciences: Medical Laboratory Science (Extended)", 30, "Faculty of Health and Wellness Sciences", "Extended medical laboratory science program", "4 years")
+        ]
+      }
+    ]
   }
 
   // Continue with ALL remaining universities from user document...
