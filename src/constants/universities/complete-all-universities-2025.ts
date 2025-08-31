@@ -2516,8 +2516,328 @@ export const COMPLETE_ALL_UNIVERSITIES_2025: University[] = [
         ]
       }
     ]
-  }
+  },
 
-  // Continue with ALL remaining universities from user document...
-  // (This is a very large dataset and would include all 26+ universities)
+  // Nelson Mandela University (NMU)
+  {
+    id: "nmu",
+    name: "Nelson Mandela University",
+    abbreviation: "NMU",
+    fullName: "Nelson Mandela University",
+    type: "Comprehensive University",
+    location: "Port Elizabeth (Gqeberha)",
+    province: "Eastern Cape",
+    website: "https://www.mandela.ac.za",
+    logo: "/university-logos/nmu.svg",
+    overview: "A comprehensive university committed to social justice and academic excellence.",
+    establishedYear: 2005,
+    studentPopulation: 27000,
+    faculties: [
+      {
+        id: "nmu-business-economic",
+        name: "Faculty of Business and Economic Sciences",
+        description: "Business, economics, and management programs.",
+        degrees: [
+          createDegree("Higher Certificate Accounting", 290, "Faculty of Business and Economic Sciences", "Accounting certificate", "1 year"),
+          createDegree("Higher Certificate Business Studies", 290, "Faculty of Business and Economic Sciences", "Business studies certificate", "1 year"),
+          createDegree("Diploma in Accountancy", 350, "Faculty of Business and Economic Sciences", "Accountancy", "3 years"),
+          createDegree("Diploma in Economics", 330, "Faculty of Business and Economic Sciences", "Economics", "3 years"),
+          createDegree("Diploma in Human Resource Management", 330, "Faculty of Business and Economic Sciences", "Human resources", "3 years"),
+          createDegree("Diploma Inventory & Stores Management", 290, "Faculty of Business and Economic Sciences", "Inventory management", "3 years"),
+          createDegree("Diploma Logistics", 330, "Faculty of Business and Economic Sciences", "Logistics", "3 years"),
+          createDegree("Diploma Management", 330, "Faculty of Business and Economic Sciences", "Management", "3 years"),
+          createDegree("Diploma Marketing", 330, "Faculty of Business and Economic Sciences", "Marketing", "3 years"),
+          createDegree("Diploma Tourism Management", 330, "Faculty of Business and Economic Sciences", "Tourism management", "3 years"),
+          createDegree("BCom General", 390, "Faculty of Business and Economic Sciences", "General commerce", "4 years"),
+          createDegree("BCom General Accounting", 390, "Faculty of Business and Economic Sciences", "General accounting", "4 years"),
+          createDegree("BCom General Business Management", 390, "Faculty of Business and Economic Sciences", "Business management", "4 years"),
+          createDegree("BCom Financial Planning", 390, "Faculty of Business and Economic Sciences", "Financial planning", "4 years"),
+          createDegree("BCom General Tourism", 390, "Faculty of Business and Economic Sciences", "Tourism", "4 years"),
+          createDegree("BCom Marketing & Business Management", 390, "Faculty of Business and Economic Sciences", "Marketing and business", "4 years"),
+          createDegree("BCom Hospitality Management", 390, "Faculty of Business and Economic Sciences", "Hospitality management", "4 years"),
+          createDegree("BCom General Stats", 390, "Faculty of Business and Economic Sciences", "Statistics", "4 years"),
+          createDegree("BCom Accounting", 410, "Faculty of Business and Economic Sciences", "Accounting", "4 years"),
+          createDegree("BCom Computer Science & Information Systems", 390, "Faculty of Business and Economic Sciences", "Computer science and information systems", "4 years"),
+          createDegree("BCom Economics & Statistics", 390, "Faculty of Business and Economic Sciences", "Economics and statistics", "4 years"),
+          createDegree("BCom Industrial Psychology & Human Resource Management", 390, "Faculty of Business and Economic Sciences", "Industrial psychology", "4 years"),
+          createDegree("BCom Logistics & Transport Economics", 390, "Faculty of Business and Economic Sciences", "Logistics and transport", "4 years"),
+          createDegree("BCom Accounting Science (Economics/Business Management)", 410, "Faculty of Business and Economic Sciences", "Accounting science", "4 years"),
+          createDegree("BCom Accounting Science (Law)", 410, "Faculty of Business and Economic Sciences", "Accounting science with law", "4 years"),
+          createDegree("BCom Accounting Science (Computer Science & Information Systems)", 410, "Faculty of Business and Economic Sciences", "Accounting science with IT", "4 years"),
+          createDegree("BA (Human Resource Management)", 350, "Faculty of Business and Economic Sciences", "Human resource management", "4 years"),
+          createDegree("BA (Development Studies)", 350, "Faculty of Business and Economic Sciences", "Development studies", "4 years")
+        ]
+      },
+      {
+        id: "nmu-education",
+        name: "Faculty of Education",
+        description: "Teacher education and training.",
+        degrees: [
+          createDegree("Bachelor of Foundation Phase", 350, "Faculty of Education", "Foundation phase teaching", "4 years"),
+          createDegree("Bachelor of Intermediate Phase", 350, "Faculty of Education", "Intermediate phase teaching", "4 years"),
+          createDegree("Bachelor of Senior Phase & Further Education & Training", 390, "Faculty of Education", "Senior phase teaching", "4 years")
+        ]
+      },
+      {
+        id: "nmu-engineering-built-environment-technology",
+        name: "Faculty of Engineering, the Built Environment and Technology",
+        description: "Engineering, construction, and technology programs.",
+        degrees: [
+          createDegree("HCert Mechatronic Engineering", 330, "Faculty of Engineering, the Built Environment and Technology", "Mechatronic engineering certificate", "1 year"),
+          createDegree("HCert Renewable Energy Engineering", 330, "Faculty of Engineering, the Built Environment and Technology", "Renewable energy certificate", "1 year"),
+          createDegree("BEng Mechatronics", 410, "Faculty of Engineering, the Built Environment and Technology", "Mechatronics engineering", "4 years"),
+          createDegree("BEngTech Electrical Engineering", 370, "Faculty of Engineering, the Built Environment and Technology", "Electrical engineering technology", "4 years"),
+          createDegree("BEngTech Industrial Engineering", 370, "Faculty of Engineering, the Built Environment and Technology", "Industrial engineering technology", "4 years"),
+          createDegree("BEngTech Mechanical Engineering", 370, "Faculty of Engineering, the Built Environment and Technology", "Mechanical engineering technology", "4 years"),
+          createDegree("BEngTech Marine Engineering", 370, "Faculty of Engineering, the Built Environment and Technology", "Marine engineering technology", "4 years"),
+          createDegree("Dip Architectural Technology", 330, "Faculty of Engineering, the Built Environment and Technology", "Architectural technology", "3 years"),
+          createDegree("Dip Interior Design", 315, "Faculty of Engineering, the Built Environment and Technology", "Interior design", "3 years"),
+          createDegree("Bachelor of Architectural Studies Architecture", 370, "Faculty of Engineering, the Built Environment and Technology", "Architecture", "5 years"),
+          createDegree("Dip Building", 330, "Faculty of Engineering, the Built Environment and Technology", "Building technology", "3 years"),
+          createDegree("BSc in Construction Economics", 370, "Faculty of Engineering, the Built Environment and Technology", "Construction economics", "4 years"),
+          createDegree("Bachelor of Human Settlement Development", 370, "Faculty of Engineering, the Built Environment and Technology", "Human settlement development", "4 years"),
+          createDegree("BEngTech Civil Engineering", 370, "Faculty of Engineering, the Built Environment and Technology", "Civil engineering technology", "4 years"),
+          createDegree("HCert IT User Support Service", 290, "Faculty of Engineering, the Built Environment and Technology", "IT support certificate", "1 year"),
+          createDegree("Dip IT Software Development", 330, "Faculty of Engineering, the Built Environment and Technology", "Software development", "3 years"),
+          createDegree("Dip IT Communication Networks", 330, "Faculty of Engineering, the Built Environment and Technology", "Communication networks", "3 years"),
+          createDegree("Dip IT Support Service", 330, "Faculty of Engineering, the Built Environment and Technology", "IT support services", "3 years"),
+          createDegree("Bachelor of Information Technology", 370, "Faculty of Engineering, the Built Environment and Technology", "Information technology", "4 years")
+        ]
+      },
+      {
+        id: "nmu-health-sciences",
+        name: "Faculty of Health Sciences",
+        description: "Health sciences and medical programs.",
+        degrees: [
+          createDegree("Bachelor of Environmental Health", 390, "Faculty of Health Sciences", "Environmental health", "4 years"),
+          createDegree("BAPsych", 350, "Faculty of Health Sciences", "Psychology", "4 years"),
+          createDegree("BSW (Social Work)", 350, "Faculty of Health Sciences", "Social work", "4 years"),
+          createDegree("BSc Dietetics", 390, "Faculty of Health Sciences", "Dietetics", "4 years"),
+          createDegree("Dip Sport Management", 330, "Faculty of Health Sciences", "Sport management", "3 years"),
+          createDegree("Bachelor of Human Movement Science", 350, "Faculty of Health Sciences", "Human movement science", "4 years"),
+          createDegree("Bachelor of Biokinetics", 370, "Faculty of Health Sciences", "Biokinetics", "4 years"),
+          createDegree("Bachelor of Nursing", 370, "Faculty of Health Sciences", "Nursing", "4 years"),
+          createDegree("Bachelor of Radiography in Diagnostic", 390, "Faculty of Health Sciences", "Diagnostic radiography", "4 years"),
+          createDegree("Bachelor of Emergency Medical Care", 350, "Faculty of Health Sciences", "Emergency medical care", "4 years"),
+          createDegree("Bachelor of Medical Laboratory Science", 390, "Faculty of Health Sciences", "Medical laboratory science", "4 years"),
+          createDegree("Bachelor in Pharmacy", 410, "Faculty of Health Sciences", "Pharmacy", "4 years"),
+          createDegree("Bachelor of Medicine and Bachelor of Surgery", 430, "Faculty of Health Sciences", "Medicine", "6 years")
+        ]
+      },
+      {
+        id: "nmu-humanities",
+        name: "Faculty of Humanities",
+        description: "Arts, humanities, and social sciences.",
+        degrees: [
+          createDegree("Bachelor of Visual Arts", 350, "Faculty of Humanities", "Visual arts", "4 years"),
+          createDegree("Diploma in Music", 290, "Faculty of Humanities", "Music", "3 years"),
+          createDegree("Bachelor of Music", 350, "Faculty of Humanities", "Music", "4 years"),
+          createDegree("BMus Performing Arts", 350, "Faculty of Humanities", "Performing arts", "4 years"),
+          createDegree("BMus Technology", 350, "Faculty of Humanities", "Music technology", "4 years"),
+          createDegree("BMus General", 350, "Faculty of Humanities", "General music", "4 years"),
+          createDegree("Dip Public Relations", 330, "Faculty of Humanities", "Public relations", "3 years"),
+          createDegree("BA", 350, "Faculty of Humanities", "Arts", "4 years"),
+          createDegree("BA Media, Communication & Culture", 350, "Faculty of Humanities", "Media and communication", "4 years"),
+          createDegree("Dip (Public Management)", 310, "Faculty of Humanities", "Public management", "3 years"),
+          createDegree("BA Politics & Economics", 350, "Faculty of Humanities", "Politics and economics", "4 years"),
+          createDegree("BAdmin Public Administration", 350, "Faculty of Humanities", "Public administration", "4 years")
+        ]
+      },
+      {
+        id: "nmu-law",
+        name: "Faculty of Law",
+        description: "Legal studies and law enforcement.",
+        degrees: [
+          createDegree("HCert Law Enforcement", 310, "Faculty of Law", "Law enforcement certificate", "1 year"),
+          createDegree("Dip Law Enforcement", 330, "Faculty of Law", "Law enforcement", "3 years"),
+          createDegree("BA Law", 390, "Faculty of Law", "Arts with law", "4 years"),
+          createDegree("BCom Law", 390, "Faculty of Law", "Commerce with law", "4 years"),
+          createDegree("LLB Law", 390, "Faculty of Law", "Law degree", "4 years")
+        ]
+      },
+      {
+        id: "nmu-science",
+        name: "Faculty of Science",
+        description: "Natural sciences and agricultural programs.",
+        degrees: [
+          createDegree("Dip Agricultural Management", 330, "Faculty of Science", "Agricultural management", "3 years"),
+          createDegree("Dip Analytical Chemistry", 350, "Faculty of Science", "Analytical chemistry", "3 years"),
+          createDegree("Dip Game Ranch Management", 330, "Faculty of Science", "Game ranch management", "3 years"),
+          createDegree("Dip Polymer Technology", 350, "Faculty of Science", "Polymer technology", "3 years"),
+          createDegree("BSc Biological Sciences", 410, "Faculty of Science", "Biological sciences", "4 years"),
+          createDegree("BSc Biochemistry, Chemistry, Microbiology & Physiology", 410, "Faculty of Science", "Biochemistry and related sciences", "4 years"),
+          createDegree("BSc Environmental Sciences", 410, "Faculty of Science", "Environmental sciences", "4 years"),
+          createDegree("BSc Geosciences", 410, "Faculty of Science", "Geosciences", "4 years"),
+          createDegree("BSc Computer Sciences", 410, "Faculty of Science", "Computer sciences", "4 years"),
+          createDegree("BSc Physical Science & Mathematics", 410, "Faculty of Science", "Physical science and mathematics", "4 years")
+        ]
+      }
+    ]
+  },
+
+  // University of Venda (UNIVEN)
+  {
+    id: "univen",
+    name: "University of Venda",
+    abbreviation: "UNIVEN",
+    fullName: "University of Venda",
+    type: "Traditional University",
+    location: "Thohoyandou",
+    province: "Limpopo",
+    website: "https://www.univen.ac.za",
+    logo: "/university-logos/univen.svg",
+    overview: "A university committed to excellence in teaching, research, and community engagement in rural development.",
+    establishedYear: 1982,
+    studentPopulation: 16000,
+    faculties: [
+      {
+        id: "univen-commerce",
+        name: "School of Management Sciences",
+        description: "Commerce, management, and business programs.",
+        degrees: [
+          createDegree("Bachelor of Administration", 32, "School of Management Sciences", "Administration", "4 years"),
+          createDegree("Bachelor of Commerce in Accounting Sciences", 35, "School of Management Sciences", "Accounting sciences", "4 years"),
+          createDegree("Bachelor of Commerce in Accounting", 32, "School of Management Sciences", "Accounting", "4 years"),
+          createDegree("Bachelor of Commerce in Business Information Systems", 32, "School of Management Sciences", "Business information systems", "4 years"),
+          createDegree("Bachelor of Commerce in Business Management", 32, "School of Management Sciences", "Business management", "4 years"),
+          createDegree("Bachelor of Commerce in Cost and Management Accounting", 32, "School of Management Sciences", "Management accounting", "4 years"),
+          createDegree("Bachelor of Commerce in Economics", 32, "School of Management Sciences", "Economics", "4 years"),
+          createDegree("Bachelor of Commerce in Human Resource Management", 32, "School of Management Sciences", "Human resources", "4 years"),
+          createDegree("Bachelor of Commerce in Industrial Psychology", 32, "School of Management Sciences", "Industrial psychology", "4 years"),
+          createDegree("Bachelor of Commerce in Tourism Management", 32, "School of Management Sciences", "Tourism management", "4 years"),
+          createDegree("Extended Bachelor of Administration", 28, "School of Management Sciences", "Extended administration program", "4 years"),
+          createDegree("Extended Bachelor of Commerce in Accounting", 28, "School of Management Sciences", "Extended accounting program", "4 years"),
+          createDegree("Extended Bachelor of Commerce in Business Information Systems", 28, "School of Management Sciences", "Extended business information systems", "4 years"),
+          createDegree("Extended Bachelor of Commerce in Business Management", 28, "School of Management Sciences", "Extended business management", "4 years"),
+          createDegree("Extended Bachelor of Commerce in Cost and Management Accounting", 28, "School of Management Sciences", "Extended management accounting", "4 years"),
+          createDegree("Extended Bachelor of Commerce in Economics", 28, "School of Management Sciences", "Extended economics program", "4 years"),
+          createDegree("Extended Bachelor of Commerce in Human Resources Management", 28, "School of Management Sciences", "Extended human resources program", "4 years")
+        ]
+      },
+      {
+        id: "univen-law",
+        name: "School of Law",
+        description: "Legal studies and criminal justice.",
+        degrees: [
+          createDegree("Bachelor of Laws", 38, "School of Law", "Law degree", "4 years"),
+          createDegree("Bachelor of Arts in Criminal Justice", 34, "School of Law", "Criminal justice", "4 years")
+        ]
+      },
+      {
+        id: "univen-health-sciences",
+        name: "School of Health Sciences",
+        description: "Health sciences and medical programs.",
+        degrees: [
+          createDegree("Bachelor of Nursing", 36, "School of Health Sciences", "Nursing", "4 years"),
+          createDegree("BSc in Nutrition", 34, "School of Health Sciences", "Nutrition", "4 years"),
+          createDegree("BSc in Sports and Exercise Science", 34, "School of Health Sciences", "Sports and exercise science", "4 years"),
+          createDegree("BSc in Recreation and Leisure Studies", 34, "School of Health Sciences", "Recreation and leisure studies", "4 years"),
+          createDegree("Bachelor of Psychology", 36, "School of Health Sciences", "Psychology", "4 years")
+        ]
+      },
+      {
+        id: "univen-science-engineering-agriculture",
+        name: "School of Agriculture",
+        description: "Agriculture, natural sciences, and engineering programs.",
+        degrees: [
+          createDegree("Diploma in Freshwater Technology", 24, "School of Agriculture", "Freshwater technology", "3 years"),
+          createDegree("BSc in Biochemistry and Microbiology", 26, "School of Agriculture", "Biochemistry and microbiology", "4 years"),
+          createDegree("BSc in Biochemistry and Biology", 26, "School of Agriculture", "Biochemistry and biology", "4 years"),
+          createDegree("BSc in Microbiology and Botany", 26, "School of Agriculture", "Microbiology and botany", "4 years"),
+          createDegree("BSc in Mathematics and Applied Mathematics", 26, "School of Agriculture", "Mathematics and applied mathematics", "4 years"),
+          createDegree("BSc in Mathematics and Physics", 26, "School of Agriculture", "Mathematics and physics", "4 years"),
+          createDegree("BSc in Mathematics and Statistics", 26, "School of Agriculture", "Mathematics and statistics", "4 years"),
+          createDegree("BSc in Physics and Chemistry", 26, "School of Agriculture", "Physics and chemistry", "4 years"),
+          createDegree("BSc in Chemistry and Mathematics", 26, "School of Agriculture", "Chemistry and mathematics", "4 years"),
+          createDegree("BSc in Chemistry and Biochemistry", 26, "School of Agriculture", "Chemistry and biochemistry", "4 years"),
+          createDegree("BSc in Chemistry", 26, "School of Agriculture", "Chemistry", "4 years"),
+          createDegree("BSc in Botany and Zoology", 26, "School of Agriculture", "Botany and zoology", "4 years"),
+          createDegree("BSc in Computer Science", 26, "School of Agriculture", "Computer science", "4 years"),
+          createDegree("BSc in Computer Science and Mathematics", 26, "School of Agriculture", "Computer science and mathematics", "4 years"),
+          createDegree("Bachelor of Environmental Sciences", 32, "School of Agriculture", "Environmental sciences", "4 years"),
+          createDegree("Bachelor of Earth Sciences in Mining and Environmental Geology", 35, "School of Agriculture", "Mining and environmental geology", "4 years"),
+          createDegree("Bachelor of Earth Sciences in Hydrology and Water Resources", 35, "School of Agriculture", "Hydrology and water resources", "4 years"),
+          createDegree("Bachelor of Urban and Regional Planning", 35, "School of Agriculture", "Urban and regional planning", "4 years"),
+          createDegree("Bachelor of Environmental Sciences in Disaster Risk Reduction", 35, "School of Agriculture", "Disaster risk reduction", "4 years"),
+          createDegree("Bachelor of Science in Agriculture (Agricultural Economics)", 26, "School of Agriculture", "Agricultural economics", "4 years"),
+          createDegree("Bachelor of Science in Agriculture (Agribusiness Management)", 26, "School of Agriculture", "Agribusiness management", "4 years"),
+          createDegree("Bachelor of Science in Agriculture (Animal Science)", 26, "School of Agriculture", "Animal science", "4 years"),
+          createDegree("Bachelor of Science in Agriculture (Horticultural Sciences)", 26, "School of Agriculture", "Horticultural sciences", "4 years"),
+          createDegree("Bachelor of Science in Agriculture (Plant Production)", 26, "School of Agriculture", "Plant production", "4 years"),
+          createDegree("Bachelor of Science in Soil Science", 26, "School of Agriculture", "Soil science", "4 years"),
+          createDegree("Bachelor of Science in Forestry", 26, "School of Agriculture", "Forestry", "4 years"),
+          createDegree("Bachelor of Science in Agricultural and Biosystems Engineering", 32, "School of Agriculture", "Agricultural and biosystems engineering", "4 years")
+        ]
+      }
+    ]
+  },
+
+  // Sefako Makgatho Health Sciences University (SMU)
+  {
+    id: "smu",
+    name: "Sefako Makgatho Health Sciences University",
+    abbreviation: "SMU",
+    fullName: "Sefako Makgatho Health Sciences University",
+    type: "Specialized University",
+    location: "Pretoria",
+    province: "Gauteng",
+    website: "https://www.smu.ac.za",
+    logo: "/university-logos/smu.svg",
+    overview: "A specialized health sciences university committed to excellence in health education and research.",
+    establishedYear: 2014,
+    studentPopulation: 4000,
+    faculties: [
+      {
+        id: "smu-medicine",
+        name: "School of Medicine",
+        description: "Medical education and clinical training.",
+        degrees: [
+          createDegree("Diploma of Medicine (Extended)", 32, "School of Medicine", "Extended medical program", "6 years"),
+          createDegree("Diploma in Emergency Medical Care", 18, "School of Medicine", "Emergency medical care", "3 years"),
+          createDegree("Higher Certificate in Medical Care", 15, "School of Medicine", "Medical care certificate", "1 year"),
+          createDegree("Bachelor of Diagnostic Radiography", 16, "School of Medicine", "Diagnostic radiography", "4 years")
+        ]
+      },
+      {
+        id: "smu-dentistry",
+        name: "School of Dentistry",
+        description: "Dental sciences and oral health.",
+        degrees: [
+          createDegree("Bachelor of Dental Surgery", 37, "School of Dentistry", "Dental surgery", "5 years"),
+          createDegree("Bachelor of Dental Therapy", 28, "School of Dentistry", "Dental therapy", "4 years"),
+          createDegree("Bachelor of Oral Hygiene", 28, "School of Dentistry", "Oral hygiene", "3 years")
+        ]
+      },
+      {
+        id: "smu-pharmacy",
+        name: "School of Pharmacy",
+        description: "Pharmaceutical sciences.",
+        degrees: [
+          createDegree("Bachelor of Pharmacy", 32, "School of Pharmacy", "Pharmacy", "4 years")
+        ]
+      },
+      {
+        id: "smu-health-care-sciences",
+        name: "School of Health Care Sciences",
+        description: "Health care sciences and allied health professions.",
+        degrees: [
+          createDegree("Bachelor of Nursing and Midwifery", 26, "School of Health Care Sciences", "Nursing and midwifery", "4 years"),
+          createDegree("Bachelor of Occupational Therapy", 25, "School of Health Care Sciences", "Occupational therapy", "4 years"),
+          createDegree("Bachelor of Science in Physiotherapy", 28, "School of Health Care Sciences", "Physiotherapy", "4 years"),
+          createDegree("Bachelor of Audiology", 25, "School of Health Care Sciences", "Audiology", "4 years"),
+          createDegree("Bachelor of Speech Language Pathology", 25, "School of Health Care Sciences", "Speech language pathology", "4 years")
+        ]
+      },
+      {
+        id: "smu-science-technology",
+        name: "School of Science and Technology",
+        description: "Science and technology programs supporting health sciences.",
+        degrees: [
+          createDegree("Bachelor of Science in Medical Laboratory Sciences", 26, "School of Science and Technology", "Medical laboratory sciences", "4 years"),
+          createDegree("Bachelor of Science in Biomedical Sciences", 26, "School of Science and Technology", "Biomedical sciences", "4 years"),
+          createDegree("Bachelor of Science in Environmental Health", 26, "School of Science and Technology", "Environmental health", "4 years")
+        ]
+      }
+    ]
+  }
 ];
