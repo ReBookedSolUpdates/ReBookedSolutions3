@@ -6,6 +6,7 @@ import {
   clearNotificationCache,
 } from "@/services/notificationService";
 import { Database } from "@/integrations/supabase/types";
+import { getSafeErrorMessage } from "@/utils/errorMessageUtils";
 
 type Notification = Database["public"]["Tables"]["notifications"]["Row"];
 
@@ -138,11 +139,8 @@ class NotificationManager {
           if (payload.eventType === "INSERT") {
             clearNotificationCache(userId);
             refreshCallback().catch((err) => {
-              const errorMessage = err instanceof Error ? err.message :
-                (typeof err === 'object' && err !== null) ?
-                  (err.message || err.details || err.hint || JSON.stringify(err)) :
-                  String(err);
-              console.error('[NotificationManager] Refresh callback error:', errorMessage, err);
+              const safeMessage = getSafeErrorMessage(err, 'Refresh callback failed');
+              console.error('[NotificationManager] Refresh callback error:', safeMessage, { original: err });
             });
           }
         },
@@ -354,8 +352,7 @@ export const useNotifications = (): NotificationHookReturn => {
           throw new Error("Invalid data format received");
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
+        const errorMessage = getSafeErrorMessage(error, "Failed to fetch notifications");
         console.error(
           `[NotificationHook] Error fetching notifications:`,
           errorMessage
@@ -404,7 +401,7 @@ export const useNotifications = (): NotificationHookReturn => {
 
         // Set user-friendly error state
         setHasError(true);
-        setLastError(error instanceof Error ? error : new Error(errorMessage));
+        setLastError(new Error(errorMessage));
 
         // Only retry on network or temporary errors, not on auth errors
         if (
