@@ -1173,6 +1173,74 @@ export const COMPLETE_ALL_UNIVERSITIES_2025: University[] = [
         ]
       }
     ]
+  },
+
+  // Central University of Technology (CUT)
+  {
+    id: "cut",
+    name: "Central University of Technology",
+    abbreviation: "CUT",
+    fullName: "Central University of Technology, Free State",
+    type: "University of Technology",
+    location: "Bloemfontein",
+    province: "Free State",
+    website: "https://www.cut.ac.za",
+    logo: "/university-logos/cut.svg",
+    overview: "A comprehensive University of Technology offering career-focused programs in the Free State.",
+    establishedYear: 1981,
+    studentPopulation: 15000,
+    faculties: [
+      {
+        id: "cut-engineering-built-environment-it",
+        name: "Faculty of Engineering, Built Environment & Information Technology",
+        description: "Engineering, construction, and information technology programs.",
+        degrees: [
+          createDegree("Diploma in Civil Engineering", 27, "Faculty of Engineering, Built Environment & Information Technology", "Civil engineering technology and construction", "3 years"),
+          createDegree("Bachelor of Engineering Technology in Civil Engineering", 32, "Faculty of Engineering, Built Environment & Information Technology", "Advanced civil engineering degree", "4 years"),
+          createDegree("Diploma in Mechanical Engineering Technology", 27, "Faculty of Engineering, Built Environment & Information Technology", "Mechanical engineering technology", "3 years"),
+          createDegree("Bachelor of Engineering Technology in Mechanical Engineering", 32, "Faculty of Engineering, Built Environment & Information Technology", "Advanced mechanical engineering degree", "4 years"),
+          createDegree("Diploma in Information Technology", 27, "Faculty of Engineering, Built Environment & Information Technology", "Information technology and computing", "3 years"),
+          createDegree("Bachelor of Information Technology", 30, "Faculty of Engineering, Built Environment & Information Technology", "Advanced IT and computer science", "4 years")
+        ]
+      },
+      {
+        id: "cut-health-environmental",
+        name: "Faculty of Health & Environmental Sciences",
+        description: "Health sciences and environmental health programs.",
+        degrees: [
+          createDegree("Bachelor of Health Sciences: Medical Laboratory Sciences", 30, "Faculty of Health & Environmental Sciences", "Medical laboratory technology and diagnostics", "4 years"),
+          createDegree("Diploma in Environmental Health", 27, "Faculty of Health & Environmental Sciences", "Environmental health and safety", "3 years"),
+          createDegree("Diploma in Dental Assisting", 27, "Faculty of Health & Environmental Sciences", "Dental assistant and oral health care", "3 years")
+        ]
+      },
+      {
+        id: "cut-management-humanities",
+        name: "Faculty of Management Sciences & Humanities",
+        description: "Management, business, and humanities programs.",
+        degrees: [
+          createDegree("Diploma in Public Management", 27, "Faculty of Management Sciences & Humanities", "Public administration and management", "3 years"),
+          createDegree("Diploma in Marketing", 27, "Faculty of Management Sciences & Humanities", "Marketing and advertising", "3 years"),
+          createDegree("Diploma in Internal Auditing", 28, "Faculty of Management Sciences & Humanities", "Internal auditing and risk management", "3 years"),
+          createDegree("Diploma in Office Management & Technology", 27, "Faculty of Management Sciences & Humanities", "Office administration and technology", "3 years"),
+          createDegree("Bachelor of Hospitality Management", 30, "Faculty of Management Sciences & Humanities", "Hospitality and tourism management", "4 years"),
+          createDegree("Bachelor of Accountancy", 30, "Faculty of Management Sciences & Humanities", "Accounting and financial management", "4 years"),
+          createDegree("Bachelor of Tourism Management", 30, "Faculty of Management Sciences & Humanities", "Tourism and travel management", "4 years")
+        ]
+      },
+      {
+        id: "cut-education",
+        name: "Faculty of Education",
+        description: "Teacher education and training programs.",
+        degrees: [
+          createDegree("Bachelor of Education (Foundation Phase)", 27, "Faculty of Education", "Foundation phase teaching", "4 years"),
+          createDegree("Bachelor of Education (Senior Phase & FET - Economics)", 27, "Faculty of Education", "Senior phase economics teaching", "4 years"),
+          createDegree("Bachelor of Education (Senior Phase & FET - Natural Science)", 27, "Faculty of Education", "Senior phase science teaching", "4 years"),
+          createDegree("Bachelor of Education (Senior Phase & FET - Languages)", 27, "Faculty of Education", "Senior phase language teaching", "4 years"),
+          createDegree("Bachelor of Education (Senior Phase & FET - Mathematics)", 27, "Faculty of Education", "Senior phase mathematics teaching", "4 years"),
+          createDegree("Bachelor of Education (Senior Phase & FET - Computer Science)", 27, "Faculty of Education", "Senior phase computer science teaching", "4 years")
+        ]
+      }
+    ]
   }
 
   // Continue with ALL remaining universities from user document...
