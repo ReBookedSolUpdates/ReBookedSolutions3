@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Book, Instagram, Facebook, Music } from "lucide-react";
+import { Book, Instagram, Facebook } from "lucide-react";
+import TikTokIcon from "@/components/icons/TikTokIcon";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -189,7 +190,7 @@ const Footer = () => {
               className="text-gray-400 hover:text-black transition-colors"
               aria-label="Follow us on TikTok"
             >
-              <Music className="h-5 w-5" />
+              <TikTokIcon className="h-5 w-5" />
             </a>
           </div>
         </div>
