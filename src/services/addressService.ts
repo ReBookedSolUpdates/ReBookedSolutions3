@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { updateAddressValidation } from "./addressValidationService";
 import { safeLogError } from "@/utils/errorHandling";
 import { safeLogError as safelog, formatSupabaseError } from "@/utils/safeErrorLogger";
+import { getSafeErrorMessage } from "@/utils/errorMessageUtils";
 
 interface Address {
   complex: string;
@@ -191,7 +192,15 @@ export const getSellerPickupAddress = async (sellerId: string) => {
       .single();
 
     if (bookError || !bookData) {
-      console.error("Error fetching book from books table:", bookError);
+      const message = getSafeErrorMessage(bookError, 'Unknown error');
+      console.error("Error fetching book from books table:", {
+        message,
+        code: bookError?.code,
+        details: bookError?.details,
+        hint: bookError?.hint,
+        sellerId,
+        timestamp: new Date().toISOString()
+      });
       console.log("❌ No book found for seller");
       return null;
     }

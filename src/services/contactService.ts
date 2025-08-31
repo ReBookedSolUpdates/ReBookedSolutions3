@@ -20,23 +20,38 @@ export interface ContactMessage {
 
 export const submitContactMessage = async (
   messageData: ContactMessageData,
-): Promise<void> => {
+): Promise<{ id: string }> => {
   try {
+    const id = (globalThis.crypto && 'randomUUID' in globalThis.crypto)
+      ? globalThis.crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
     const { error } = await supabase.from("contact_messages").insert({
+      id,
       name: messageData.name,
       email: messageData.email,
       subject: messageData.subject,
       message: messageData.message,
       status: "unread",
+      updated_at: new Date().toISOString(),
     });
 
     if (error) {
-      console.error("Error submitting contact message:", error);
-      throw error;
+      console.error("[contactService.submitContactMessage] Error:", {
+        code: (error as any)?.code,
+        message: (error as any)?.message,
+        details: (error as any)?.details,
+        hint: (error as any)?.hint,
+      });
+      throw new Error((error as any)?.message || "Failed to submit contact message");
     }
+
+    return { id };
   } catch (error) {
-    console.error("Error in submitContactMessage:", error);
-    throw new Error("Failed to submit contact message");
+    console.error("[contactService.submitContactMessage] Exception:", error);
+    throw new Error(
+      (error as any)?.message || "Failed to submit contact message",
+    );
   }
 };
 

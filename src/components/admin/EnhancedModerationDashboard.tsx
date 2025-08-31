@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -40,9 +40,6 @@ const EnhancedModerationDashboard = () => {
   const isMobile = useIsMobile();
   const [reports, setReports] = useState<Report[]>([]);
   const [suspendedUsers, setSuspendedUsers] = useState<SuspendedUser[]>([]);
-  const [filteredData, setFilteredData] = useState<Report[] | SuspendedUser[]>(
-    [],
-  );
   const [isLoading, setIsLoading] = useState(true);
   const [isActionLoading, setIsActionLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -50,6 +47,7 @@ const EnhancedModerationDashboard = () => {
   const [activeTab, setActiveTab] = useState<
     "pending" | "resolved" | "dismissed" | "suspended" | "all"
   >("pending");
+  const [pageSize, setPageSize] = useState(100);
   const [actionReason, setActionReason] = useState("");
   const [channelsSetup, setChannelsSetup] = useState(false);
   const { handleError } = useErrorHandler();
@@ -64,7 +62,7 @@ const EnhancedModerationDashboard = () => {
       setError(null);
       setIsLoading(true);
 
-      const data: ModerationData = await loadModerationData();
+      const data: ModerationData = await loadModerationData(pageSize);
       setReports(data.reports);
       setSuspendedUsers(data.suspendedUsers);
       setRetryCount(0); // Reset retry count on success
@@ -85,7 +83,7 @@ const EnhancedModerationDashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [retryCount, handleError]);
+  }, [retryCount, handleError, pageSize]);
 
   const setupRealtimeSubscription = useCallback(() => {
     // Prevent multiple subscriptions
@@ -184,14 +182,10 @@ const EnhancedModerationDashboard = () => {
     setChannelsSetup(false);
   }, []);
 
-  const filterData = useCallback(() => {
-    if (activeTab === "suspended") {
-      setFilteredData(suspendedUsers);
-    } else if (activeTab === "all") {
-      setFilteredData(reports);
-    } else {
-      setFilteredData(reports.filter((report) => report.status === activeTab));
-    }
+  const filteredData = useMemo<Report[] | SuspendedUser[]>(() => {
+    if (activeTab === "suspended") return suspendedUsers;
+    if (activeTab === "all") return reports;
+    return reports.filter((report) => report.status === activeTab);
   }, [activeTab, suspendedUsers, reports]);
 
   // useEffect hooks after function definitions
@@ -212,9 +206,6 @@ const EnhancedModerationDashboard = () => {
     };
   }, []); // Remove dependencies to prevent re-setup on every render
 
-  useEffect(() => {
-    filterData();
-  }, [reports, suspendedUsers, activeTab, filterData]);
 
   const handleUpdateReportStatus = async (
     reportId: string,
@@ -226,7 +217,7 @@ const EnhancedModerationDashboard = () => {
       setIsActionLoading(reportId);
       await updateReportStatus(reportId, status);
       toast.success(`Report ${status} successfully`);
-      await loadData(); // Reload data after action
+      setReports(prev => prev.map(r => r.id === reportId ? { ...r, status, updated_at: new Date().toISOString() as any } : r));
     } catch (error) {
       console.error("Error updating report status:", error);
       toast.error(`Failed to ${status} report. Please try again.`);
@@ -512,6 +503,12 @@ const EnhancedModerationDashboard = () => {
           )}
         </CardContent>
       </Card>
+
+      <div className="flex justify-center">
+        <Button variant="outline" onClick={() => setPageSize(ps => ps + 100)} disabled={isLoading}>
+          Load More
+        </Button>
+      </div>
     </div>
   );
 };

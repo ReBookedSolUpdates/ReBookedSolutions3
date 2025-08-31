@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { getSafeErrorMessage } from "@/utils/errorMessageUtils";
 
 // Utility to properly serialize errors for logging (prevents [object Object])
 const serializeError = (error: any): any => {
@@ -73,7 +74,8 @@ export async function getNotifications(userId: string): Promise<Notification[]> 
     if (error) {
       const serializedError = serializeError(error);
       console.error('Error fetching notifications:', serializedError);
-      throw error;
+      const safeMessage = getSafeErrorMessage(error, 'Failed to fetch notifications');
+      throw new Error(safeMessage);
     }
 
     const notifications = data || [];
@@ -88,7 +90,8 @@ export async function getNotifications(userId: string): Promise<Notification[]> 
   } catch (error) {
     const serializedError = serializeError(error);
     console.error('Failed to get notifications:', serializedError);
-    throw error;
+    const safeMessage = getSafeErrorMessage(error, 'Failed to get notifications');
+    throw new Error(safeMessage);
   }
 }
 

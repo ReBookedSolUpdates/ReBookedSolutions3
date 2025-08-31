@@ -1,6 +1,7 @@
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Flag, UserX, Copy, Loader2 } from "lucide-react";
 
 interface Report {
@@ -241,38 +242,64 @@ export const ModerationTableRow = ({
           </div>
         </TableCell>
         <TableCell>
-          {report.status === "pending" ? (
-            <div className="flex gap-1">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onUpdateStatus(report.id, "resolved")}
-                disabled={isLoading}
-                className="text-green-600 hover:text-green-700"
-              >
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Resolve"
-                )}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onUpdateStatus(report.id, "dismissed")}
-                disabled={isLoading}
-                className="text-gray-600 hover:text-gray-700"
-              >
-                {isLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Dismiss"
-                )}
-              </Button>
-            </div>
-          ) : (
-            <span className="text-sm text-gray-400">No actions available</span>
-          )}
+          <div className="flex gap-1">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">View All</Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Report Details</DialogTitle>
+                  <DialogDescription>
+                    Submitted {new Date(report.created_at).toLocaleString()}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-3 text-sm">
+                  <div><strong>Book/User:</strong> {report.book_id ? report.book_title : report.seller_name}</div>
+                  <div><strong>Reporter:</strong> {report.reporter_name || `User #${report.reporter_user_id?.slice(-8) || 'Unknown'}`}{report.reporter_email ? ` (${report.reporter_email})` : ''}</div>
+                  <div>
+                    <strong>Reason:</strong>
+                    <div className="mt-1 whitespace-pre-wrap break-words p-3 bg-gray-50 rounded border">
+                      {report.reason || 'No reason provided'}
+                    </div>
+                  </div>
+                  <div className="text-gray-500"><strong>Status:</strong> {report.status}</div>
+                </div>
+              </DialogContent>
+            </Dialog>
+            {report.status === "pending" ? (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onUpdateStatus(report.id, "resolved")}
+                  disabled={isLoading}
+                  className="text-green-600 hover:text-green-700"
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Resolve"
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onUpdateStatus(report.id, "dismissed")}
+                  disabled={isLoading}
+                  className="text-gray-600 hover:text-gray-700"
+                >
+                  {isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Dismiss"
+                  )}
+                </Button>
+              </>
+            ) : (
+              <span className="text-sm text-gray-400">No actions available</span>
+            )}
+          </div>
         </TableCell>
       </TableRow>
     );

@@ -32,7 +32,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/hooks/useNotifications";
 import { toast } from "sonner";
-import { NotificationService } from "@/services/notificationService";
+import { NotificationService, clearNotificationCache } from "@/services/notificationService";
 import { supabase } from "@/integrations/supabase/client";
 import { testConnection, getConnectionErrorMessage, type ConnectionTestResult } from "@/utils/connectionTester";
 
@@ -439,6 +439,34 @@ const NotificationsNew = () => {
             })),
           };
         }
+        if (category.id === "account") {
+          return {
+            ...category,
+            notifications: categorizedNotifications.account.map((n) => ({
+              id: n.id,
+              type: n.type || "account",
+              title: n.title,
+              message: n.message,
+              timestamp: n.created_at || n.createdAt,
+              read: n.read,
+              priority: "medium" as const,
+            })),
+          };
+        }
+        if (category.id === "general") {
+          return {
+            ...category,
+            notifications: categorizedNotifications.general.map((n) => ({
+              id: n.id,
+              type: n.type || "general",
+              title: n.title,
+              message: n.message,
+              timestamp: n.created_at || n.createdAt,
+              read: n.read,
+              priority: "low" as const,
+            })),
+          };
+        }
 
         return category;
       }),
@@ -630,6 +658,11 @@ const NotificationsNew = () => {
 
       console.log('✅ Successfully deleted notification from database');
 
+      // Clear notification cache to avoid stale reads
+      if (user?.id) {
+        clearNotificationCache(user.id);
+      }
+
       // Update local state to remove from UI immediately (before showing success message)
       console.log('🔄 Updating local state to remove notification from UI...');
       setCategories((prev) => {
@@ -658,7 +691,7 @@ const NotificationsNew = () => {
         console.log('✅ Notifications hook refreshed successfully - badge count and state should update immediately');
       } catch (refreshError) {
         const safeRefreshErrorMessage = getSafeErrorMessage(refreshError, 'Failed to refresh notifications');
-        console.warn('⚠️ Failed to refresh notifications after deletion:', {
+        console.warn('⚠��� Failed to refresh notifications after deletion:', {
           message: safeRefreshErrorMessage,
           code: refreshError?.code,
           details: refreshError?.details
