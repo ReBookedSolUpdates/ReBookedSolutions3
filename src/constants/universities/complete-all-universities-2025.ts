@@ -1375,6 +1375,71 @@ export const COMPLETE_ALL_UNIVERSITIES_2025: University[] = [
         ]
       }
     ]
+  },
+
+  // Mangosuthu University of Technology (MUT)
+  {
+    id: "mut",
+    name: "Mangosuthu University of Technology",
+    abbreviation: "MUT",
+    fullName: "Mangosuthu University of Technology",
+    type: "University of Technology",
+    location: "Umlazi, Durban",
+    province: "KwaZulu-Natal",
+    website: "https://www.mut.ac.za",
+    logo: "/university-logos/mut.svg",
+    overview: "A University of Technology dedicated to providing quality education and skills development in KwaZulu-Natal.",
+    establishedYear: 1979,
+    studentPopulation: 13000,
+    faculties: [
+      {
+        id: "mut-engineering",
+        name: "Faculty of Engineering",
+        description: "Engineering diplomas and bridging programs with industry focus.",
+        degrees: [
+          createDegree("Diploma in Chemical Engineering", 26, "Faculty of Engineering", "Chemical engineering technology", "3 years"),
+          createDegree("Diploma in Civil Engineering", 26, "Faculty of Engineering", "Civil engineering technology", "3 years"),
+          createDegree("Diploma in Surveying", 26, "Faculty of Engineering", "Land surveying technology", "3 years"),
+          createDegree("Diploma in Building", 26, "Faculty of Engineering", "Building and construction technology", "3 years"),
+          createDegree("Diploma in Electrical Engineering", 26, "Faculty of Engineering", "Electrical engineering technology", "3 years"),
+          createDegree("Diploma in Mechanical Engineering", 26, "Faculty of Engineering", "Mechanical engineering technology", "3 years"),
+          createDegree("Bridging: Chemical Engineering", 20, "Faculty of Engineering", "Chemical engineering bridging program", "6 months"),
+          createDegree("Bridging: Civil Engineering", 20, "Faculty of Engineering", "Civil engineering bridging program", "6 months"),
+          createDegree("Bridging: Electrical Engineering", 20, "Faculty of Engineering", "Electrical engineering bridging program", "6 months"),
+          createDegree("Bridging: Mechanical Engineering", 20, "Faculty of Engineering", "Mechanical engineering bridging program", "6 months"),
+          createDegree("Bridging: Building", 20, "Faculty of Engineering", "Building technology bridging program", "6 months"),
+          createDegree("Bridging: Surveying", 20, "Faculty of Engineering", "Surveying bridging program", "6 months")
+        ]
+      },
+      {
+        id: "mut-management-sciences",
+        name: "Faculty of Management Sciences",
+        description: "Management, accounting, and business administration programs.",
+        degrees: [
+          createDegree("Diploma in Accounting", 25, "Faculty of Management Sciences", "Financial accounting", "3 years"),
+          createDegree("Diploma in Finance & Accounting: Public", 25, "Faculty of Management Sciences", "Public sector accounting", "3 years"),
+          createDegree("Diploma in Human Resource Management", 25, "Faculty of Management Sciences", "Human resource management", "3 years"),
+          createDegree("Diploma in Marketing", 25, "Faculty of Management Sciences", "Marketing management", "3 years"),
+          createDegree("Diploma in Office Management & Technology", 25, "Faculty of Management Sciences", "Office administration", "3 years"),
+          createDegree("Diploma in Public Management", 25, "Faculty of Management Sciences", "Public administration", "3 years")
+        ]
+      },
+      {
+        id: "mut-natural-sciences",
+        name: "Faculty of Natural Sciences",
+        description: "Natural sciences, health sciences, and information technology programs.",
+        degrees: [
+          createDegree("BSc in Environmental Health", 26, "Faculty of Natural Sciences", "Environmental health science", "4 years"),
+          createDegree("Bachelor of Health Science in Medical Laboratory Sciences", 26, "Faculty of Natural Sciences", "Medical laboratory science", "4 years"),
+          createDegree("Diploma in Agriculture", 23, "Faculty of Natural Sciences", "Agricultural sciences", "3 years"),
+          createDegree("Diploma in Biomedical Science", 26, "Faculty of Natural Sciences", "Biomedical technology", "3 years"),
+          createDegree("Diploma in Analytical Chemistry", 26, "Faculty of Natural Sciences", "Chemical analysis", "3 years"),
+          createDegree("Diploma in Community Extension", 23, "Faculty of Natural Sciences", "Community development", "3 years"),
+          createDegree("Diploma in Nature Conservation", 23, "Faculty of Natural Sciences", "Conservation science", "3 years"),
+          createDegree("Diploma in Information Technology", 23, "Faculty of Natural Sciences", "Information technology", "3 years")
+        ]
+      }
+    ]
   }
 
   // Continue with ALL remaining universities from user document...
