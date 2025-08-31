@@ -28,13 +28,14 @@ export interface ModerationData {
   suspendedUsers: SuspendedUser[];
 }
 
-export const loadModerationData = async (): Promise<ModerationData> => {
-  // First, get reports and suspended users
+export const loadModerationData = async (limit: number = 100): Promise<ModerationData> => {
+  // First, get reports (limited columns) and suspended users
   const [reportsResponse, usersResponse] = await Promise.all([
     supabase
       .from("reports")
-      .select("*")
-      .order("created_at", { ascending: false }),
+      .select("id, book_title, seller_name, reason, status, created_at, reporter_user_id, reported_user_id, book_id")
+      .order("created_at", { ascending: false })
+      .limit(limit),
     supabase
       .from("profiles")
       .select("id, name, email, status, suspended_at, suspension_reason")
