@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { updateAddressValidation } from "./addressValidationService";
 import { safeLogError } from "@/utils/errorHandling";
 import { safeLogError as safelog, formatSupabaseError } from "@/utils/safeErrorLogger";
+import { getSafeErrorMessage } from "@/utils/errorMessageUtils";
 
 interface Address {
   complex: string;
