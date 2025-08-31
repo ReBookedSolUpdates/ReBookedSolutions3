@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { ArrowLeft, Mail, Send, Instagram, Facebook } from "lucide-react";
 import { submitContactMessage } from "@/services/contactService";
+import TikTokIcon from "@/components/icons/TikTokIcon";
 
 const ContactUs = () => {
   const { user, profile } = useAuth();
@@ -197,6 +198,15 @@ const ContactUs = () => {
                   >
                     <Facebook className="h-5 w-5" />
                     <span>Facebook</span>
+                  </a>
+                  <a
+                    href="https://www.tiktok.com/@rebooked.solution"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-2 bg-book-100 hover:bg-book-200 text-book-600 px-4 py-2 rounded-lg transition-colors"
+                  >
+                    <TikTokIcon className="h-5 w-5" />
+                    <span>TikTok</span>
                   </a>
                 </div>
               </div>
