@@ -64,11 +64,16 @@ const Report = () => {
       return;
     }
 
+    if (!user?.id) {
+      toast.error("Please log in to submit a report");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      await submitReport({
-        userId: user?.id || null,
+      const saved = await submitReport({
+        userId: user.id,
         name: name.trim(),
         email: email.trim(),
         category,
@@ -79,7 +84,7 @@ const Report = () => {
       });
 
       toast.success(
-        "Your report has been submitted! We'll investigate and get back to you soon.",
+        `Your report has been submitted! Ref: ${saved.id}`,
       );
 
       // Reset form
