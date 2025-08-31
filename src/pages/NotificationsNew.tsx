@@ -32,7 +32,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/hooks/useNotifications";
 import { toast } from "sonner";
-import { NotificationService } from "@/services/notificationService";
+import { NotificationService, clearNotificationCache } from "@/services/notificationService";
 import { supabase } from "@/integrations/supabase/client";
 import { testConnection, getConnectionErrorMessage, type ConnectionTestResult } from "@/utils/connectionTester";
 
