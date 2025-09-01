@@ -341,7 +341,7 @@ const EnhancedBursaryListing = () => {
                 <Search className="h-5 w-5" />
                 Find Your Perfect Bursary
               </CardTitle>
-              <CardDescription className="text-gray-600 mt-1">
+              <CardDescription className="text-muted-foreground mt-1">
                 Use the filters below to discover bursaries that match your
                 academic goals and financial needs
               </CardDescription>
@@ -430,28 +430,28 @@ const EnhancedBursaryListing = () => {
         <CardContent className="space-y-6">
           {/* Search Bar Section */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
+            <label className="text-sm font-medium text-muted-foreground">
               Search Bursaries
             </label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
                 placeholder="Search by name, provider, or field of study..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-11 border-gray-200 focus:border-green-400 focus:ring-green-400"
+                className="pl-10 h-11 border-border focus:border-green-400 focus:ring-green-400"
               />
             </div>
           </div>
 
           {/* Main Filters Section */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-800 border-b border-gray-200 pb-2">
+            <h3 className="text-sm font-semibold text-foreground border-b border-border pb-2">
               Primary Filters
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-muted-foreground">
                   Field of Study
                 </label>
                 <Select
@@ -463,7 +463,7 @@ const EnhancedBursaryListing = () => {
                     )
                   }
                 >
-                  <SelectTrigger className="h-11 border-gray-200 focus:border-green-400">
+                  <SelectTrigger className="h-11 border-border focus:border-green-400">
                     <SelectValue placeholder="Select field of study" />
                   </SelectTrigger>
                   <SelectContent>
@@ -478,7 +478,7 @@ const EnhancedBursaryListing = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-muted-foreground">
                   Province
                 </label>
                 <Select
@@ -490,7 +490,7 @@ const EnhancedBursaryListing = () => {
                     )
                   }
                 >
-                  <SelectTrigger className="h-11 border-gray-200 focus:border-green-400">
+                  <SelectTrigger className="h-11 border-border focus:border-green-400">
                     <SelectValue placeholder="Select province" />
                   </SelectTrigger>
                   <SelectContent>
@@ -505,7 +505,7 @@ const EnhancedBursaryListing = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-muted-foreground">
                   Min. Academic Average (%)
                 </label>
                 <Input
@@ -520,7 +520,7 @@ const EnhancedBursaryListing = () => {
                       e.target.value ? parseInt(e.target.value) : undefined,
                     )
                   }
-                  className="h-11 border-gray-200 focus:border-green-400 focus:ring-green-400"
+                  className="h-11 border-border focus:border-green-400 focus:ring-green-400"
                 />
               </div>
             </div>
@@ -528,12 +528,12 @@ const EnhancedBursaryListing = () => {
 
           {/* Financial & Demographics Section */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-800 border-b border-gray-200 pb-2">
+            <h3 className="text-sm font-semibold text-foreground border-b border-border pb-2">
               Financial & Demographics
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-muted-foreground">
                   Max. Household Income (R)
                 </label>
                 <Input
@@ -547,12 +547,12 @@ const EnhancedBursaryListing = () => {
                       e.target.value ? parseInt(e.target.value) : undefined,
                     )
                   }
-                  className="h-11 border-gray-200 focus:border-green-400 focus:ring-green-400"
+                  className="h-11 border-border focus:border-green-400 focus:ring-green-400"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-muted-foreground">
                   Gender Requirements
                 </label>
                 <Select
@@ -564,7 +564,7 @@ const EnhancedBursaryListing = () => {
                     )
                   }
                 >
-                  <SelectTrigger className="h-11 border-gray-200 focus:border-green-400">
+                  <SelectTrigger className="h-11 border-border focus:border-green-400">
                     <SelectValue placeholder="Any gender" />
                   </SelectTrigger>
                   <SelectContent>
@@ -576,7 +576,7 @@ const EnhancedBursaryListing = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-muted-foreground">
                   Race Requirements
                 </label>
                 <Select
@@ -588,7 +588,7 @@ const EnhancedBursaryListing = () => {
                     )
                   }
                 >
-                  <SelectTrigger className="h-11 border-gray-200 focus:border-green-400">
+                  <SelectTrigger className="h-11 border-border focus:border-green-400">
                     <SelectValue placeholder="Any race" />
                   </SelectTrigger>
                   <SelectContent>
@@ -605,11 +605,11 @@ const EnhancedBursaryListing = () => {
 
           {/* Special Criteria Section */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-800 border-b border-gray-200 pb-2">
+            <h3 className="text-sm font-semibold text-foreground border-b border-border pb-2">
               Special Criteria
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg border border-border">
                 <Checkbox
                   id="financial-need"
                   checked={filters.financialNeed || false}
@@ -623,13 +623,13 @@ const EnhancedBursaryListing = () => {
                 />
                 <label
                   htmlFor="financial-need"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
+                  className="text-sm font-medium text-muted-foreground cursor-pointer"
                 >
                   Financial Need Based
                 </label>
               </div>
 
-              <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg border border-border">
                 <Checkbox
                   id="disability-support"
                   checked={filters.disabilitySupport || false}
@@ -643,13 +643,13 @@ const EnhancedBursaryListing = () => {
                 />
                 <label
                   htmlFor="disability-support"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
+                  className="text-sm font-medium text-muted-foreground cursor-pointer"
                 >
                   Disability Support
                 </label>
               </div>
 
-              <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg border border-border">
                 <Checkbox
                   id="rural-background"
                   checked={filters.ruralBackground || false}
@@ -663,13 +663,13 @@ const EnhancedBursaryListing = () => {
                 />
                 <label
                   htmlFor="rural-background"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
+                  className="text-sm font-medium text-muted-foreground cursor-pointer"
                 >
                   Rural Background
                 </label>
               </div>
 
-              <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="flex items-center space-x-3 p-3 bg-muted/50 rounded-lg border border-border">
                 <Checkbox
                   id="first-generation"
                   checked={filters.firstGeneration || false}
@@ -683,7 +683,7 @@ const EnhancedBursaryListing = () => {
                 />
                 <label
                   htmlFor="first-generation"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
+                  className="text-sm font-medium text-muted-foreground cursor-pointer"
                 >
                   First-Generation Student
                 </label>
@@ -692,16 +692,16 @@ const EnhancedBursaryListing = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-4 border-t border-gray-200">
+          <div className="flex gap-3 pt-4 border-t border-border">
             <Button
               variant="outline"
               onClick={clearFilters}
-              className="flex items-center gap-2 border-gray-300 hover:bg-gray-50"
+              className="flex items-center gap-2 border-border hover:bg-muted/50"
             >
               <AlertCircle className="h-4 w-4" />
               Clear All Filters
             </Button>
-            <div className="text-sm text-gray-500 flex items-center">
+            <div className="text-sm text-muted-foreground flex items-center">
               Use filters to narrow down {filteredBursaries.length} available
               bursaries
             </div>
@@ -710,8 +710,8 @@ const EnhancedBursaryListing = () => {
       </Card>
 
       {/* Results Summary */}
-      <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-        <span className="text-sm text-gray-600">
+      <div className="flex items-center justify-between bg-muted/50 p-3 rounded-lg">
+        <span className="text-sm text-muted-foreground">
           Found <strong>{filteredBursaries.length}</strong> university bursaries
         </span>
         {filteredBursaries.length > 0 && (
@@ -737,7 +737,7 @@ const EnhancedBursaryListing = () => {
           return (
             <Card
               key={bursary.id}
-              className="hover:shadow-lg transition-shadow"
+              className="transition-shadow hover:shadow-md"
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -745,7 +745,7 @@ const EnhancedBursaryListing = () => {
                     <CardTitle className="text-lg font-semibold text-book-800">
                       {bursary.name}
                     </CardTitle>
-                    <CardDescription className="text-gray-600 font-medium mt-1">
+                    <CardDescription className="text-muted-foreground font-medium mt-1">
                       {bursary.provider}
                     </CardDescription>
                   </div>
@@ -772,7 +772,7 @@ const EnhancedBursaryListing = () => {
               </CardHeader>
 
               <CardContent className="space-y-4">
-                <p className="text-sm text-gray-600">{bursary.description}</p>
+                <p className="text-sm text-muted-foreground line-clamp-3">{bursary.description}</p>
 
                 {/* High School Requirements Preview */}
                 {highSchoolReqs.length > 0 && (
@@ -807,15 +807,15 @@ const EnhancedBursaryListing = () => {
                 {/* Key Details */}
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-gray-500" />
-                    <span className="text-gray-600">Deadline:</span>
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">Deadline:</span>
                     <span className="font-medium">
                       {bursary.applicationDeadline}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-gray-500" />
-                    <span className="text-gray-600">Provinces:</span>
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">Provinces:</span>
                     <span className="font-medium">
                       {bursary.provinces.includes("All provinces")
                         ? "All"
@@ -829,7 +829,7 @@ const EnhancedBursaryListing = () => {
 
                 {/* Fields of Study */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-800 mb-2">
+                  <h4 className="text-sm font-medium text-foreground mb-2">
                     Fields of Study:
                   </h4>
                   <div className="flex flex-wrap gap-1">
@@ -924,7 +924,7 @@ const EnhancedBursaryListing = () => {
 
                     {/* Eligibility Criteria */}
                     <div>
-                      <h4 className="font-medium text-gray-800 mb-2 flex items-center gap-2">
+                      <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600" />
                         Eligibility Criteria:
                       </h4>
@@ -943,20 +943,20 @@ const EnhancedBursaryListing = () => {
 
                     {/* Application Process */}
                     <div>
-                      <h4 className="font-medium text-gray-800 mb-2">
+                      <h4 className="font-medium text-foreground mb-2">
                         Application Process:
                       </h4>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-muted-foreground">
                         {bursary.applicationProcess}
                       </p>
                     </div>
 
                     {/* Contact Information */}
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <h4 className="font-medium text-gray-800 mb-2">
+                    <div className="bg-muted/50 p-3 rounded-lg">
+                      <h4 className="font-medium text-foreground mb-2">
                         Contact Information:
                       </h4>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-muted-foreground">
                         {bursary.contactInfo}
                       </p>
                       {bursary.website && (
@@ -982,13 +982,13 @@ const EnhancedBursaryListing = () => {
       {/* No Results */}
       {filteredBursaries.length === 0 && (
         <div className="text-center py-12">
-          <div className="text-gray-400 mb-4">
+          <div className="text-muted-foreground mb-4">
             <Search className="h-12 w-12 mx-auto" />
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             No bursaries found
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-muted-foreground mb-4">
             Try adjusting your search terms or filters to find more bursaries.
           </p>
           <Button variant="outline" onClick={clearFilters}>
