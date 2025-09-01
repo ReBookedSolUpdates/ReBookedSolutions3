@@ -149,19 +149,19 @@ const BursaryExplorer = () => {
         {/* Section Header */}
         <div className="text-center max-w-4xl mx-auto mb-12">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <DollarSign className="h-8 w-8 text-gray-700" />
+            <DollarSign className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h2 className="text-4xl font-bold mb-6 text-gray-900">
+          <h2 className="text-4xl font-bold mb-6 text-foreground">
             Find Bursaries & Scholarships
           </h2>
-          <p className="text-xl text-gray-600 leading-relaxed mb-8">
+          <p className="text-xl text-muted-foreground leading-relaxed mb-8">
             Discover comprehensive bursary and scholarship opportunities from
             government, corporate sponsors, and educational institutions across
             South Africa.
           </p>
 
           {/* Quick Stats */}
-          <div className="flex items-center justify-center gap-8 text-sm text-gray-500 mb-12">
+          <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground mb-12">
             <span>{BURSARIES.length} Bursaries</span>
             <span>•</span>
             <span>R1M+ Total Funding</span>
@@ -174,7 +174,7 @@ const BursaryExplorer = () => {
 
         {/* Featured Bursaries */}
         <div className="mb-12">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+          <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
             Featured Opportunities
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -187,15 +187,15 @@ const BursaryExplorer = () => {
               return (
                 <Card
                   key={bursary.id}
-                  className="group hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm border-0 hover:-translate-y-2"
+                  className="group transition-shadow hover:shadow-md"
                 >
                   <CardHeader className="pb-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <CardTitle className="text-lg font-bold text-gray-900 group-hover:text-yellow-600 transition-colors">
+                        <CardTitle className="text-lg font-bold text-foreground group-hover:text-yellow-600 transition-colors">
                           {bursary.name}
                         </CardTitle>
-                        <CardDescription className="text-gray-600 font-medium mt-1">
+                        <CardDescription className="text-muted-foreground font-medium mt-1">
                           {bursary.provider}
                         </CardDescription>
                       </div>
@@ -223,21 +223,21 @@ const BursaryExplorer = () => {
                   </CardHeader>
 
                   <CardContent className="space-y-4">
-                    <p className="text-sm text-gray-600 line-clamp-3">
+                    <p className="text-sm text-muted-foreground line-clamp-3">
                       {bursary.description}
                     </p>
 
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-600">Deadline:</span>
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Deadline:</span>
                         <span className="font-medium">
                           {bursary.applicationDeadline}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-600">Coverage:</span>
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Coverage:</span>
                         <span className="font-medium">
                           {bursary.provinces.includes("All provinces")
                             ? "National"
@@ -285,9 +285,9 @@ const BursaryExplorer = () => {
         </div>
 
         {/* Search and Filter Section */}
-        <Card className="mb-8 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+        <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2">
               <Search className="h-5 w-5 text-book-600" />
               Find Your Perfect Bursary
             </CardTitle>
@@ -299,12 +299,12 @@ const BursaryExplorer = () => {
           <CardContent className="space-y-6">
             {/* Search Bar */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
                 placeholder="Search bursaries by name, provider, or description..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-gray-200 focus:border-book-400 focus:ring-book-200"
+                className="pl-10 border-border focus:border-book-400 focus:ring-book-200"
               />
             </div>
 
@@ -319,7 +319,7 @@ const BursaryExplorer = () => {
                   )
                 }
               >
-                <SelectTrigger className="border-gray-200 focus:border-yellow-400">
+                <SelectTrigger className="border-border focus:border-yellow-400">
                   <SelectValue placeholder="Field of study" />
                 </SelectTrigger>
                 <SelectContent>
@@ -340,7 +340,7 @@ const BursaryExplorer = () => {
                   updateFilter("province", value === "all" ? undefined : value)
                 }
               >
-                <SelectTrigger className="border-gray-200 focus:border-yellow-400">
+                <SelectTrigger className="border-border focus:border-yellow-400">
                   <SelectValue placeholder="Province" />
                 </SelectTrigger>
                 <SelectContent>
@@ -369,7 +369,7 @@ const BursaryExplorer = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-600">
+                <label className="text-xs font-medium text-muted-foreground">
                   Max. Household Income (R)
                 </label>
                 <Input
@@ -383,12 +383,12 @@ const BursaryExplorer = () => {
                       e.target.value ? parseInt(e.target.value) : undefined,
                     )
                   }
-                  className="border-gray-200 focus:border-yellow-400"
+                  className="border-border focus:border-yellow-400"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-600">
+                <label className="text-xs font-medium text-muted-foreground">
                   Your Average Marks (%)
                 </label>
                 <Input
@@ -403,7 +403,7 @@ const BursaryExplorer = () => {
                       e.target.value ? parseInt(e.target.value) : undefined,
                     )
                   }
-                  className="border-gray-200 focus:border-yellow-400"
+                  className="border-border focus:border-yellow-400"
                 />
               </div>
 
@@ -411,7 +411,7 @@ const BursaryExplorer = () => {
                 value={viewMode}
                 onValueChange={(value: "grid" | "list") => setViewMode(value)}
               >
-                <SelectTrigger className="border-gray-200 focus:border-yellow-400">
+                <SelectTrigger className="border-border focus:border-yellow-400">
                   <SelectValue placeholder="View mode" />
                 </SelectTrigger>
                 <SelectContent>
@@ -427,7 +427,7 @@ const BursaryExplorer = () => {
               <Button
                 variant="outline"
                 onClick={clearFilters}
-                className="w-full border-gray-300 hover:border-yellow-400"
+                className="w-full border-border hover:border-yellow-400"
               >
                 Clear Filters
               </Button>
@@ -441,7 +441,7 @@ const BursaryExplorer = () => {
               filters.minMarks ||
               searchTerm) && (
               <div className="flex flex-wrap gap-2">
-                <span className="text-sm text-gray-600">Active filters:</span>
+                <span className="text-sm text-muted-foreground">Active filters:</span>
                 {filters.fieldOfStudy && (
                   <Badge variant="secondary">
                     Field: {filters.fieldOfStudy}
@@ -462,7 +462,7 @@ const BursaryExplorer = () => {
             )}
 
             {/* Results Count */}
-            <div className="text-sm text-gray-600 border-t pt-4">
+            <div className="text-sm text-muted-foreground border-t pt-4">
               Showing {filteredBursaries.length} of {BURSARIES.length} bursaries
             </div>
           </CardContent>
@@ -486,15 +486,15 @@ const BursaryExplorer = () => {
             return (
               <Card
                 key={bursary.id}
-                className="hover:shadow-xl transition-all duration-300 bg-white/60 backdrop-blur-sm border-0"
+                className="transition-shadow hover:shadow-md"
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-lg font-semibold text-gray-800 hover:text-yellow-600 transition-colors">
+                      <CardTitle className="text-lg font-semibold text-foreground hover:text-yellow-600 transition-colors">
                         {bursary.name}
                       </CardTitle>
-                      <CardDescription className="text-gray-600 font-medium mt-1">
+                      <CardDescription className="text-muted-foreground font-medium mt-1">
                         {bursary.provider}
                       </CardDescription>
                     </div>
@@ -521,20 +521,20 @@ const BursaryExplorer = () => {
                 </CardHeader>
 
                 <CardContent className="space-y-4">
-                  <p className="text-sm text-gray-600">{bursary.description}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-3">{bursary.description}</p>
 
                   {/* Key Details */}
-                  <div className="grid grid-cols-2 gap-4 text-sm bg-white/50 rounded-lg p-3">
+                  <div className="grid grid-cols-2 gap-4 text-sm bg-transparent rounded-lg p-3">
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-gray-500" />
-                      <span className="text-gray-600">Deadline:</span>
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Deadline:</span>
                       <span className="font-medium">
                         {bursary.applicationDeadline}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-gray-500" />
-                      <span className="text-gray-600">Provinces:</span>
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Provinces:</span>
                       <span className="font-medium">
                         {bursary.provinces.includes("All provinces")
                           ? "All"
@@ -548,7 +548,7 @@ const BursaryExplorer = () => {
 
                   {/* Fields of Study */}
                   <div>
-                    <h4 className="text-sm font-medium text-gray-800 mb-2">
+                    <h4 className="text-sm font-medium text-foreground mb-2">
                       Fields of Study:
                     </h4>
                     <div className="flex flex-wrap gap-1">
@@ -591,7 +591,7 @@ const BursaryExplorer = () => {
                     <div className="space-y-4 pt-4 border-t border-gray-100">
                       {/* Eligibility Criteria */}
                       <div>
-                        <h4 className="font-medium text-gray-800 mb-2 flex items-center gap-2">
+                        <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
                           <CheckCircle className="h-4 w-4 text-green-600" />
                           Eligibility Criteria:
                         </h4>
@@ -600,7 +600,7 @@ const BursaryExplorer = () => {
                             (criteria, index) => (
                               <li
                                 key={index}
-                                className="text-sm text-gray-600 flex items-start gap-2"
+                                className="text-sm text-muted-foreground flex items-start gap-2"
                               >
                                 <span className="text-green-600 mt-1">•</span>
                                 {criteria}
@@ -612,11 +612,11 @@ const BursaryExplorer = () => {
 
                       {/* Application Process */}
                       <div>
-                        <h4 className="font-medium text-gray-800 mb-2 flex items-center gap-2">
+                        <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
                           <TrendingUp className="h-4 w-4 text-blue-600" />
                           Application Process:
                         </h4>
-                        <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg">
+                        <p className="text-sm text-muted-foreground bg-blue-50 p-3 rounded-lg">
                           {bursary.applicationProcess}
                         </p>
                       </div>
@@ -653,12 +653,12 @@ const BursaryExplorer = () => {
         {filteredBursaries.length === 0 && (
           <div className="text-center py-16">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="h-8 w-8 text-gray-400" />
+              <Search className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-foreground mb-2">
               No bursaries found
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               Try adjusting your search terms or filters to find more bursaries.
             </p>
             <Button variant="outline" onClick={clearFilters}>
