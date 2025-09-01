@@ -560,8 +560,7 @@ const UniversityInfo = () => {
               🇿🇦 South African Public Universities – 2025 Application Info
             </h2>
             <p className="text-gray-600">
-              Complete application information for all{" "}
-              {UNIVERSITY_APPLICATIONS_2025.length} public universities
+              Complete application information for all 26 public universities
             </p>
           </div>
 
