@@ -211,7 +211,7 @@ const UniversityInfo = () => {
       }
 
       return {
-        universities: SOUTH_AFRICAN_UNIVERSITIES.length,
+        universities: 26, // Official count of South African public universities
         students: "1M+",
         programs: `${totalPrograms}+`,
         resources: "Growing Daily",
