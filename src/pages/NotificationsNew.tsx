@@ -864,14 +864,11 @@ const NotificationsNew = () => {
         {/* Check if we have any notifications to show */}
         {(() => {
           const hasVisibleCategories = categories.some(category => {
-            if (!category.enabled && category.id !== "welcome") return false;
-            if (category.id === "welcome" && !isFirstTime && !showWelcome) return false;
+            if (!category.enabled) return false;
             return category.notifications.length > 0;
           });
 
-          const shouldShowWelcome = showWelcome && isFirstTime;
-
-          if (!hasVisibleCategories && !shouldShowWelcome) {
+          if (!hasVisibleCategories) {
             return (
               <Card className="text-center py-16">
                 <CardContent>
