@@ -28,7 +28,7 @@ const TestEmailSystem = () => {
       console.log("🔧 Testing password reset email...");
       
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+        redirectTo: `${window.location.origin}/auth/callback?type=recovery&recovery=1`,
       });
 
       if (error) {
