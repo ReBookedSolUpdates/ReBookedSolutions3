@@ -37,8 +37,7 @@ export const debugBookFetching = async () => {
         seller_id,
         created_at,
         seller_profile:profiles!seller_id(
-          id,
-          pickup_address
+          id
         )
       `)
       .order("created_at", { ascending: false });
