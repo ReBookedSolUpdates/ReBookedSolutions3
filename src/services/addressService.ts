@@ -273,13 +273,16 @@ export const getUserAddresses = async (userId: string) => {
       } as any;
     };
 
-    // Try to get addresses using the simplified address service first
-    const simplifiedAddressService = await import("./simplifiedAddressService");
+    // Decrypt pickup address directly via edge function
     let pickupAddress: any = null;
     let shippingAddress: any = null;
 
     try {
-      const pickup = await simplifiedAddressService.getSellerDeliveryAddress(userId);
+      const pickup = await decryptAddress({
+        table: 'profiles',
+        target_id: userId,
+        address_type: 'pickup'
+      });
       pickupAddress = mapToAddress(pickup);
       console.log("📍 Pickup address result:", pickupAddress);
     } catch (error) {
