@@ -99,12 +99,7 @@ export const debugBookFetching = async () => {
     }
 
     // Calculate final valid books count
-    const validBooks = availableBooks.filter(book => {
-      if (!book.seller_profile?.pickup_address) return false;
-      const addr = book.seller_profile.pickup_address;
-      const streetField = addr.streetAddress || addr.street;
-      return !!(streetField && addr.city && addr.province && addr.postalCode);
-    });
+    const validBooks = availableBooks;
 
     console.log("✅ Final valid books count:", validBooks.length);
 
