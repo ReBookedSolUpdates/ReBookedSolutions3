@@ -144,11 +144,12 @@ const UniversityProfile: React.FC = () => {
             <div className="mb-8">
               <button
                 type="button"
-                aria-label="Back to overview"
+                aria-label="Back to Overview"
                 onClick={() => navigate("/university-info")}
-                className="inline-flex items-center justify-center rounded-full p-2 text-gray-600 hover:text-gray-900 transition-colors group"
+                className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors group"
               >
                 <ArrowLeft className="h-5 w-5 transition-transform duration-200 group-hover:-translate-x-0.5" />
+                <span className="text-sm font-medium">Back to Overview</span>
               </button>
             </div>
 
