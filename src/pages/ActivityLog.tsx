@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import BackButton from "@/components/ui/BackButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -280,14 +281,14 @@ const ActivityLog = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
-            <Button
-              variant="ghost"
-              onClick={() => navigate(-1)}
+            <BackButton
+              fallbackPath="/"
               className="mb-4 text-slate-600 hover:text-slate-800 btn-mobile"
+              variant="ghost"
             >
               <ArrowLeft className="btn-mobile-icon" />
               <span className="btn-mobile-text">Back</span>
-            </Button>
+            </BackButton>
 
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
