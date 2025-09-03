@@ -343,21 +343,25 @@ const EnhancedShippingForm: React.FC<EnhancedShippingFormProps> = ({
         data: { user },
       } = await supabase.auth.getUser();
       if (user) {
-        await supabase
-          .from("profiles")
-          .update({
-            shipping_address: {
-              name: data.recipient_name,
-              phone: data.phone,
-              streetAddress: data.street_address,
-              apartment: data.apartment,
-              city: data.city,
-              province: data.province,
-              postalCode: data.postal_code,
-              additional_info: data.additional_info,
-            },
-          })
-          .eq("id", user.id);
+        const addressObject = {
+          name: data.recipient_name,
+          phone: data.phone,
+          streetAddress: data.street_address,
+          apartment: data.apartment,
+          city: data.city,
+          province: data.province,
+          postalCode: data.postal_code,
+          additional_info: data.additional_info,
+        };
+        const { data: encData, error: encError } = await supabase.functions.invoke('encrypt-address', {
+          body: {
+            object: addressObject,
+            save: { table: 'profiles', target_id: user.id, address_type: 'shipping' }
+          }
+        });
+        if (encError || !encData?.success) {
+          throw new Error(encError?.message || 'Failed to encrypt shipping address');
+        }
       }
 
       const optionsToPass =
