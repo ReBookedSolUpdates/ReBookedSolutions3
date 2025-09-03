@@ -500,48 +500,7 @@ export class BookDeletionService {
         console.warn("Failed to check encrypted pickup address:", error);
       }
 
-      // Fallback to plaintext only if no encrypted address
-      if (!hasValidAddress) {
-        const { data: profile, error } = await supabase
-          .from("profiles")
-          .select("pickup_address_encrypted, pickup_address")
-          .eq("id", userId)
-          .single();
-
-        if (error) {
-          logError("BookDeletionService.validateUserCanListBooks", error, {
-            userId,
-          });
-          return {
-            canList: false,
-            message: "Unable to verify profile information",
-          };
-        }
-
-        // Only use plaintext if no encrypted version exists
-        if (!profile?.pickup_address_encrypted && profile?.pickup_address) {
-          const pickupAddr = profile.pickup_address as any;
-          if (
-            !pickupAddr.streetAddress ||
-            !pickupAddr.city ||
-            !pickupAddr.province ||
-            !pickupAddr.postalCode
-          ) {
-            return {
-              canList: false,
-              message:
-                "Please complete your pickup address information before listing a book.",
-            };
-          }
-          hasValidAddress = true;
-          console.log("⚠️ Using plaintext pickup address fallback for book listing validation");
-        } else if (!profile?.pickup_address) {
-          return {
-            canList: false,
-            message: "You need to add a pickup address before listing a book.",
-          };
-        }
-      }
+      // No plaintext fallback allowed
 
       if (!hasValidAddress) {
         return {
