@@ -9,7 +9,7 @@ interface Address {
   city: string;
   province: string;
   postalCode: string;
-  [key: string]: string | number | boolean | null; // Make it compatible with Json type
+  [key: string]: string | number | boolean | null;
 }
 
 export const validateAddress = (address: Address): boolean => {
@@ -23,18 +23,19 @@ export const validateAddress = (address: Address): boolean => {
 
 export const canUserListBooks = async (userId: string): Promise<boolean> => {
   try {
-    // Try to get encrypted address first
     let hasValidAddress = false;
 
     try {
       const { getSellerDeliveryAddress } = await import("@/services/simplifiedAddressService");
       const encryptedAddress = await getSellerDeliveryAddress(userId);
 
-      if (encryptedAddress &&
-          encryptedAddress.street &&
-          encryptedAddress.city &&
-          encryptedAddress.province &&
-          encryptedAddress.postal_code) {
+      if (
+        encryptedAddress &&
+        encryptedAddress.street &&
+        encryptedAddress.city &&
+        encryptedAddress.province &&
+        encryptedAddress.postal_code
+      ) {
         hasValidAddress = true;
         console.log("🔐 Using encrypted pickup address for listing validation");
       }
@@ -47,59 +48,9 @@ export const canUserListBooks = async (userId: string): Promise<boolean> => {
       return true;
     }
 
-    // Fallback to plaintext validation only if no encrypted address
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("pickup_address_encrypted, pickup_address, addresses_same")
-      .eq("id", userId)
-      .single();
-
-    if (error) {
-      safeLogError("Error checking if user can list books", error, { userId });
-      return false;
-    }
-
-    // Must have completed address setup AND have valid pickup address
-    if (data?.addresses_same === null) {
-      console.log(`📍 User ${userId} has not completed address setup`);
-      return false;
-    }
-
-    // If encrypted data exists but we couldn't decrypt it, don't fall back to plaintext for security
-    if (data.pickup_address_encrypted) {
-      console.log(`🔐 Encrypted address exists but decryption failed for ${userId}`);
-      return false;
-    }
-
-    if (!data?.pickup_address) {
-      console.log(`📍 User ${userId} has no pickup address`);
-      return false;
-    }
-
-    // Validate pickup address content (plaintext fallback)
-    const pickupAddr = data.pickup_address as any;
-    const streetField = pickupAddr.streetAddress || pickupAddr.street;
-    const isValidAddress = !!(
-      pickupAddr &&
-      typeof pickupAddr === "object" &&
-      streetField &&
-      pickupAddr.city &&
-      pickupAddr.province &&
-      pickupAddr.postalCode
-    );
-
-    if (!isValidAddress) {
-      console.log(`📍 User ${userId} has incomplete pickup address:`, {
-        hasStreet: !!streetField,
-        hasCity: !!pickupAddr.city,
-        hasProvince: !!pickupAddr.province,
-        hasPostalCode: !!pickupAddr.postalCode
-      });
-      return false;
-    }
-
-    console.log(`✅ User ${userId} can list books - valid plaintext pickup address`);
-    return true;
+    // No plaintext fallback allowed
+    console.log(`❌ User ${userId} cannot list books - encrypted pickup address missing`);
+    return false;
   } catch (error) {
     safeLogError("Error in canUserListBooks", error, { userId });
     return false;
@@ -114,28 +65,13 @@ export const updateAddressValidation = async (
 ) => {
   try {
     const isPickupValid = validateAddress(pickupAddress);
-    const isShippingValid = addressesSame
-      ? isPickupValid
-      : validateAddress(shippingAddress);
+    const isShippingValid = addressesSame ? isPickupValid : validateAddress(shippingAddress);
     const canList = isPickupValid && isShippingValid;
 
-    // Ensure address objects have both field names for compatibility
-    const normalizedPickupAddress = {
-      ...pickupAddress,
-      streetAddress:
-        pickupAddress.streetAddress || (pickupAddress as any).street,
-    };
-    const normalizedShippingAddress = {
-      ...shippingAddress,
-      streetAddress:
-        shippingAddress.streetAddress || (shippingAddress as any).street,
-    };
-
+    // Update metadata only; never write plaintext addresses
     const { error } = await supabase
       .from("profiles")
       .update({
-        pickup_address: normalizedPickupAddress as Record<string, unknown>,
-        shipping_address: normalizedShippingAddress as Record<string, unknown>,
         addresses_same: addressesSame,
         updated_at: new Date().toISOString(),
       })
