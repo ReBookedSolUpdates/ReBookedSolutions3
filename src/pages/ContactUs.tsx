@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import BackButton from "@/components/ui/BackButton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -47,13 +48,13 @@ const ContactUs = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <Button
+        <BackButton
+          fallbackPath="/"
           variant="ghost"
-          onClick={() => navigate(-1)}
           className="mb-6 text-book-600"
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
-        </Button>
+        </BackButton>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
