@@ -100,14 +100,18 @@ const UniversityProfile: React.FC = () => {
     navigate("/university-info?tool=aps-calculator");
   };
 
+  // Normalize weird data where some requirements are stored as 10x (e.g., 450 -> 45)
+  const normalizeRequirement = (val: number) => (val > 100 ? Math.round(val / 10) : val);
+
   // Helper function to check if user is eligible for a program
   const isEligibleForProgram = (program: Degree): boolean => {
     if (!userAPS || userAPS === 0) return true;
     const uniId = university?.id || "";
-    const requiredAPS =
+    let requiredAPS =
       (program.universitySpecificAPS && uniId
         ? program.universitySpecificAPS[uniId]
         : undefined) ?? program.apsRequirement;
+    requiredAPS = normalizeRequirement(requiredAPS);
     return userAPS >= requiredAPS;
   };
 
@@ -650,7 +654,7 @@ const UniversityProfile: React.FC = () => {
                                                   : "bg-book-100 text-book-700 border-book-200"
                                               }
                                             >
-                                              APS: {degree.apsRequirement}
+                                              APS: {normalizeRequirement(degree.apsRequirement)}
                                               {fromAPS && userAPS > 0 && (
                                                 <span className="ml-1">
                                                   {isEligible ? "✓" : "✗"}
