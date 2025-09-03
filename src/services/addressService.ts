@@ -40,23 +40,24 @@ const encryptAddress = async (address: Address, options?: { save?: { table: stri
 };
 
 // Decrypt an address using the improved decrypt-address edge function
-const decryptAddress = async (params: { table: string; target_id: string; address_type?: string }) => {
+const decryptAddress = async (params: { table: 'profiles' | 'orders' | 'books'; target_id: string; address_type?: 'pickup' | 'shipping' | 'delivery' }) => {
   try {
-    // Use the legacy format for backward compatibility
+    // Use the new fetch format to target exact encrypted columns
     const { data, error } = await supabase.functions.invoke('decrypt-address', {
       body: {
-        table: params.table,
-        target_id: params.target_id,
-        address_type: params.address_type || 'pickup'
-      }
+        fetch: {
+          table: params.table,
+          target_id: params.target_id,
+          address_type: params.address_type || 'pickup',
+        },
+      },
     });
 
     if (error) {
-      console.warn("Decryption not available or failed:", error.message);
-      return null; // Return null instead of throwing error for graceful fallback
+      console.warn("Decryption not available or failed:", (error as any).message);
+      return null;
     }
 
-    // The new function returns { success: boolean, data?: any, error?: any }
     if (data?.success) {
       return data.data || null;
     } else {
@@ -64,8 +65,8 @@ const decryptAddress = async (params: { table: string; target_id: string; addres
       return null;
     }
   } catch (error) {
-    console.warn("Decryption service unavailable, falling back to plaintext:", error instanceof Error ? error.message : String(error));
-    return null; // Return null for graceful fallback
+    console.warn("Decryption service unavailable:", error instanceof Error ? error.message : String(error));
+    return null;
   }
 };
 
