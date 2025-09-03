@@ -1,10 +1,8 @@
+import { supabase } from "@/integrations/supabase/client";
 import { PAYSTACK_CONFIG } from "@/config/paystack";
-import { validateAddress } from "@/services/addressValidationService";
 import type {
   BankingDetails,
   BankingSubaccount,
-  SubaccountCreationRequest,
-  SubaccountCreationResponse,
   SellerRequirements,
   BankingRequirementsStatus,
 } from "@/types/banking";
