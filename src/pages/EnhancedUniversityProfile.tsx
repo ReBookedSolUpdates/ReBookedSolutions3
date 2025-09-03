@@ -972,7 +972,7 @@ const EnhancedUniversityProfile: React.FC = () => {
                                                       : "bg-slate-600 hover:bg-slate-700"
                                                 }`}
                                               >
-                                                APS {degree.apsRequirement}
+                                                APS {(degree.apsRequirement > 100 ? Math.round(degree.apsRequirement / 10) : degree.apsRequirement)}
                                               </Badge>
 
                                               {category === "eligible" && (
