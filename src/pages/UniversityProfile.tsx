@@ -142,26 +142,14 @@ const UniversityProfile: React.FC = () => {
           <div className="container mx-auto px-6 py-8">
             {/* Back Navigation */}
             <div className="mb-8">
-              <Button
-                variant="ghost"
-                className="text-gray-600 hover:text-gray-900 transition-colors group p-0"
-                onClick={() => {
-                  try {
-                    const hasAPS = !!localStorage.getItem("userAPSProfile");
-                    if (fromAPS || hasAPS) {
-                      navigate("/university-info?tool=aps-calculator");
-                      return;
-                    }
-                  } catch {}
-                  if (window.history.length > 1 && (window.history as any).state?.idx > 0) {
-                    navigate(-1);
-                  } else {
-                    navigate("/university-info");
-                  }
-                }}
+              <button
+                type="button"
+                aria-label="Back to overview"
+                onClick={() => navigate("/university-info")}
+                className="inline-flex items-center justify-center rounded-full p-2 text-gray-600 hover:text-gray-900 transition-colors group"
               >
-                <span className="font-medium">Back</span>
-              </Button>
+                <ArrowLeft className="h-5 w-5 transition-transform duration-200 group-hover:-translate-x-0.5" />
+              </button>
             </div>
 
             {/* University Header - Mobile Optimized */}
