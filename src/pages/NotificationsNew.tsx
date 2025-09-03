@@ -861,45 +861,6 @@ const NotificationsNew = () => {
           </Card>
         )}
 
-        {/* Welcome Message for First-Time Users */}
-        {showWelcome && (
-          <Alert className="mb-6 sm:mb-8 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
-            <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 flex-shrink-0" />
-            <AlertDescription>
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-purple-900 mb-2 text-sm sm:text-base">
-                    🎉 Welcome to ReBooked Solutions!
-                  </h3>
-                  <p className="text-purple-800 mb-3 text-sm sm:text-base leading-relaxed">
-                    You've joined South Africa's leading textbook marketplace!
-                    We've prepared some helpful notifications to get you
-                    started.
-                  </p>
-                  <Button
-                    onClick={markWelcomeAsSeen}
-                    className="bg-purple-600 hover:bg-purple-700 text-white w-full sm:w-auto"
-                    size="sm"
-                  >
-                    <Check className="h-4 w-4 mr-2" />
-                    <span className="text-sm">Got it, let's explore!</span>
-                  </Button>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={markWelcomeAsSeen}
-                  className="text-purple-600 hover:bg-purple-100 self-end sm:self-start min-h-[44px] min-w-[44px]"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
-
-
-
         {/* Check if we have any notifications to show */}
         {(() => {
           const hasVisibleCategories = categories.some(category => {
