@@ -149,8 +149,7 @@ export const fixBooksWithMissingAddresses = async () => {
         seller_id,
         province,
         seller_profile:profiles!seller_id(
-          id,
-          pickup_address
+          id
         )
       `)
       .eq("sold", false);
