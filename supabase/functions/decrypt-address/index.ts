@@ -318,20 +318,19 @@ Deno.serve(async (req: Request) => {
       }
 
       const encryptedData = data[encryptedColumn]
-      const plaintextData = data[plaintextColumn]
 
       // If we have encrypted data, try to decrypt it
       if (encryptedData) {
         try {
           console.log(`[decrypt-address] Processing encrypted data`)
-          
+
           let bundle: EncryptedBundle
           try {
             bundle = typeof encryptedData === 'string' ? JSON.parse(encryptedData) : encryptedData
           } catch (_e) {
-            return jsonResponse({ 
-              success: false, 
-              error: { code: 'PARSE_ERROR', message: 'Stored encrypted bundle is not valid JSON.' } 
+            return jsonResponse({
+              success: false,
+              error: { code: 'PARSE_ERROR', message: 'Stored encrypted bundle is not valid JSON.' }
             }, { status: 422 })
           }
 
@@ -347,35 +346,25 @@ Deno.serve(async (req: Request) => {
 
           const plaintextBytes = await decryptGCM(decryptParams)
           const text = new TextDecoder().decode(plaintextBytes)
-          
+
           try {
             const obj = JSON.parse(text)
             return jsonResponse({ success: true, data: obj } as DecryptionResult)
           } catch (_e) {
-            return jsonResponse({ 
-              success: false, 
-              error: { code: 'PARSE_ERROR', message: 'Decryption succeeded but payload is not valid JSON.' } 
+            return jsonResponse({
+              success: false,
+              error: { code: 'PARSE_ERROR', message: 'Decryption succeeded but payload is not valid JSON.' }
             }, { status: 422 })
           }
         } catch (decryptError) {
           console.error(`[decrypt-address] Decryption failed:`, decryptError)
-          // Fall back to plaintext if available
         }
-      }
-
-      // Return plaintext data if available
-      if (plaintextData) {
-        console.log(`[decrypt-address] Returning address data`)
-        return jsonResponse({
-          success: true, 
-          data: plaintextData
-        })
       }
 
       // No data found
       console.log(`[decrypt-address] No address data found`)
       return jsonResponse({
-        success: false, 
+        success: false,
         data: null, 
         error: { code: 'NOT_FOUND', message: 'No address data found' }
       }, { status: 404 })
