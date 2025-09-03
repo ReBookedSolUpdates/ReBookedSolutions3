@@ -5,14 +5,16 @@ import { safeLogError as safelog, formatSupabaseError } from "@/utils/safeErrorL
 import { getSafeErrorMessage } from "@/utils/errorMessageUtils";
 
 interface Address {
-  complex: string;
-  unitNumber: string;
-  streetAddress: string;
-  suburb: string;
-  city: string;
-  province: string;
-  postalCode: string;
-  [key: string]: string | number | boolean | null;
+  complex?: string;
+  unitNumber?: string;
+  streetAddress?: string;
+  suburb?: string;
+  street?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  country?: string;
+  [key: string]: string | number | boolean | null | undefined;
 }
 
 // Encrypt an address using the encrypt-address edge function
@@ -254,13 +256,29 @@ export const getUserAddresses = async (userId: string) => {
   try {
     console.log("Fetching addresses for user:", userId);
 
+    const mapToAddress = (raw: any) => {
+      if (!raw) return null;
+      return {
+        // normalize common variants
+        street: raw.street ?? raw.streetAddress ?? raw.line1 ?? "",
+        city: raw.city ?? "",
+        province: raw.province ?? raw.state ?? "",
+        postalCode: raw.postalCode ?? raw.postal_code ?? raw.zip ?? "",
+        country: raw.country ?? "South Africa",
+        streetAddress: raw.streetAddress ?? raw.street ?? undefined,
+        instructions: raw.instructions ?? raw.additional_info ?? undefined,
+        additional_info: raw.additional_info ?? undefined,
+      } as any;
+    };
+
     // Try to get addresses using the simplified address service first
     const simplifiedAddressService = await import("./simplifiedAddressService");
-    let pickupAddress = null;
-    let shippingAddress = null;
+    let pickupAddress: any = null;
+    let shippingAddress: any = null;
 
     try {
-      pickupAddress = await simplifiedAddressService.getSellerDeliveryAddress(userId);
+      const pickup = await simplifiedAddressService.getSellerDeliveryAddress(userId);
+      pickupAddress = mapToAddress(pickup);
       console.log("📍 Pickup address result:", pickupAddress);
     } catch (error) {
       console.warn("Failed to get pickup address:", error);
@@ -268,11 +286,12 @@ export const getUserAddresses = async (userId: string) => {
 
     // For shipping address, try the decrypt function directly
     try {
-      shippingAddress = await decryptAddress({
+      const shipping = await decryptAddress({
         table: 'profiles',
         target_id: userId,
         address_type: 'shipping'
       });
+      shippingAddress = mapToAddress(shipping);
       console.log("📍 Shipping address result:", shippingAddress);
     } catch (error) {
       console.warn("Failed to get shipping address:", error);
@@ -310,10 +329,9 @@ export const getUserAddresses = async (userId: string) => {
       userId,
     });
 
-    // Handle network errors specifically
     if (
       error instanceof TypeError &&
-      error.message.includes("Failed to fetch")
+      (error as any).message?.includes("Failed to fetch")
     ) {
       throw new Error(
         "Network connection error. Please check your internet connection and try again.",
