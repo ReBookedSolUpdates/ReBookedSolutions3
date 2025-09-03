@@ -544,6 +544,7 @@ const EnhancedAPSCalculator: React.FC = () => {
       localStorage.removeItem("apsProfileBackup");
       localStorage.removeItem("rebookedMarketplace-aps-profile");
       localStorage.removeItem("reBooked-aps-profile");
+      localStorage.removeItem("userAPSManual");
       sessionStorage.removeItem("userAPSProfile");
       sessionStorage.removeItem("apsSearchResults");
 
@@ -551,6 +552,10 @@ const EnhancedAPSCalculator: React.FC = () => {
       setSubjects([]);
       setSelectedSubject("");
       setSelectedMarks("");
+      setManualAPS("");
+      setManualAPSUniMatches([]);
+      setManualSummary(null);
+      setManualSpecificScores(null);
       setSearchResults([]);
       setSelectedProgram(null);
       setIsDetailsModalOpen(false);
