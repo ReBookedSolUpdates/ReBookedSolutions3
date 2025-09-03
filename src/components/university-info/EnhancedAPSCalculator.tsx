@@ -59,6 +59,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SOUTH_AFRICAN_SUBJECTS } from "@/constants/subjects";
+import { ALL_SOUTH_AFRICAN_UNIVERSITIES } from "@/constants/universities/index";
+import { getCoursesForUniversity, getAPSRequirement } from "@/constants/universities/comprehensive-course-database";
 import {
   useAPSAwareCourseAssignment,
   useAPSFilterOptions,
@@ -183,6 +185,7 @@ const EnhancedAPSCalculator: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>("eligibility");
   const [maxAPSGap] = useState(5);
   const [manualAPS, setManualAPS] = useState<string>("");
+  const [manualAPSUniMatches, setManualAPSUniMatches] = useState<Array<{ id: string; name: string; abbreviation?: string; matchCount: number; minAPS: number }>>([]);
 
   // New state for two-section layout
   const [showProgramsSection, setShowProgramsSection] = useState(false);
@@ -282,6 +285,38 @@ const EnhancedAPSCalculator: React.FC = () => {
       console.warn("Failed to hydrate APS subjects from storage", e);
     }
   }, [storedSubjects, subjects.length]);
+
+  // Build university matches when manual APS is entered
+  useEffect(() => {
+    const n = Number(manualAPS);
+    if (!isNaN(n) && n > 0) {
+      const matches: Array<{ id: string; name: string; abbreviation?: string; matchCount: number; minAPS: number }> = [];
+      ALL_SOUTH_AFRICAN_UNIVERSITIES.forEach((uni) => {
+        try {
+          const courses = getCoursesForUniversity(uni.id);
+          let count = 0;
+          let minReq = Infinity;
+          for (const course of courses) {
+            const req = getAPSRequirement(course, uni.id);
+            if (req <= n) {
+              count++;
+              if (req < minReq) minReq = req;
+            }
+          }
+          if (count > 0) {
+            matches.push({ id: uni.id, name: uni.fullName || uni.name, abbreviation: uni.abbreviation, matchCount: count, minAPS: minReq === Infinity ? 0 : minReq });
+          }
+        } catch (e) {
+          // ignore per-uni errors
+        }
+      });
+      // Sort by minAPS then by matchCount desc
+      matches.sort((a, b) => a.minAPS - b.minAPS || b.matchCount - a.matchCount);
+      setManualAPSUniMatches(matches);
+    } else {
+      setManualAPSUniMatches([]);
+    }
+  }, [manualAPS]);
 
   // Listen for global APS profile clearing event
   useEffect(() => {
@@ -759,6 +794,34 @@ const EnhancedAPSCalculator: React.FC = () => {
                   </AlertDescription>
                 </Alert>
               </div>
+
+              {/* Universities matching entered APS */}
+              {manualAPS && manualAPSUniMatches.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-gray-900">Universities matching APS {manualAPS}</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {manualAPSUniMatches.map((u) => (
+                      <Card key={u.id} className="border border-gray-200 hover:shadow-sm transition-shadow">
+                        <CardContent className="p-4 flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-gray-900">{u.name}</div>
+                            <div className="text-xs text-gray-600">Min APS: {u.minAPS} • Programs: {u.matchCount}</div>
+                          </div>
+                          <Button size="sm" className="bg-book-600 hover:bg-book-700" onClick={() => navigate(`/university/${u.id}?fromAPS=true&aps=${manualAPS}`)}>
+                            View
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                  <Alert className="border-yellow-200 bg-yellow-50">
+                    <Info className="h-4 w-4 text-yellow-600" />
+                    <AlertDescription className="text-yellow-800 text-sm">
+                      Subject-specific requirements may apply. We assume required subjects are met when only a total APS is entered. Verify requirements on the university page before applying.
+                    </AlertDescription>
+                  </Alert>
+                </div>
+              )}
 
               {/* 💾 Storage Status Indicator */}
               {(hasProfile || enhancedProfile || subjects.length > 0) && (
