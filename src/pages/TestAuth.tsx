@@ -70,7 +70,7 @@ const TestAuth: React.FC = () => {
       console.log('🧪 Testing password reset...');
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
+        redirectTo: `${window.location.origin}/auth/callback?type=recovery&recovery=1`,
       });
 
       if (error) {
