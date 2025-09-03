@@ -142,7 +142,12 @@ const EligibleProgramsSection: React.FC<EligibleProgramsSectionProps> = ({
 
     return (
       <Card
-        className="transition-all duration-200 hover:shadow-md cursor-pointer border"
+        className={cn(
+          "transition-all duration-200 hover:shadow-md cursor-pointer border",
+          program.eligible
+            ? "border-green-200 hover:border-green-300"
+            : "border-red-200 hover:border-red-300",
+        )}
         onClick={() => onProgramSelect(program)}
       >
         <CardHeader className="pb-3">
