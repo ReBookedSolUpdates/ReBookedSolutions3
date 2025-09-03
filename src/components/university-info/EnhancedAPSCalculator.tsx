@@ -793,7 +793,7 @@ const EnhancedAPSCalculator: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Add Subject Form */}
-              <div className="bg-gray-50 p-6 rounded-xl space-y-4">
+              <div className="bg-gray-50 p-6 rounded-xl space-y-4 max-w-xl mx-auto">
                 <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                   <Plus className="w-4 h-4" />
                   Add Subject
