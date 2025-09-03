@@ -34,12 +34,17 @@ const AuthCallback = () => {
         const match = decodedUrl.match(regex);
         return match ? match[1] : null;
       };
+      const isRecoveryHint = () => {
+        const r = (getParam("recovery") || "").toLowerCase();
+        const flow = (getParam("flow") || "").toLowerCase();
+        return r === "1" || r === "true" || flow === "recovery";
+      };
 
       const type = getParam("type");
       const token_hash = getParam("token_hash");
       const access_token = getParam("access_token");
 
-      if (type === "recovery") {
+      if (type === "recovery" || isRecoveryHint()) {
         console.log("🔐 Authenticated user in recovery flow - redirecting directly to reset password");
         navigate("/reset-password", { replace: true });
         return;
@@ -89,7 +94,7 @@ const AuthCallback = () => {
           const type = new URLSearchParams(window.location.search).get("type") ||
                       new URLSearchParams(window.location.hash.substring(1)).get("type");
 
-          if (type === "recovery") {
+          if (type === "recovery" || isRecoveryHint()) {
             setMessage("Password reset link verified! Redirecting to reset your password.");
             toast.success("Reset link verified! Set your new password.");
             navigate("/reset-password", { replace: true });
@@ -118,7 +123,6 @@ const AuthCallback = () => {
 
           // Check for URL-encoded parameters (some email clients encode URLs)
           const fullUrl = window.location.href;
-          const encodedParam = encodeURIComponent(name + '=');
           const decodedUrl = decodeURIComponent(fullUrl);
 
           // Try to extract from decoded URL
@@ -127,6 +131,11 @@ const AuthCallback = () => {
           if (match) return match[1];
 
           return null;
+        };
+        const isRecoveryHint = () => {
+          const r = (getParam("recovery") || "").toLowerCase();
+          const flow = (getParam("flow") || "").toLowerCase();
+          return r === "1" || r === "true" || flow === "recovery";
         };
 
         const access_token = getParam("access_token");
@@ -159,7 +168,7 @@ const AuthCallback = () => {
 
         // Handle errors first
         if (error) {
-          console.error("❌ Auth callback error:", error, error_description);
+          console.error("��� Auth callback error:", error, error_description);
           setStatus("error");
           const safeErrorMsg = getSafeErrorMessage(error_description || error, 'Authentication failed');
           setMessage(safeErrorMsg);
