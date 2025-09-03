@@ -11,6 +11,7 @@
       default-src 'self';
       script-src 'self' 'unsafe-inline' 'unsafe-eval'
         https://www.googletagmanager.com
+        https://fundingchoicesmessages.google.com
         https://js.paystack.co
         https://cdn.gpteng.co
         https://pagead2.googlesyndication.com
@@ -34,6 +35,7 @@
         https://checkout.paystack.com
         https://googleads.g.doubleclick.net
         https://tpc.googlesyndication.com
+        https://fundingchoicesmessages.google.com
         https://maps.google.com
         https://www.google.com
         https://vercel.live;
@@ -135,6 +137,10 @@
       gtag("js", new Date());
       gtag("config", "G-33V40Q5BEW");
     </script>
+
+    <!-- Google Funding Choices -->
+    <script async src="https://fundingchoicesmessages.google.com/i/pub-1957085805829290?ers=1"></script>
+    <script>(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();</script>
 
     <!-- Minimal error handling for development -->
     <script>
