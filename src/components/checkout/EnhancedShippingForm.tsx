@@ -186,20 +186,7 @@ const EnhancedShippingForm: React.FC<EnhancedShippingFormProps> = ({
         console.warn("Failed to get encrypted shipping address:", error);
       }
 
-      // Fallback to plaintext if no encrypted address
-      if (!savedShippingAddress) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("shipping_address_encrypted, shipping_address")
-          .eq("id", user.id)
-          .single();
-
-        // Only use plaintext if no encrypted version exists
-        if (!profile?.shipping_address_encrypted && profile?.shipping_address) {
-          savedShippingAddress = profile.shipping_address;
-          console.log("⚠️ Using plaintext shipping address fallback");
-        }
-      }
+      // No plaintext fallback allowed
 
       if (savedShippingAddress) {
         setSavedAddress(savedShippingAddress);
