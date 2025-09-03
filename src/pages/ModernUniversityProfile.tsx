@@ -608,7 +608,7 @@ const ModernUniversityProfile: React.FC = () => {
                                           variant="outline"
                                           className="text-xs px-2 py-1"
                                         >
-                                          APS: {degree.apsRequirement}
+                                          APS: {degree.apsRequirement > 100 ? Math.round(degree.apsRequirement / 10) : degree.apsRequirement}
                                         </Badge>
                                         <Badge
                                           variant="outline"
@@ -618,12 +618,12 @@ const ModernUniversityProfile: React.FC = () => {
                                         </Badge>
                                         <Badge
                                           className={`text-xs px-2 py-1 ${
-                                            degree.apsRequirement > 30
+                                            (degree.apsRequirement > 100 ? Math.round(degree.apsRequirement / 10) : degree.apsRequirement) > 30
                                               ? "bg-red-100 text-red-700"
                                               : "bg-green-100 text-green-700"
                                           }`}
                                         >
-                                          {degree.apsRequirement > 30
+                                          {(degree.apsRequirement > 100 ? Math.round(degree.apsRequirement / 10) : degree.apsRequirement) > 30
                                             ? "Highly Competitive"
                                             : "Competitive"}
                                         </Badge>
