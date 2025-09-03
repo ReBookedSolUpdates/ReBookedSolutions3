@@ -219,6 +219,7 @@ export async function clearAPSProfile(user?: User): Promise<{success: boolean; s
     localStorage.removeItem("reBooked-aps-profile"); // Legacy key
     localStorage.removeItem("reBooked-aps-search-results"); // Legacy key
     localStorage.removeItem("rebookedMarketplace-aps-profile"); // Another legacy key
+    localStorage.removeItem("userAPSManual");
     sessionStorage.removeItem(APS_STORAGE_KEY);
     sessionStorage.removeItem("apsSearchResults");
 
@@ -341,6 +342,7 @@ export function clearAPSProfileSimple(): boolean {
     localStorage.removeItem("reBooked-aps-profile");
     localStorage.removeItem("reBooked-aps-search-results");
     localStorage.removeItem("rebookedMarketplace-aps-profile");
+    localStorage.removeItem("userAPSManual");
     sessionStorage.removeItem(APS_STORAGE_KEY);
     sessionStorage.removeItem("apsSearchResults");
 

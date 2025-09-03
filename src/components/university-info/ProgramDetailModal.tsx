@@ -257,7 +257,7 @@ const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
                   className="bg-blue-100 text-blue-700 text-xs sm:text-sm"
                 >
                   <Calculator className="h-3 w-3 mr-1" />
-                  APS: {program.apsRequirement}
+                  APS: {program.apsRequirement > 100 ? Math.round(program.apsRequirement / 10) : program.apsRequirement}
                 </Badge>
                 <Badge
                   variant="secondary"

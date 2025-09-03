@@ -130,6 +130,7 @@ const EligibleProgramsSection: React.FC<EligibleProgramsSectionProps> = ({
     return programsByFaculty[selectedFacultyTab] || [];
   }, [programs, programsByFaculty, selectedFacultyTab]);
 
+  const normalizeRequirement = (val: number) => (val > 100 ? Math.round(val / 10) : val);
   const ProgramCard: React.FC<{ program: Program }> = ({ program }) => {
     const eligibilityColor = program.eligible
       ? "text-green-600 bg-green-50 border-green-200"
@@ -142,7 +143,12 @@ const EligibleProgramsSection: React.FC<EligibleProgramsSectionProps> = ({
 
     return (
       <Card
-        className="transition-all duration-200 hover:shadow-md cursor-pointer border"
+        className={cn(
+          "transition-all duration-200 hover:shadow-md cursor-pointer border",
+          program.eligible
+            ? "border-green-200 hover:border-green-300"
+            : "border-red-200 hover:border-red-300",
+        )}
         onClick={() => onProgramSelect(program)}
       >
         <CardHeader className="pb-3">
@@ -181,7 +187,7 @@ const EligibleProgramsSection: React.FC<EligibleProgramsSectionProps> = ({
               </div>
               <div className="flex items-center gap-1 text-gray-600">
                 <BarChart3 className="h-3 w-3" />
-                <span>APS: {program.apsRequirement}</span>
+                <span>APS: {normalizeRequirement(program.apsRequirement)}</span>
               </div>
             </div>
 

@@ -422,7 +422,7 @@ const UniversityDetailView: React.FC<UniversityDetailViewProps> = ({
                                           }}
                                         >
                                           <Award className="h-3 w-3 mr-1" />
-                                          APS: {degree.apsRequirement}
+                                          APS: {degree.apsRequirement > 100 ? Math.round(degree.apsRequirement / 10) : degree.apsRequirement}
                                         </Badge>
                                       </div>
 

@@ -100,10 +100,19 @@ const UniversityProfile: React.FC = () => {
     navigate("/university-info?tool=aps-calculator");
   };
 
+  // Normalize weird data where some requirements are stored as 10x (e.g., 450 -> 45)
+  const normalizeRequirement = (val: number) => (val > 100 ? Math.round(val / 10) : val);
+
   // Helper function to check if user is eligible for a program
   const isEligibleForProgram = (program: Degree): boolean => {
     if (!userAPS || userAPS === 0) return true;
-    return userAPS >= program.apsRequirement;
+    const uniId = university?.id || "";
+    let requiredAPS =
+      (program.universitySpecificAPS && uniId
+        ? program.universitySpecificAPS[uniId]
+        : undefined) ?? program.apsRequirement;
+    requiredAPS = normalizeRequirement(requiredAPS);
+    return userAPS >= requiredAPS;
   };
 
   // Helper function to filter programs based on eligibility
@@ -348,10 +357,8 @@ const UniversityProfile: React.FC = () => {
                       {(() => {
                         const eligibleCount = university.faculties.reduce(
                           (total, faculty) => {
-                            const eligiblePrograms = filterPrograms(
-                              faculty.degrees || [],
-                            );
-                            return total + eligiblePrograms.length;
+                            const count = (faculty.degrees || []).filter(isEligibleForProgram).length;
+                            return total + count;
                           },
                           0,
                         );
@@ -380,6 +387,15 @@ const UniversityProfile: React.FC = () => {
                         {showEligibleOnly
                           ? "Show All Programs"
                           : "Show Eligible Only"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleAPSCalculator}
+                        className="border-book-200 text-book-600 hover:bg-book-50"
+                      >
+                        <Calculator className="h-4 w-4 mr-2" />
+                        Back to APS Calculator
                       </Button>
                       <Button
                         size="sm"
@@ -638,7 +654,7 @@ const UniversityProfile: React.FC = () => {
                                                   : "bg-book-100 text-book-700 border-book-200"
                                               }
                                             >
-                                              APS: {degree.apsRequirement}
+                                              APS: {normalizeRequirement(degree.apsRequirement)}
                                               {fromAPS && userAPS > 0 && (
                                                 <span className="ml-1">
                                                   {isEligible ? "✓" : "✗"}
