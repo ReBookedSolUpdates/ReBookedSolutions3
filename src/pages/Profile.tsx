@@ -97,6 +97,13 @@ const Profile = () => {
     }
   }, [user?.id, loadActiveListings, loadUserAddresses]);
 
+  // Ensure addresses refresh when navigating back to the Addresses tab
+  useEffect(() => {
+    if (activeTab === 'addresses' && user?.id) {
+      loadUserAddresses();
+    }
+  }, [activeTab, user?.id, loadUserAddresses]);
+
   const handleDeleteBook = async (bookId: string, bookTitle: string) => {
     if (!bookId) {
       toast.error("Book ID is missing");
