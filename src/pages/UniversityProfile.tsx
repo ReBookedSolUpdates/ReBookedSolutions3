@@ -103,7 +103,12 @@ const UniversityProfile: React.FC = () => {
   // Helper function to check if user is eligible for a program
   const isEligibleForProgram = (program: Degree): boolean => {
     if (!userAPS || userAPS === 0) return true;
-    return userAPS >= program.apsRequirement;
+    const uniId = university?.id || "";
+    const requiredAPS =
+      (program.universitySpecificAPS && uniId
+        ? program.universitySpecificAPS[uniId]
+        : undefined) ?? program.apsRequirement;
+    return userAPS >= requiredAPS;
   };
 
   // Helper function to filter programs based on eligibility
@@ -348,10 +353,8 @@ const UniversityProfile: React.FC = () => {
                       {(() => {
                         const eligibleCount = university.faculties.reduce(
                           (total, faculty) => {
-                            const eligiblePrograms = filterPrograms(
-                              faculty.degrees || [],
-                            );
-                            return total + eligiblePrograms.length;
+                            const count = (faculty.degrees || []).filter(isEligibleForProgram).length;
+                            return total + count;
                           },
                           0,
                         );
@@ -380,6 +383,15 @@ const UniversityProfile: React.FC = () => {
                         {showEligibleOnly
                           ? "Show All Programs"
                           : "Show Eligible Only"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleAPSCalculator}
+                        className="border-book-200 text-book-600 hover:bg-book-50"
+                      >
+                        <Calculator className="h-4 w-4 mr-2" />
+                        Back to APS Calculator
                       </Button>
                       <Button
                         size="sm"
