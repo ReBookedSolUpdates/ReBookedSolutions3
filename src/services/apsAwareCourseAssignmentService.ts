@@ -322,17 +322,9 @@ export function getCoursesForUniversityWithAPS(
       })
       .filter(Boolean) as EnhancedCourseWithEligibility[];
 
-    // Apply APS filtering if requested
-    let filteredCourses = enhancedCourses;
-    if (apsOptions.userAPS !== undefined) {
-      const includeAlmost = apsOptions.includeAlmostQualified !== false;
-      filteredCourses = enhancedCourses.filter((course) => {
-        if (course.isEligible) return true;
-        if (includeAlmost && course.apsGap <= (apsOptions.maxAPSGap || 5))
-          return true;
-        return false;
-      });
-    }
+    // Do NOT filter out ineligible programs here.
+    // Always include all applicable programs and mark eligibility for UI toggles.
+    const filteredCourses = enhancedCourses;
 
     // Sort courses by eligibility and APS requirement
     filteredCourses.sort((a, b) => {
@@ -347,8 +339,9 @@ export function getCoursesForUniversityWithAPS(
     });
 
     result.courses = filteredCourses;
-    result.eligibleCourses = filteredCourses.filter((c) => c.isEligible).length;
-    result.almostEligibleCourses = filteredCourses.filter(
+    // Compute counts from ALL courses, not just displayed order
+    result.eligibleCourses = enhancedCourses.filter((c) => c.isEligible).length;
+    result.almostEligibleCourses = enhancedCourses.filter(
       (c) => !c.isEligible && c.apsGap <= 5,
     ).length;
 

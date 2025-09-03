@@ -6,13 +6,14 @@ import {
   useSearchParams,
   useNavigate,
 } from "react-router-dom";
-import BackButton from "@/components/ui/BackButton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
+import { usesCustomScoring, getUniversityScoringMethodology } from "@/services/universitySpecificAPSService";
 import { ALL_SOUTH_AFRICAN_UNIVERSITIES } from "@/constants/universities/index";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   ArrowLeft,
   ExternalLink,
@@ -132,6 +133,7 @@ const UniversityProfile: React.FC = () => {
       : university.studentPopulation.toString()
     : "N/A";
 
+
   return (
     <Layout>
       <div className="bg-white min-h-screen">
@@ -140,13 +142,15 @@ const UniversityProfile: React.FC = () => {
           <div className="container mx-auto px-6 py-8">
             {/* Back Navigation */}
             <div className="mb-8">
-              <BackButton
-                fallbackPath="/university-info"
-                className="text-gray-600 hover:text-gray-900 transition-colors group p-0"
-                variant="ghost"
+              <button
+                type="button"
+                aria-label="Back to Overview"
+                onClick={() => navigate("/university-info")}
+                className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors group"
               >
-                <span className="font-medium">Back to Universities</span>
-              </BackButton>
+                <ArrowLeft className="h-5 w-5 transition-transform duration-200 group-hover:-translate-x-0.5" />
+                <span className="text-sm font-medium">Back to Overview</span>
+              </button>
             </div>
 
             {/* University Header - Mobile Optimized */}
@@ -210,6 +214,15 @@ const UniversityProfile: React.FC = () => {
                       {university.overview ||
                         "A prestigious South African institution dedicated to academic excellence, research innovation, and developing leaders who shape the future."}
                     </p>
+
+                    {usesCustomScoring(university.id) && (
+                      <Alert className="mt-4 border-amber-200 bg-amber-50">
+                        <AlertTriangle className="h-4 w-4 text-amber-600" />
+                        <AlertDescription className="text-amber-800 text-sm">
+                          {getUniversityScoringMethodology(university.id)} APS ranges for this university may be higher than standard APS. Results shown here adapt to their method.
+                        </AlertDescription>
+                      </Alert>
+                    )}
                   </div>
                 </div>
 

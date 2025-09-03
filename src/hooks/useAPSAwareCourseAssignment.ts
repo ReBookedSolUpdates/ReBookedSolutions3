@@ -99,7 +99,7 @@ export function useAPSAwareCourseAssignment(universityId?: string) {
       if (stored) {
         const profile = JSON.parse(stored);
         console.log("✅ [APS Debug] APS Profile loaded from localStorage:", profile);
-        console.log("✅ [APS Debug] Profile has subjects:", profile.subjects?.length || 0);
+        console.log("�� [APS Debug] Profile has subjects:", profile.subjects?.length || 0);
         setUserProfile(profile);
         return profile;
       } else {
@@ -253,17 +253,41 @@ export function useAPSAwareCourseAssignment(universityId?: string) {
         setIsLoading(true);
         setError(null);
 
+        const apsOptions = {
+          userAPS: userProfile.totalAPS,
+          userSubjects: userProfile.subjects,
+          includeAlmostQualified: true,
+          maxAPSGap: 5,
+        } as const;
+
         const results = await getUniversityFacultiesWithAPS(
           targetUniversityId,
-          userProfile.subjects,
+          apsOptions,
         );
 
-        // Cache results for current university
         if (targetUniversityId === universityId) {
           setLastSearchResults(results);
         }
 
-        return results.programs || [];
+        // Flatten faculties into a program list with eligibility flags for UI consumption
+        const programs = (results.faculties || []).flatMap((f: any) =>
+          (f.degrees || []).map((d: any) => ({
+            id: d.id,
+            name: d.name,
+            faculty: f.name?.replace(/^Faculty of\s+/i, "") || d.faculty,
+            universityName: (results.courses && results.courses[0]?.universityInfo?.name) || "",
+            universityId: targetUniversityId,
+            duration: d.duration,
+            apsRequirement: d.apsRequirement,
+            eligible: !!d.isEligible,
+            apsGap: d.apsGap,
+            subjects: d.subjects,
+            careerProspects: d.careerProspects,
+            description: d.description,
+          })),
+        );
+
+        return programs;
       } catch (error) {
         console.error("Error searching courses:", error);
         setError("Failed to search courses. Please try again.");

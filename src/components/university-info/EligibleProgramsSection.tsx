@@ -37,6 +37,7 @@ import {
   BookOpen,
   Target,
   TrendingUp,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -163,7 +164,7 @@ const EligibleProgramsSection: React.FC<EligibleProgramsSectionProps> = ({
               {program.eligible ? (
                 <CheckCircle className="w-3 h-3 mr-1" />
               ) : (
-                <AlertTriangle className="w-3 h-3 mr-1" />
+                <X className="w-3 h-3 mr-1" />
               )}
               {program.eligible ? "Qualified" : "Not Qualified"}
             </Badge>
