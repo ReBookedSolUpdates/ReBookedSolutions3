@@ -56,7 +56,7 @@ const ModernAddressTab = ({
     if (addressData) {
       setPickupAddress(addressData.pickup_address);
       setShippingAddress(addressData.shipping_address);
-      setSameAsPickup(addressData.same_as_pickup || false);
+      setSameAsPickup(addressData.addresses_same || false);
     }
   }, [addressData]);
 
