@@ -65,15 +65,8 @@ export const debugBookFetching = async () => {
 
     // Check seller profiles
     const booksWithoutSeller = availableBooks.filter(book => !book.seller_profile);
-    const booksWithoutPickupAddress = availableBooks.filter(book => 
-      book.seller_profile && !book.seller_profile.pickup_address
-    );
-    const booksWithInvalidPickupAddress = availableBooks.filter(book => {
-      if (!book.seller_profile?.pickup_address) return false;
-      const addr = book.seller_profile.pickup_address;
-      const streetField = addr.streetAddress || addr.street;
-      return !(streetField && addr.city && addr.province && addr.postalCode);
-    });
+    const booksWithoutPickupAddress: any[] = [];
+    const booksWithInvalidPickupAddress: any[] = [];
 
     console.log("🚫 Filtering analysis:");
     console.log("  - Books without seller profile:", booksWithoutSeller.length);
