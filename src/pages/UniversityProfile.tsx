@@ -6,8 +6,6 @@ import {
   useSearchParams,
   useNavigate,
 } from "react-router-dom";
-import BackButton from "@/components/ui/BackButton";
-import { useSearchParams } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { usesCustomScoring, getUniversityScoringMethodology } from "@/services/universitySpecificAPSService";
@@ -16,7 +14,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   ArrowLeft,
   ExternalLink,
