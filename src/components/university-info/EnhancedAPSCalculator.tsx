@@ -186,10 +186,13 @@ const EnhancedAPSCalculator: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>("eligibility");
   const [maxAPSGap] = useState(5);
   const [manualAPS, setManualAPS] = useState<string>("");
-  const [manualAPSUniMatches, setManualAPSUniMatches] = useState<Array<{ id: string; name: string; abbreviation?: string; matchCount: number; minAPS: number }>>([]);
+  const [manualAPSUniMatches, setManualAPSUniMatches] = useState<Array<{ id: string; name: string; abbreviation?: string; matchCount: number; minAPS: number; totalCourses: number }>>([]);
+  const [manualSummary, setManualSummary] = useState<{ qualified: number; total: number } | null>(null);
+  const [manualSpecificScores, setManualSpecificScores] = useState<{ universitySpecificScores: import("@/types/university").UniversityAPSResult[]; standardAPS: number } | null>(null);
 
   // New state for two-section layout
   const [showProgramsSection, setShowProgramsSection] = useState(false);
+  const [showOnlyEligible, setShowOnlyEligible] = useState(false);
 
   // Calculate APS with all validations
   const apsCalculation = useMemo(() => {
@@ -287,11 +290,14 @@ const EnhancedAPSCalculator: React.FC = () => {
     }
   }, [storedSubjects, subjects.length]);
 
-  // Build university matches when manual APS is entered
+  // Build university matches and university-specific scores when manual APS is entered
   useEffect(() => {
     const n = Number(manualAPS);
     if (!isNaN(n) && n > 0) {
-      const matches: Array<{ id: string; name: string; abbreviation?: string; matchCount: number; minAPS: number }> = [];
+      const matches: Array<{ id: string; name: string; abbreviation?: string; matchCount: number; minAPS: number; totalCourses: number }> = [];
+      let totalPrograms = 0;
+      let qualifiedPrograms = 0;
+
       ALL_SOUTH_AFRICAN_UNIVERSITIES.forEach((uni) => {
         try {
           const courses = getCoursesForUniversity(uni.id);
@@ -304,9 +310,9 @@ const EnhancedAPSCalculator: React.FC = () => {
               if (req < minReq) minReq = req;
             }
           }
-          if (count > 0) {
-            matches.push({ id: uni.id, name: uni.fullName || uni.name, abbreviation: uni.abbreviation, matchCount: count, minAPS: minReq === Infinity ? 0 : minReq });
-          }
+          totalPrograms += courses.length;
+          qualifiedPrograms += count;
+          matches.push({ id: uni.id, name: uni.fullName || uni.name, abbreviation: uni.abbreviation, matchCount: count, minAPS: minReq === Infinity ? 0 : minReq, totalCourses: courses.length });
         } catch (e) {
           // ignore per-uni errors
         }
@@ -314,8 +320,69 @@ const EnhancedAPSCalculator: React.FC = () => {
       // Sort by minAPS then by matchCount desc
       matches.sort((a, b) => a.minAPS - b.minAPS || b.matchCount - a.matchCount);
       setManualAPSUniMatches(matches);
+      setManualSummary({ qualified: qualifiedPrograms, total: totalPrograms });
+
+      // Create synthetic subjects to reflect the entered APS for university-specific calculations
+      const synthesizeSubjectsFromAPS = (total: number): APSSubject[] => {
+        const subjectNames = [
+          "English",
+          "Mathematics",
+          "Physical Sciences",
+          "Life Sciences",
+          "Accounting",
+          "Geography",
+        ];
+        const maxSubjects = 6;
+        const capped = Math.max(0, Math.min(42, Math.floor(total)));
+        const base = Math.floor(capped / maxSubjects);
+        let remainder = capped % maxSubjects;
+        const points: number[] = new Array(maxSubjects).fill(Math.min(7, base));
+        for (let i = 0; i < maxSubjects && remainder > 0; i++) {
+          if (points[i] < 7) {
+            points[i] += 1;
+            remainder -= 1;
+          }
+        }
+        const pointsToMarks = (p: number) => {
+          switch (p) {
+            case 7:
+              return 85;
+            case 6:
+              return 75;
+            case 5:
+              return 65;
+            case 4:
+              return 55;
+            case 3:
+              return 45;
+            case 2:
+              return 35;
+            case 1:
+              return 25;
+            default:
+              return 0;
+          }
+        };
+        return points.map((pt, i) => ({
+          name: subjectNames[i] || `Subject ${i + 1}`,
+          marks: pointsToMarks(pt),
+          level: pt,
+          points: pt,
+        }));
+      };
+
+      import("@/services/universitySpecificAPSService").then((module) => {
+        const subs = synthesizeSubjectsFromAPS(n);
+        const calc = module.calculateUniversitySpecificAPS(subs, ALL_UNIVERSITY_IDS);
+        setManualSpecificScores({
+          universitySpecificScores: calc.universitySpecificScores,
+          standardAPS: calc.standardAPS,
+        });
+      });
     } else {
       setManualAPSUniMatches([]);
+      setManualSummary(null);
+      setManualSpecificScores(null);
     }
   }, [manualAPS]);
 
@@ -545,15 +612,18 @@ const EnhancedAPSCalculator: React.FC = () => {
 
   // Filter and sort programs
   const filteredPrograms = useMemo(() => {
-    let filtered = searchResults;
+    let filtered = [...searchResults];
 
     // Faculty filter
     if (facultyFilter && facultyFilter !== "all") {
       filtered = filtered.filter((p) => p.faculty === facultyFilter);
     }
 
-    // Almost qualified filter
-    if (!includeAlmostQualified) {
+    // Show only eligible toggle
+    if (showOnlyEligible) {
+      filtered = filtered.filter((p) => p.eligible);
+    } else if (!includeAlmostQualified) {
+      // Backward compatibility: if user disables almost-qualified, show only eligible
       filtered = filtered.filter((p) => p.eligible);
     }
 
@@ -573,7 +643,7 @@ const EnhancedAPSCalculator: React.FC = () => {
     });
 
     return filtered;
-  }, [searchResults, facultyFilter, includeAlmostQualified, sortBy]);
+  }, [searchResults, facultyFilter, includeAlmostQualified, showOnlyEligible, sortBy]);
 
   // Calculate statistics
   const statistics = useMemo(() => {
@@ -796,10 +866,15 @@ const EnhancedAPSCalculator: React.FC = () => {
                     )}
                   </div>
                 </div>
+                {manualSummary && (
+                  <div className="text-sm text-gray-700">
+                    Your APS: <span className="font-semibold">{manualAPS}</span> – You qualify for <span className="font-semibold">{manualSummary.qualified}</span> out of <span className="font-semibold">{manualSummary.total}</span> programs.
+                  </div>
+                )}
                 <Alert className="border-yellow-200 bg-yellow-50">
                   <Info className="h-4 w-4 text-yellow-600" />
                   <AlertDescription className="text-yellow-800 text-sm">
-                    Some programs require specific subjects and minimum levels. Entering only a total APS may not guarantee eligibility. The system assumes subject-specific minimums are met based on your total APS for guidance. For example, for a BCom requiring English 4 and Mathematics 4, if your APS is 30 with Mathematics 3, we’ll assume Math 4 for matching purposes.
+                    Some programs require specific subjects and minimum levels. Entering only a total APS may not guarantee eligibility. The system assumes subject-specific minimums are met based on your total APS for guidance. For example, a perfect APS of 42 corresponds to distinctions across your best 6 subjects.
                   </AlertDescription>
                 </Alert>
               </div>
@@ -956,17 +1031,10 @@ const EnhancedAPSCalculator: React.FC = () => {
 
           {/* University Scores Section */}
           <div className="xl:col-span-3 space-y-6">
-            {manualAPS && manualAPSUniMatches.length > 0 ? (
+            {manualAPS && manualSpecificScores ? (
               <UniversitySpecificAPSDisplay
-                universityScores={manualAPSUniMatches.map((u) => ({
-                  universityId: u.id,
-                  universityName: u.name,
-                  score: Number(manualAPS),
-                  maxScore: 42,
-                  explanation: `Standard APS used for comparison (${manualAPS}/42). Min required for programs here starts at ${u.minAPS}.`,
-                  methodology: getUniversityScoringMethodology(u.id),
-                }))}
-                standardAPS={Number(manualAPS)}
+                universityScores={manualSpecificScores.universitySpecificScores}
+                standardAPS={manualSpecificScores.standardAPS}
               />
             ) : (
               apsCalculation.isCalculationValid && universitySpecificScores && (
@@ -993,19 +1061,36 @@ const EnhancedAPSCalculator: React.FC = () => {
               Eligible Programs
             </h2>
             <div className="flex-1 h-px bg-gray-300"></div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowProgramsSection(!showProgramsSection)}
-              className="flex items-center gap-1"
-            >
-              {showProgramsSection ? (
-                <ChevronUp className="w-4 h-4" />
-              ) : (
-                <ChevronDown className="w-4 h-4" />
-              )}
-              {showProgramsSection ? "Collapse" : "Expand"}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant={showOnlyEligible ? "outline" : "default"}
+                size="sm"
+                onClick={() => setShowOnlyEligible(false)}
+                className={showOnlyEligible ? "" : "bg-book-600 hover:bg-book-700"}
+              >
+                Show all programs
+              </Button>
+              <Button
+                variant={showOnlyEligible ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowOnlyEligible(true)}
+              >
+                Show only eligible programs
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowProgramsSection(!showProgramsSection)}
+                className="flex items-center gap-1"
+              >
+                {showProgramsSection ? (
+                  <ChevronUp className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
+                {showProgramsSection ? "Collapse" : "Expand"}
+              </Button>
+            </div>
           </div>
 
           {/* Programs Section with Faculty Grouping */}
