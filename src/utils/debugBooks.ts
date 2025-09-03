@@ -94,8 +94,7 @@ export const debugBookFetching = async () => {
       console.log("📝 Books with invalid pickup address:", booksWithInvalidPickupAddress.map(b => ({
         id: b.id,
         title: b.title,
-        seller_id: b.seller_id,
-        pickup_address: b.seller_profile?.pickup_address
+        seller_id: b.seller_id
       })));
     }
 
