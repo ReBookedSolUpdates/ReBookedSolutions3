@@ -7,6 +7,10 @@ import {
   useNavigate,
 } from "react-router-dom";
 import BackButton from "@/components/ui/BackButton";
+import { useSearchParams } from "react-router-dom";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
+import { usesCustomScoring, getUniversityScoringMethodology } from "@/services/universitySpecificAPSService";
 import { ALL_SOUTH_AFRICAN_UNIVERSITIES } from "@/constants/universities/index";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -132,6 +136,9 @@ const UniversityProfile: React.FC = () => {
       : university.studentPopulation.toString()
     : "N/A";
 
+  const [searchParams] = useSearchParams();
+  const fromAPS = searchParams.get("fromAPS") === "true";
+
   return (
     <Layout>
       <div className="bg-white min-h-screen">
@@ -140,13 +147,26 @@ const UniversityProfile: React.FC = () => {
           <div className="container mx-auto px-6 py-8">
             {/* Back Navigation */}
             <div className="mb-8">
-              <BackButton
-                fallbackPath="/university-info"
-                className="text-gray-600 hover:text-gray-900 transition-colors group p-0"
+              <Button
                 variant="ghost"
+                className="text-gray-600 hover:text-gray-900 transition-colors group p-0"
+                onClick={() => {
+                  try {
+                    const hasAPS = !!localStorage.getItem("userAPSProfile");
+                    if (fromAPS || hasAPS) {
+                      navigate("/university-info?tool=aps-calculator");
+                      return;
+                    }
+                  } catch {}
+                  if (window.history.length > 1 && (window.history as any).state?.idx > 0) {
+                    navigate(-1);
+                  } else {
+                    navigate("/university-info");
+                  }
+                }}
               >
-                <span className="font-medium">Back to Universities</span>
-              </BackButton>
+                <span className="font-medium">Back</span>
+              </Button>
             </div>
 
             {/* University Header - Mobile Optimized */}
@@ -210,6 +230,15 @@ const UniversityProfile: React.FC = () => {
                       {university.overview ||
                         "A prestigious South African institution dedicated to academic excellence, research innovation, and developing leaders who shape the future."}
                     </p>
+
+                    {usesCustomScoring(university.id) && (
+                      <Alert className="mt-4 border-amber-200 bg-amber-50">
+                        <AlertTriangle className="h-4 w-4 text-amber-600" />
+                        <AlertDescription className="text-amber-800 text-sm">
+                          {getUniversityScoringMethodology(university.id)} APS ranges for this university may be higher than standard APS. Results shown here adapt to their method.
+                        </AlertDescription>
+                      </Alert>
+                    )}
                   </div>
                 </div>
 
