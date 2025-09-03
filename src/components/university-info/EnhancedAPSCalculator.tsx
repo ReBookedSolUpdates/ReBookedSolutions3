@@ -106,6 +106,7 @@ import {
 } from "@/utils/apsCalculation";
 import { validateAPSSubjectsEnhanced } from "@/utils/enhancedValidation";
 import UniversitySpecificAPSDisplay from "./UniversitySpecificAPSDisplay";
+import { getUniversityScoringMethodology } from "@/services/universitySpecificAPSService";
 import EligibleProgramsSection from "./EligibleProgramsSection";
 
 /**
@@ -776,7 +777,15 @@ const EnhancedAPSCalculator: React.FC = () => {
                     min={0}
                     max={42}
                     value={manualAPS}
-                    onChange={(e) => setManualAPS(e.target.value)}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === "") { setManualAPS(""); return; }
+                      let n = Number(v);
+                      if (isNaN(n)) return;
+                      if (n < 0) n = 0;
+                      if (n > 42) n = 42;
+                      setManualAPS(String(Math.floor(n)));
+                    }}
                     placeholder="e.g., 30"
                     className="bg-white"
                   />
@@ -794,34 +803,6 @@ const EnhancedAPSCalculator: React.FC = () => {
                   </AlertDescription>
                 </Alert>
               </div>
-
-              {/* Universities matching entered APS */}
-              {manualAPS && manualAPSUniMatches.length > 0 && (
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-gray-900">Universities matching APS {manualAPS}</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {manualAPSUniMatches.map((u) => (
-                      <Card key={u.id} className="border border-gray-200 hover:shadow-sm transition-shadow">
-                        <CardContent className="p-4 flex items-center justify-between">
-                          <div>
-                            <div className="font-medium text-gray-900">{u.name}</div>
-                            <div className="text-xs text-gray-600">Min APS: {u.minAPS} • Programs: {u.matchCount}</div>
-                          </div>
-                          <Button size="sm" className="bg-book-600 hover:bg-book-700" onClick={() => navigate(`/university/${u.id}?fromAPS=true&aps=${manualAPS}`)}>
-                            View
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                  <Alert className="border-yellow-200 bg-yellow-50">
-                    <Info className="h-4 w-4 text-yellow-600" />
-                    <AlertDescription className="text-yellow-800 text-sm">
-                      Subject-specific requirements may apply. We assume required subjects are met when only a total APS is entered. Verify requirements on the university page before applying.
-                    </AlertDescription>
-                  </Alert>
-                </div>
-              )}
 
               {/* 💾 Storage Status Indicator */}
               {(hasProfile || enhancedProfile || subjects.length > 0) && (
@@ -975,13 +956,27 @@ const EnhancedAPSCalculator: React.FC = () => {
 
           {/* University Scores Section */}
           <div className="xl:col-span-3 space-y-6">
-            {apsCalculation.isCalculationValid && universitySpecificScores && (
+            {manualAPS && manualAPSUniMatches.length > 0 ? (
               <UniversitySpecificAPSDisplay
-                universityScores={
-                  universitySpecificScores.universitySpecificScores
-                }
-                standardAPS={apsCalculation.totalAPS}
+                universityScores={manualAPSUniMatches.map((u) => ({
+                  universityId: u.id,
+                  universityName: u.name,
+                  score: Number(manualAPS),
+                  maxScore: 42,
+                  explanation: `Standard APS used for comparison (${manualAPS}/42). Min required for programs here starts at ${u.minAPS}.`,
+                  methodology: getUniversityScoringMethodology(u.id),
+                }))}
+                standardAPS={Number(manualAPS)}
               />
+            ) : (
+              apsCalculation.isCalculationValid && universitySpecificScores && (
+                <UniversitySpecificAPSDisplay
+                  universityScores={
+                    universitySpecificScores.universitySpecificScores
+                  }
+                  standardAPS={apsCalculation.totalAPS}
+                />
+              )
             )}
           </div>
         </div>
