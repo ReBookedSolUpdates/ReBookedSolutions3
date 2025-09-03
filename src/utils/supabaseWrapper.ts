@@ -99,19 +99,13 @@ export const supabaseQuery = async <T>(
  * Get user addresses with enhanced error handling
  */
 export const getUserAddressesWithRetry = async (userId: string) => {
-  return supabaseQuery(
-    () =>
-      supabase
-        .from("profiles")
-        .select("pickup_address, shipping_address, addresses_same")
-        .eq("id", userId)
-        .single(),
-    {
-      retries: 2,
-      timeout: 8000,
-      fallbackData: null,
-    },
-  );
+  const { getSimpleUserAddresses } = await import("@/services/simplifiedAddressService");
+  try {
+    const data = await getSimpleUserAddresses(userId);
+    return { data, error: null, userMessage: null } as const;
+  } catch (e) {
+    return { data: null, error: e, userMessage: "Failed to load addresses" } as const;
+  }
 };
 
 /**
