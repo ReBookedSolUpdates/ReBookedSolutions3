@@ -256,7 +256,7 @@ Deno.serve(async (req: Request) => {
       }
 
       // First, check if we have access to this record
-      let query = supabase.from(table).select(`id, ${encryptedColumn}, ${plaintextColumn}, address_encryption_version`)
+      let query = supabase.from(table).select(`id, ${encryptedColumn}, address_encryption_version`)
       
       if (table === 'profiles') {
         // For profiles, users can access their own data or seller pickup addresses for checkout
