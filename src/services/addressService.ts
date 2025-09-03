@@ -191,18 +191,20 @@ export const getSellerPickupAddress = async (sellerId: string) => {
       .select("id, pickup_address_encrypted")
       .eq("seller_id", sellerId)
       .limit(1)
-      .single();
+      .maybeSingle();
 
-    if (bookError || !bookData) {
-      const message = getSafeErrorMessage(bookError, 'Unknown error');
-      console.error("Error fetching book from books table:", {
-        message,
-        code: bookError?.code,
-        details: bookError?.details,
-        hint: bookError?.hint,
+    if (bookError) {
+      const message = getSafeErrorMessage(bookError, 'Unknown error fetching book');
+      console.warn("[getSellerPickupAddress] Books query warning:", message, {
+        code: (bookError as any)?.code,
+        details: (bookError as any)?.details,
+        hint: (bookError as any)?.hint,
         sellerId,
-        timestamp: new Date().toISOString()
       });
+      return null;
+    }
+
+    if (!bookData) {
       console.log("❌ No book found for seller");
       return null;
     }
