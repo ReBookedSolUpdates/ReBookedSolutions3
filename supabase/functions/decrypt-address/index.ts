@@ -237,7 +237,6 @@ Deno.serve(async (req: Request) => {
 
       // Determine the encrypted column name
       let encryptedColumn: string
-      let plaintextColumn: string
       
       switch (address_type) {
         case 'pickup':
