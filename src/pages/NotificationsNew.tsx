@@ -913,11 +913,9 @@ const NotificationsNew = () => {
         {/* Notification Categories */}
         <div className="space-y-6">
           {categories.map((category) => {
-            if (!category.enabled && category.id !== "welcome") return null;
-            if (category.id === "welcome" && !isFirstTime && !showWelcome)
-              return null;
-            // Hide categories with no notifications (except welcome)
-            if (category.id !== "welcome" && category.notifications.length === 0)
+            if (!category.enabled) return null;
+            // Hide categories with no notifications
+            if (category.notifications.length === 0)
               return null;
 
             const colorClasses = {
