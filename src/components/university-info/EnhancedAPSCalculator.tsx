@@ -182,6 +182,7 @@ const EnhancedAPSCalculator: React.FC = () => {
   const [includeAlmostQualified, setIncludeAlmostQualified] = useState(true);
   const [sortBy, setSortBy] = useState<string>("eligibility");
   const [maxAPSGap] = useState(5);
+  const [manualAPS, setManualAPS] = useState<string>("");
 
   // New state for two-section layout
   const [showProgramsSection, setShowProgramsSection] = useState(false);
@@ -263,6 +264,24 @@ const EnhancedAPSCalculator: React.FC = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [subjects, apsCalculation]);
+
+  // Hydrate subjects from saved profile
+  useEffect(() => {
+    try {
+      if (subjects.length === 0 && storedSubjects && storedSubjects.length > 0) {
+        const mapped: APSSubjectInput[] = storedSubjects.map((s) => ({
+          name: s.name,
+          marks: typeof s.marks === "number" ? s.marks : 0,
+          level: typeof s.level === "number" ? s.level : (typeof s.points === "number" ? s.points : 0),
+          points: typeof s.points === "number" ? s.points : (typeof s.level === "number" ? s.level : 0),
+          isRequired: ["English", "Mathematics", "Mathematical Literacy"].includes(s.name),
+        }));
+        setSubjects(mapped);
+      }
+    } catch (e) {
+      console.warn("Failed to hydrate APS subjects from storage", e);
+    }
+  }, [storedSubjects, subjects.length]);
 
   // Listen for global APS profile clearing event
   useEffect(() => {
@@ -711,6 +730,34 @@ const EnhancedAPSCalculator: React.FC = () => {
                   <Plus className="w-4 h-4 mr-2" />
                   Add Subject
                 </Button>
+              </div>
+
+              {/* Manual APS Entry */}
+              <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-2">
+                <h4 className="font-semibold text-gray-900">Enter APS Manually (Optional)</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                  <Input
+                    type="number"
+                    min={0}
+                    max={42}
+                    value={manualAPS}
+                    onChange={(e) => setManualAPS(e.target.value)}
+                    placeholder="e.g., 30"
+                    className="bg-white"
+                  />
+                  <div className="text-sm text-gray-600">
+                    Current calculated APS: <span className="font-semibold text-book-700">{apsCalculation.totalAPS}</span>
+                    {manualAPS && (
+                      <span className="ml-2">• Manual APS: <span className="font-semibold">{manualAPS}</span></span>
+                    )}
+                  </div>
+                </div>
+                <Alert className="border-yellow-200 bg-yellow-50">
+                  <Info className="h-4 w-4 text-yellow-600" />
+                  <AlertDescription className="text-yellow-800 text-sm">
+                    Some programs require specific subjects and minimum levels. Entering only a total APS may not guarantee eligibility. The system assumes subject-specific minimums are met based on your total APS for guidance. For example, for a BCom requiring English 4 and Mathematics 4, if your APS is 30 with Mathematics 3, we’ll assume Math 4 for matching purposes.
+                  </AlertDescription>
+                </Alert>
               </div>
 
               {/* 💾 Storage Status Indicator */}
