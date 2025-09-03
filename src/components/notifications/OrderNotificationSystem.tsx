@@ -52,7 +52,7 @@ interface NotificationStats {
 
 const OrderNotificationSystem: React.FC = () => {
   const { user } = useAuth();
-  const { notifications: globalNotifications, isLoading } = useNotifications();
+  const { notifications: globalNotifications, isLoading, refreshNotifications } = useNotifications();
   const [selectedNotification, setSelectedNotification] =
     useState<OrderNotification | null>(null);
   const [filter, setFilter] = useState<"all" | "unread" | "actions">("all");
@@ -92,7 +92,7 @@ const OrderNotificationSystem: React.FC = () => {
   const handleMarkAsRead = async (notificationId: string) => {
     try {
       await markNotificationAsRead(notificationId);
-      // Global notification state will be updated automatically via realtime
+      await refreshNotifications();
     } catch (error) {
       console.error("Error marking notification as read:", error);
       toast.error("Failed to mark notification as read");
@@ -116,7 +116,7 @@ const OrderNotificationSystem: React.FC = () => {
 
       if (error) throw error;
 
-      // Global notification state will be updated automatically via realtime
+      await refreshNotifications();
 
       toast.success(`Marked ${unreadIds.length} notifications as read`);
     } catch (error) {
@@ -185,7 +185,7 @@ const OrderNotificationSystem: React.FC = () => {
     return {
       total: notifications.length,
       unread: notifications.filter((n) => !n.read).length,
-      actionRequired: notifications.filter((n) => n.action_required).length,
+      actionRequired: notifications.filter((n) => n.action_required && !n.read).length,
       orderUpdates: notifications.filter(
         (n) =>
           getNotificationCategory(n) === "order" ||
