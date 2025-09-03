@@ -66,15 +66,7 @@ export const getSellerCheckoutData = async (sellerId: string) => {
       console.warn("Failed to check encrypted address:", error);
     }
 
-    // Fallback to plaintext only if no encrypted address
-    if (!hasAddress && profile.pickup_address) {
-      hasAddress = !!(profile.pickup_address.street &&
-        profile.pickup_address.city &&
-        profile.pickup_address.province &&
-        profile.pickup_address.postal_code);
-      sellerAddress = profile.pickup_address;
-      console.log("⚠️ Using plaintext address fallback for seller validation");
-    }
+    // No plaintext fallback allowed
 
     const hasSubaccount = profile.subaccount_code;
 
@@ -131,20 +123,7 @@ export const getBuyerCheckoutData = async (userId: string) => {
       console.warn("Failed to check encrypted buyer address:", error);
     }
 
-    // Fallback to plaintext only if no encrypted address
-    if (!address && profile.shipping_address) {
-      const addr = profile.shipping_address as any;
-      if (addr.streetAddress && addr.city && addr.province && addr.postalCode) {
-        address = {
-          street: addr.streetAddress,
-          city: addr.city,
-          province: addr.province,
-          postal_code: addr.postalCode,
-          country: "South Africa",
-        };
-        console.log("⚠️ Using plaintext address fallback for buyer");
-      }
-    }
+    // No plaintext fallback allowed
 
     return {
       valid: true,

@@ -112,8 +112,7 @@ export const getBooks = async (filters?: BookFilters): Promise<Book[]> => {
           .select(`
             *,
             seller_profile:profiles!seller_id(
-              id,
-              pickup_address
+              id
             )
           `)
           .eq("sold", false)  // Only show available books

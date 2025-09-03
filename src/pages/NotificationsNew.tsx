@@ -353,28 +353,11 @@ const NotificationsNew = () => {
     checkConnection();
   }, []);
 
-  // Check if this is a first-time user
+  // Disable welcome notification entirely
   useEffect(() => {
-    if (user && profile) {
-      const hasSeenWelcome = localStorage.getItem(`welcome_seen_${user.id}`);
-      const hasDismissedWelcome = localStorage.getItem(
-        `welcome_dismissed_${user.id}`,
-      );
-
-      // Only show welcome if user hasn't seen it AND hasn't dismissed it
-      if (!hasSeenWelcome && !hasDismissedWelcome) {
-        setIsFirstTime(true);
-        setShowWelcome(true);
-      } else {
-        // If user has already seen/dismissed welcome, ensure states are correct
-        setIsFirstTime(false);
-        setShowWelcome(false);
-        // Remove welcome category from state if it exists
-        setCategories((prev) =>
-          prev.filter((category) => category.id !== "welcome"),
-        );
-      }
-    }
+    setIsFirstTime(false);
+    setShowWelcome(false);
+    setCategories((prev) => prev.filter((c) => c.id !== "welcome" && c.id !== "welcome-disabled"));
   }, [user, profile]);
 
   // Update categories when notifications change
@@ -878,56 +861,14 @@ const NotificationsNew = () => {
           </Card>
         )}
 
-        {/* Welcome Message for First-Time Users */}
-        {showWelcome && (
-          <Alert className="mb-6 sm:mb-8 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
-            <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 flex-shrink-0" />
-            <AlertDescription>
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-purple-900 mb-2 text-sm sm:text-base">
-                    🎉 Welcome to ReBooked Solutions!
-                  </h3>
-                  <p className="text-purple-800 mb-3 text-sm sm:text-base leading-relaxed">
-                    You've joined South Africa's leading textbook marketplace!
-                    We've prepared some helpful notifications to get you
-                    started.
-                  </p>
-                  <Button
-                    onClick={markWelcomeAsSeen}
-                    className="bg-purple-600 hover:bg-purple-700 text-white w-full sm:w-auto"
-                    size="sm"
-                  >
-                    <Check className="h-4 w-4 mr-2" />
-                    <span className="text-sm">Got it, let's explore!</span>
-                  </Button>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={markWelcomeAsSeen}
-                  className="text-purple-600 hover:bg-purple-100 self-end sm:self-start min-h-[44px] min-w-[44px]"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
-
-
-
         {/* Check if we have any notifications to show */}
         {(() => {
           const hasVisibleCategories = categories.some(category => {
-            if (!category.enabled && category.id !== "welcome") return false;
-            if (category.id === "welcome" && !isFirstTime && !showWelcome) return false;
+            if (!category.enabled) return false;
             return category.notifications.length > 0;
           });
 
-          const shouldShowWelcome = showWelcome && isFirstTime;
-
-          if (!hasVisibleCategories && !shouldShowWelcome) {
+          if (!hasVisibleCategories) {
             return (
               <Card className="text-center py-16">
                 <CardContent>
@@ -972,11 +913,9 @@ const NotificationsNew = () => {
         {/* Notification Categories */}
         <div className="space-y-6">
           {categories.map((category) => {
-            if (!category.enabled && category.id !== "welcome") return null;
-            if (category.id === "welcome" && !isFirstTime && !showWelcome)
-              return null;
-            // Hide categories with no notifications (except welcome)
-            if (category.id !== "welcome" && category.notifications.length === 0)
+            if (!category.enabled) return null;
+            // Hide categories with no notifications
+            if (category.notifications.length === 0)
               return null;
 
             const colorClasses = {

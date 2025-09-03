@@ -3,6 +3,7 @@ export interface Address {
   city: string;
   province: string;
   postalCode: string;
+  country?: string;
   streetAddress?: string; // For backend compatibility
   instructions?: string; // For additional details like unit numbers, gate codes, etc.
   additional_info?: string; // For additional information like special instructions, security details, etc.

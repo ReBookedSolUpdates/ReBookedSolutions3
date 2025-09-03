@@ -62,15 +62,14 @@ export const emergencyBookTest = async () => {
     console.log("👥 Checking seller profiles...");
     const { data: profileCheck, error: profileError } = await supabase
       .from("profiles")
-      .select("id, pickup_address")
+      .select("id")
       .limit(3);
 
     if (profileError) {
       console.error("❌ PROFILE CHECK ERROR:", profileError);
     } else {
       console.log("👥 SAMPLE PROFILES:", profileCheck?.map(p => ({
-        id: p.id,
-        hasPickupAddress: !!p.pickup_address
+        id: p.id
       })));
     }
 
@@ -81,8 +80,7 @@ export const emergencyBookTest = async () => {
       .select(`
         *,
         seller_profile:profiles!seller_id(
-          id,
-          pickup_address
+          id
         )
       `)
       .eq("sold", false)
@@ -98,8 +96,7 @@ export const emergencyBookTest = async () => {
           id: b.id,
           title: b.title,
           seller_id: b.seller_id,
-          hasSellerProfile: !!b.seller_profile,
-          hasPickupAddress: !!b.seller_profile?.pickup_address
+          hasSellerProfile: !!b.seller_profile
         })));
       }
     }

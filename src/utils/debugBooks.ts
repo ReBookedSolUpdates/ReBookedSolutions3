@@ -37,8 +37,7 @@ export const debugBookFetching = async () => {
         seller_id,
         created_at,
         seller_profile:profiles!seller_id(
-          id,
-          pickup_address
+          id
         )
       `)
       .order("created_at", { ascending: false });
@@ -66,15 +65,8 @@ export const debugBookFetching = async () => {
 
     // Check seller profiles
     const booksWithoutSeller = availableBooks.filter(book => !book.seller_profile);
-    const booksWithoutPickupAddress = availableBooks.filter(book => 
-      book.seller_profile && !book.seller_profile.pickup_address
-    );
-    const booksWithInvalidPickupAddress = availableBooks.filter(book => {
-      if (!book.seller_profile?.pickup_address) return false;
-      const addr = book.seller_profile.pickup_address;
-      const streetField = addr.streetAddress || addr.street;
-      return !(streetField && addr.city && addr.province && addr.postalCode);
-    });
+    const booksWithoutPickupAddress: any[] = [];
+    const booksWithInvalidPickupAddress: any[] = [];
 
     console.log("🚫 Filtering analysis:");
     console.log("  - Books without seller profile:", booksWithoutSeller.length);
@@ -102,18 +94,12 @@ export const debugBookFetching = async () => {
       console.log("📝 Books with invalid pickup address:", booksWithInvalidPickupAddress.map(b => ({
         id: b.id,
         title: b.title,
-        seller_id: b.seller_id,
-        pickup_address: b.seller_profile?.pickup_address
+        seller_id: b.seller_id
       })));
     }
 
     // Calculate final valid books count
-    const validBooks = availableBooks.filter(book => {
-      if (!book.seller_profile?.pickup_address) return false;
-      const addr = book.seller_profile.pickup_address;
-      const streetField = addr.streetAddress || addr.street;
-      return !!(streetField && addr.city && addr.province && addr.postalCode);
-    });
+    const validBooks = availableBooks;
 
     console.log("✅ Final valid books count:", validBooks.length);
 
@@ -138,7 +124,8 @@ export const debugBookFetching = async () => {
 
 // Helper function to fix books by setting up missing pickup addresses
 export const fixBooksWithMissingAddresses = async () => {
-  console.log("🔧 Attempting to fix books with missing addresses...");
+  console.log("🔧 Address fixing disabled - plaintext storage prohibited");
+  return 0;
 
   try {
     // Get books without proper pickup addresses
@@ -150,8 +137,7 @@ export const fixBooksWithMissingAddresses = async () => {
         seller_id,
         province,
         seller_profile:profiles!seller_id(
-          id,
-          pickup_address
+          id
         )
       `)
       .eq("sold", false);

@@ -78,12 +78,15 @@ const Profile = () => {
     if (!user?.id) return;
 
     try {
+      setIsLoadingAddress(true);
       const data = await getUserAddresses(user.id);
       setAddressData(data);
     } catch (error) {
       const formattedError = handleAddressError(error, "load");
       console.error(formattedError.developerMessage, formattedError.originalError);
       toast.error(formattedError.userMessage);
+    } finally {
+      setIsLoadingAddress(false);
     }
   }, [user?.id]);
 
@@ -93,6 +96,13 @@ const Profile = () => {
       loadUserAddresses();
     }
   }, [user?.id, loadActiveListings, loadUserAddresses]);
+
+  // Ensure addresses refresh when navigating back to the Addresses tab
+  useEffect(() => {
+    if (activeTab === 'addresses' && user?.id) {
+      loadUserAddresses();
+    }
+  }, [activeTab, user?.id, loadUserAddresses]);
 
   const handleDeleteBook = async (bookId: string, bookTitle: string) => {
     if (!bookId) {
@@ -628,7 +638,6 @@ const Profile = () => {
                   addressData={addressData}
                   onSaveAddresses={handleSaveAddresses}
                   isLoading={isLoadingAddress}
-                  userId={user.id}
                 />
               </CardContent>
             </Card>

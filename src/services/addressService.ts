@@ -5,14 +5,16 @@ import { safeLogError as safelog, formatSupabaseError } from "@/utils/safeErrorL
 import { getSafeErrorMessage } from "@/utils/errorMessageUtils";
 
 interface Address {
-  complex: string;
-  unitNumber: string;
-  streetAddress: string;
-  suburb: string;
-  city: string;
-  province: string;
-  postalCode: string;
-  [key: string]: string | number | boolean | null;
+  complex?: string;
+  unitNumber?: string;
+  streetAddress?: string;
+  suburb?: string;
+  street?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  country?: string;
+  [key: string]: string | number | boolean | null | undefined;
 }
 
 // Encrypt an address using the encrypt-address edge function
@@ -38,23 +40,24 @@ const encryptAddress = async (address: Address, options?: { save?: { table: stri
 };
 
 // Decrypt an address using the improved decrypt-address edge function
-const decryptAddress = async (params: { table: string; target_id: string; address_type?: string }) => {
+const decryptAddress = async (params: { table: 'profiles' | 'orders' | 'books'; target_id: string; address_type?: 'pickup' | 'shipping' | 'delivery' }) => {
   try {
-    // Use the legacy format for backward compatibility
+    // Use the new fetch format to target exact encrypted columns
     const { data, error } = await supabase.functions.invoke('decrypt-address', {
       body: {
-        table: params.table,
-        target_id: params.target_id,
-        address_type: params.address_type || 'pickup'
-      }
+        fetch: {
+          table: params.table,
+          target_id: params.target_id,
+          address_type: params.address_type || 'pickup',
+        },
+      },
     });
 
     if (error) {
-      console.warn("Decryption not available or failed:", error.message);
-      return null; // Return null instead of throwing error for graceful fallback
+      console.warn("Decryption not available or failed:", (error as any).message);
+      return null;
     }
 
-    // The new function returns { success: boolean, data?: any, error?: any }
     if (data?.success) {
       return data.data || null;
     } else {
@@ -62,8 +65,8 @@ const decryptAddress = async (params: { table: string; target_id: string; addres
       return null;
     }
   } catch (error) {
-    console.warn("Decryption service unavailable, falling back to plaintext:", error instanceof Error ? error.message : String(error));
-    return null; // Return null for graceful fallback
+    console.warn("Decryption service unavailable:", error instanceof Error ? error.message : String(error));
+    return null;
   }
 };
 
@@ -189,18 +192,20 @@ export const getSellerPickupAddress = async (sellerId: string) => {
       .select("id, pickup_address_encrypted")
       .eq("seller_id", sellerId)
       .limit(1)
-      .single();
+      .maybeSingle();
 
-    if (bookError || !bookData) {
-      const message = getSafeErrorMessage(bookError, 'Unknown error');
-      console.error("Error fetching book from books table:", {
-        message,
-        code: bookError?.code,
-        details: bookError?.details,
-        hint: bookError?.hint,
+    if (bookError) {
+      const message = getSafeErrorMessage(bookError, 'Unknown error fetching book');
+      console.warn("[getSellerPickupAddress] Books query warning:", message, {
+        code: (bookError as any)?.code,
+        details: (bookError as any)?.details,
+        hint: (bookError as any)?.hint,
         sellerId,
-        timestamp: new Date().toISOString()
       });
+      return null;
+    }
+
+    if (!bookData) {
       console.log("❌ No book found for seller");
       return null;
     }
@@ -254,13 +259,32 @@ export const getUserAddresses = async (userId: string) => {
   try {
     console.log("Fetching addresses for user:", userId);
 
-    // Try to get addresses using the simplified address service first
-    const simplifiedAddressService = await import("./simplifiedAddressService");
-    let pickupAddress = null;
-    let shippingAddress = null;
+    const mapToAddress = (raw: any) => {
+      if (!raw) return null;
+      return {
+        // normalize common variants
+        street: raw.street ?? raw.streetAddress ?? raw.line1 ?? "",
+        city: raw.city ?? "",
+        province: raw.province ?? raw.state ?? "",
+        postalCode: raw.postalCode ?? raw.postal_code ?? raw.zip ?? "",
+        country: raw.country ?? "South Africa",
+        streetAddress: raw.streetAddress ?? raw.street ?? undefined,
+        instructions: raw.instructions ?? raw.additional_info ?? undefined,
+        additional_info: raw.additional_info ?? undefined,
+      } as any;
+    };
+
+    // Decrypt pickup address directly via edge function
+    let pickupAddress: any = null;
+    let shippingAddress: any = null;
 
     try {
-      pickupAddress = await simplifiedAddressService.getSellerDeliveryAddress(userId);
+      const pickup = await decryptAddress({
+        table: 'profiles',
+        target_id: userId,
+        address_type: 'pickup'
+      });
+      pickupAddress = mapToAddress(pickup);
       console.log("📍 Pickup address result:", pickupAddress);
     } catch (error) {
       console.warn("Failed to get pickup address:", error);
@@ -268,50 +292,18 @@ export const getUserAddresses = async (userId: string) => {
 
     // For shipping address, try the decrypt function directly
     try {
-      shippingAddress = await decryptAddress({
+      const shipping = await decryptAddress({
         table: 'profiles',
         target_id: userId,
         address_type: 'shipping'
       });
+      shippingAddress = mapToAddress(shipping);
       console.log("📍 Shipping address result:", shippingAddress);
     } catch (error) {
       console.warn("Failed to get shipping address:", error);
     }
 
-    // If no addresses found, try plaintext fallback for user's own data
-    if (!pickupAddress && !shippingAddress) {
-      console.log("🔍 No encrypted addresses found, checking plaintext fallback...");
-
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("pickup_address, shipping_address, addresses_same")
-        .eq("id", userId)
-        .single();
-
-      if (!profileError && profileData) {
-        if (profileData.pickup_address) {
-          try {
-            pickupAddress = typeof profileData.pickup_address === 'string'
-              ? JSON.parse(profileData.pickup_address)
-              : profileData.pickup_address;
-            console.log("✅ Found plaintext pickup address");
-          } catch (e) {
-            console.warn("Failed to parse pickup address:", e);
-          }
-        }
-
-        if (profileData.shipping_address) {
-          try {
-            shippingAddress = typeof profileData.shipping_address === 'string'
-              ? JSON.parse(profileData.shipping_address)
-              : profileData.shipping_address;
-            console.log("✅ Found plaintext shipping address");
-          } catch (e) {
-            console.warn("Failed to parse shipping address:", e);
-          }
-        }
-      }
-    }
+    // No plaintext fallback allowed
 
     if (pickupAddress || shippingAddress) {
       console.log("✅ Successfully fetched user addresses");
@@ -343,10 +335,9 @@ export const getUserAddresses = async (userId: string) => {
       userId,
     });
 
-    // Handle network errors specifically
     if (
       error instanceof TypeError &&
-      error.message.includes("Failed to fetch")
+      (error as any).message?.includes("Failed to fetch")
     ) {
       throw new Error(
         "Network connection error. Please check your internet connection and try again.",

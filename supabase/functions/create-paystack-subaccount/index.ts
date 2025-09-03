@@ -322,7 +322,6 @@ serve(async (req) => {
       user_id: user.id,
       business_name,
       email,
-      bank_name,
       subaccount_code: subaccount_code,
       has_encrypted_account_number: !!encryptedAccountNumber,
       has_encrypted_bank_code: !!encryptedBankCode,
@@ -337,7 +336,6 @@ serve(async (req) => {
         user_id: user.id, // Make sure user_id is explicitly set
         business_name,
         email,
-        bank_name,
         // Store encrypted values directly in both legacy/plain columns and encrypted columns
         bank_code: encryptedBankCode,
         account_number: encryptedAccountNumber,

@@ -8,7 +8,6 @@ interface SimpleAddress {
   postalCode: string;
 }
 
-// Detect if we're on mobile for better error handling
 const isMobileDevice = () => {
   return typeof window !== 'undefined' && (
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
@@ -16,7 +15,6 @@ const isMobileDevice = () => {
   );
 };
 
-// Retry logic for mobile network issues
 const retryWithBackoff = async <T>(
   fn: () => Promise<T>,
   maxAttempts: number = 3,
@@ -31,7 +29,6 @@ const retryWithBackoff = async <T>(
       lastError = error;
       const errorMsg = error instanceof Error ? error.message : String(error);
 
-      // Don't retry certain types of errors
       if (errorMsg.includes('404') || errorMsg.includes('Not Found') ||
           errorMsg.includes('401') || errorMsg.includes('403')) {
         throw error;
@@ -41,7 +38,6 @@ const retryWithBackoff = async <T>(
         throw error;
       }
 
-      // Exponential backoff with jitter for mobile networks
       const delay = baseDelay * Math.pow(2, attempt - 1) + Math.random() * 500;
       console.log(`🔄 Retry attempt ${attempt + 1}/${maxAttempts} after ${delay}ms delay`);
       await new Promise(resolve => setTimeout(resolve, delay));
@@ -51,13 +47,11 @@ const retryWithBackoff = async <T>(
   throw lastError;
 };
 
-// Decrypt an address using the decrypt-address edge function - fetch encrypted data first, then decrypt
 const decryptAddress = async (params: { table: string; target_id: string; address_type?: string }) => {
   const isMobile = isMobileDevice();
   console.log(`🔐 Fetching encrypted data for decryption (${isMobile ? 'MOBILE' : 'DESKTOP'}) with params:`, params);
 
   try {
-    // Step 1: Fetch the encrypted data from the database first
     const { table, target_id, address_type } = params;
     let encryptedColumn: string;
 
@@ -96,7 +90,6 @@ const decryptAddress = async (params: { table: string; target_id: string; addres
     const encryptedData = record[encryptedColumn];
     console.log("✅ Found encrypted data, preparing to decrypt...");
 
-    // Step 2: Parse the encrypted bundle
     let bundle;
     try {
       bundle = typeof encryptedData === 'string' ? JSON.parse(encryptedData) : encryptedData;
@@ -110,7 +103,6 @@ const decryptAddress = async (params: { table: string; target_id: string; addres
       return null;
     }
 
-    // Step 3: Call edge function with the actual encrypted data
     const makeRequest = async () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), isMobile ? 15000 : 10000);
@@ -140,7 +132,7 @@ const decryptAddress = async (params: { table: string; target_id: string; addres
         });
 
         clearTimeout(timeoutId);
-        return { data, error };
+        return { data, error } as const;
       } catch (error) {
         clearTimeout(timeoutId);
         throw error;
@@ -151,19 +143,13 @@ const decryptAddress = async (params: { table: string; target_id: string; addres
 
     console.log("🔐 Edge function response:", {
       data: data ? { success: data.success, hasData: !!data.data } : null,
-      error: error ? { message: error.message, status: error.status } : null
+      error: error ? { message: (error as any).message, status: (error as any).status } : null
     });
 
     if (error) {
-      console.log("🔐 Error details:", {
-        message: error.message,
-        status: error.status,
-        statusText: error.statusText
-      });
       return null;
     }
 
-    // Handle response
     if (data?.success && data?.data) {
       console.log("✅ Decryption successful");
       return data.data;
@@ -171,7 +157,6 @@ const decryptAddress = async (params: { table: string; target_id: string; addres
       console.warn("❌ Decryption failed:", data?.error?.message || "Unknown error");
       return null;
     }
-
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
     console.warn(`🔐 Decryption service error on ${isMobile ? 'mobile' : 'desktop'}:`, errorMsg);
@@ -179,7 +164,6 @@ const decryptAddress = async (params: { table: string; target_id: string; addres
   }
 };
 
-// Encrypt an address using the encrypt-address edge function
 const encryptAddress = async (address: SimpleAddress, options?: { save?: { table: string; target_id: string; address_type: string } }) => {
   try {
     const { data, error } = await supabase.functions.invoke('encrypt-address', {
@@ -190,11 +174,11 @@ const encryptAddress = async (address: SimpleAddress, options?: { save?: { table
     });
 
     if (error) {
-      console.warn("Encryption not available:", error.message);
+      console.warn("Encryption not available:", (error as any).message);
       return null;
     }
 
-    return data;
+    return data as any;
   } catch (error) {
     console.warn("Encryption service unavailable:", error instanceof Error ? error.message : String(error));
     return null;
@@ -207,21 +191,16 @@ export const getSellerDeliveryAddress = async (
   try {
     console.log("🔍 getSellerDeliveryAddress called for seller:", sellerId);
 
-    // Validate sellerId
     if (!sellerId || typeof sellerId !== 'string' || sellerId.length < 10) {
       console.error("❌ Invalid seller ID provided:", sellerId);
       return null;
     }
 
-    // Get encrypted address only
-    console.log("Step 1: Attempting to decrypt address for specific seller:", sellerId);
     const decryptedAddress = await decryptAddress({
       table: 'profiles',
       target_id: sellerId,
       address_type: 'pickup'
     });
-
-    console.log("🔐 Decryption result:", decryptedAddress);
 
     if (decryptedAddress) {
       const address = {
@@ -231,164 +210,31 @@ export const getSellerDeliveryAddress = async (
         postal_code: decryptedAddress.postalCode || decryptedAddress.postal_code || "",
         country: "South Africa",
       };
-      console.log("✅ Returning encrypted address:", address);
       return address;
     }
 
-    console.log("❌ No encrypted address found for seller, trying plaintext fallback...");
+    console.log("❌ No encrypted address found for seller, attempting alternative encrypted source (books)...");
 
-    // Fallback to plaintext address if encryption is unavailable
-    // First check if there's any encrypted data we can access directly
-    console.log("🔍 Querying profiles table for seller:", sellerId);
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('pickup_address_encrypted, pickup_address, id, name')
-      .eq('id', sellerId)
-      .maybeSingle();
-
-    if (profileError) {
-      console.log("❌ Error fetching profile:", profileError);
-      return null;
-    }
-
-    if (!profile) {
-      console.log("❌ No profile found for seller:", sellerId);
-      return null;
-    }
-
-    console.log("📊 Profile found:", {
-      id: profile.id,
-      name: profile.name,
-      has_encrypted: !!profile.pickup_address_encrypted,
-      has_plaintext: !!profile.pickup_address
-    });
-
-    // Mobile-specific handling for encrypted data decryption failures
-    if (profile.pickup_address_encrypted) {
-      const isMobile = isMobileDevice();
-
-      if (isMobile) {
-        console.log("📱 Mobile device detected with encrypted address that failed decryption");
-        console.log("📱 Applying mobile-specific fallback policy...");
-
-        // On mobile, we're more permissive due to network instability
-        // Try one more time with a different approach
-        try {
-          console.log("📱 Attempting mobile-specific decryption retry...");
-          const mobileRetryResult = await retryWithBackoff(async () => {
-            return await decryptAddress({
-              table: 'profiles',
-              target_id: sellerId,
-              address_type: 'pickup'
-            });
-          }, 2, 2000);
-
-          if (mobileRetryResult) {
-            console.log("📱 Mobile retry successful!");
-            const address = {
-              street: mobileRetryResult.streetAddress || mobileRetryResult.street || "",
-              city: mobileRetryResult.city || "",
-              province: mobileRetryResult.province || "",
-              postal_code: mobileRetryResult.postalCode || mobileRetryResult.postal_code || "",
-              country: "South Africa",
-            };
-            return address;
-          }
-        } catch (retryError) {
-          console.log("📱 Mobile retry also failed:", retryError);
-        }
-
-        // If we still can't decrypt on mobile and there's a plaintext fallback available,
-        // use it with a warning (mobile networks are unreliable)
-        if (profile.pickup_address) {
-          console.warn("📱 MOBILE FALLBACK: Using plaintext address due to mobile network issues");
-          try {
-            const address = typeof profile.pickup_address === 'string'
-              ? JSON.parse(profile.pickup_address)
-              : profile.pickup_address;
-
-            return {
-              street: address.street || address.line1 || "",
-              city: address.city || "",
-              province: address.state || address.province || "",
-              postal_code: address.postalCode || address.postal_code || "",
-              country: "South Africa",
-            };
-          } catch (parseError) {
-            console.error("📱 Mobile fallback address parsing failed:", parseError);
-          }
-        }
-      }
-
-      // Check if decryption failed due to authorization (400 error)
-      // This happens when buyers try to access seller addresses
-      // In this case, use the alternative address service as fallback for checkout
-      console.log("🔐 Encrypted address exists but decryption failed - checking if authorization issue...");
-
-      // Try to use the alternative address service for checkout
-      try {
-        console.log("🔄 Attempting fallback with alternative address service...");
-        const { getSellerPickupAddress } = await import("@/services/addressService");
-        const fallbackAddress = await getSellerPickupAddress(sellerId);
-
-        if (fallbackAddress) {
-          console.log("✅ Alternative address service provided fallback address:", fallbackAddress);
-
-          // Ensure proper field mapping for checkout validation
-          const mappedAddress = {
-            street: fallbackAddress.streetAddress || fallbackAddress.street || fallbackAddress.line1 || "",
-            city: fallbackAddress.city || "",
-            province: fallbackAddress.province || fallbackAddress.state || "",
-            postal_code: fallbackAddress.postalCode || fallbackAddress.postal_code || fallbackAddress.zip || "",
-            country: "South Africa",
-          };
-
-          console.log("🔄 Mapped address format for checkout:", mappedAddress);
-
-          // Validate that we have all required fields
-          if (mappedAddress.street && mappedAddress.city && mappedAddress.province && mappedAddress.postal_code) {
-            console.log("✅ Address validation passed - returning mapped address");
-            return mappedAddress;
-          } else {
-            console.warn("⚠️ Mapped address missing required fields:", {
-              street: !!mappedAddress.street,
-              city: !!mappedAddress.city,
-              province: !!mappedAddress.province,
-              postal_code: !!mappedAddress.postal_code
-            });
-          }
-        }
-      } catch (fallbackError) {
-        console.error("❌ Alternative address service also failed:", fallbackError);
-      }
-
-      console.log("🔐 All decryption methods failed - unable to retrieve seller address");
-      return null;
-    }
-
-    // Only use plaintext if no encrypted version exists
-    if (profile.pickup_address) {
-      try {
-        const address = typeof profile.pickup_address === 'string'
-          ? JSON.parse(profile.pickup_address)
-          : profile.pickup_address;
-
-        console.log("✅ Using plaintext fallback address for seller:", sellerId);
-        console.log("📍 Plaintext address data:", address);
-        return {
-          street: address.street || address.line1 || "",
-          city: address.city || "",
-          state: address.state || address.province || "",
-          postal_code: address.postalCode || address.postal_code || "",
+    try {
+      const { getSellerPickupAddress } = await import("@/services/addressService");
+      const fallbackAddress = await getSellerPickupAddress(sellerId);
+      if (fallbackAddress) {
+        const mappedAddress = {
+          street: fallbackAddress.streetAddress || fallbackAddress.street || fallbackAddress.line1 || "",
+          city: fallbackAddress.city || "",
+          province: fallbackAddress.province || fallbackAddress.state || "",
+          postal_code: fallbackAddress.postalCode || fallbackAddress.postal_code || fallbackAddress.zip || "",
           country: "South Africa",
         };
-      } catch (error) {
-        console.error("❌ Error parsing plaintext address:", error);
-        return null;
+        if (mappedAddress.street && mappedAddress.city && mappedAddress.province && mappedAddress.postal_code) {
+          return mappedAddress;
+        }
       }
+    } catch (fallbackError) {
+      console.error("❌ Alternative encrypted address source failed:", fallbackError);
     }
 
-    console.log("❌ No address data found");
+    console.log("❌ No address data found for seller");
     return null;
   } catch (error) {
     console.error("❌ Error getting seller address:", error);
@@ -398,18 +244,9 @@ export const getSellerDeliveryAddress = async (
 
 export const getSimpleUserAddresses = async (userId: string) => {
   try {
-    // Get encrypted addresses only
     const [decryptedPickup, decryptedShipping] = await Promise.all([
-      decryptAddress({
-        table: 'profiles',
-        target_id: userId,
-        address_type: 'pickup'
-      }),
-      decryptAddress({
-        table: 'profiles',
-        target_id: userId,
-        address_type: 'shipping'
-      })
+      decryptAddress({ table: 'profiles', target_id: userId, address_type: 'pickup' }),
+      decryptAddress({ table: 'profiles', target_id: userId, address_type: 'shipping' })
     ]);
 
     if (decryptedPickup || decryptedShipping) {
@@ -419,36 +256,7 @@ export const getSimpleUserAddresses = async (userId: string) => {
       };
     }
 
-    console.log("❌ No encrypted addresses found for user, checking profile...");
-
-    // Check if user has any encrypted address data
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('pickup_address_encrypted, shipping_address_encrypted, pickup_address, shipping_address')
-      .eq('id', userId)
-      .maybeSingle();
-
-    if (profileError || !profile) {
-      console.log("❌ No profile found or error:", profileError);
-      return null;
-    }
-
-    // If encrypted data exists but decryption failed, don't fallback to plaintext for security
-    if (profile.pickup_address_encrypted || profile.shipping_address_encrypted) {
-      console.log("��� Encrypted addresses exist but decryption failed - not falling back to plaintext for security");
-      return null;
-    }
-
-    // Only use plaintext if no encrypted versions exist
-    if (profile.pickup_address || profile.shipping_address) {
-      console.log("�� Using plaintext addresses (no encrypted versions found)");
-      return {
-        pickup_address: profile.pickup_address,
-        shipping_address: profile.shipping_address || profile.pickup_address,
-      };
-    }
-
-    console.log("❌ No address data found for user");
+    console.log("❌ No encrypted addresses found for user");
     return null;
   } catch (error) {
     console.error("Error getting addresses:", error);
@@ -466,18 +274,12 @@ export const saveSimpleUserAddresses = async (
     let pickupEncrypted = false;
     let shippingEncrypted = false;
 
-    // Encrypt and save pickup address (required)
     if (pickupAddress) {
       try {
         const result = await encryptAddress(pickupAddress, {
-          save: {
-            table: 'profiles',
-            target_id: userId,
-            address_type: 'pickup'
-          }
+          save: { table: 'profiles', target_id: userId, address_type: 'pickup' }
         });
-        if (result && result.success) {
-          console.log("✅ Pickup address encrypted successfully");
+        if (result && (result as any).success) {
           pickupEncrypted = true;
         }
       } catch (encryptError) {
@@ -485,18 +287,12 @@ export const saveSimpleUserAddresses = async (
       }
     }
 
-    // Encrypt and save shipping address (if different, required)
     if (shippingAddress && !addressesAreSame) {
       try {
         const result = await encryptAddress(shippingAddress, {
-          save: {
-            table: 'profiles',
-            target_id: userId,
-            address_type: 'shipping'
-          }
+          save: { table: 'profiles', target_id: userId, address_type: 'shipping' }
         });
-        if (result && result.success) {
-          console.log("✅ Shipping address encrypted successfully");
+        if (result && (result as any).success) {
           shippingEncrypted = true;
         }
       } catch (encryptError) {
@@ -506,7 +302,6 @@ export const saveSimpleUserAddresses = async (
       shippingEncrypted = pickupEncrypted;
     }
 
-    // Check if encryption was successful
     if (pickupAddress && !pickupEncrypted) {
       throw new Error("Failed to encrypt pickup address. Address not saved for security reasons.");
     }
@@ -514,15 +309,12 @@ export const saveSimpleUserAddresses = async (
       throw new Error("Failed to encrypt shipping address. Address not saved for security reasons.");
     }
 
-    // Update only metadata
-    const updateData: any = {
-      addresses_same: addressesAreSame,
-      encryption_status: 'encrypted'
-    };
-
     const { error } = await supabase
       .from("profiles")
-      .update(updateData)
+      .update({
+        addresses_same: addressesAreSame,
+        encryption_status: 'encrypted'
+      })
       .eq("id", userId);
 
     if (error) {
@@ -537,22 +329,16 @@ export const saveSimpleUserAddresses = async (
   }
 };
 
-// Function to save encrypted shipping address to orders table during checkout
 export const saveOrderShippingAddress = async (
   orderId: string,
   shippingAddress: SimpleAddress
 ) => {
   try {
-    // Encrypt and save shipping address to orders table only
     const result = await encryptAddress(shippingAddress, {
-      save: {
-        table: 'orders',
-        target_id: orderId,
-        address_type: 'shipping'
-      }
+      save: { table: 'orders', target_id: orderId, address_type: 'shipping' }
     });
 
-    if (!result || !result.success) {
+    if (!result || !(result as any).success) {
       throw new Error("Failed to encrypt shipping address for order");
     }
 
