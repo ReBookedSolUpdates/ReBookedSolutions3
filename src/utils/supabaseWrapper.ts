@@ -112,19 +112,13 @@ export const getUserAddressesWithRetry = async (userId: string) => {
  * Get seller pickup address with enhanced error handling
  */
 export const getSellerPickupAddressWithRetry = async (sellerId: string) => {
-  return supabaseQuery(
-    () =>
-      supabase
-        .from("profiles")
-        .select("pickup_address")
-        .eq("id", sellerId)
-        .single(),
-    {
-      retries: 2,
-      timeout: 8000,
-      fallbackData: null,
-    },
-  );
+  const { getSellerDeliveryAddress } = await import("@/services/simplifiedAddressService");
+  try {
+    const data = await getSellerDeliveryAddress(sellerId);
+    return { data, error: null, userMessage: null } as const;
+  } catch (e) {
+    return { data: null, error: e, userMessage: "Failed to load seller address" } as const;
+  }
 };
 
 /**
