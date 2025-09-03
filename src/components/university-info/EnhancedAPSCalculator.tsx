@@ -707,10 +707,6 @@ const EnhancedAPSCalculator: React.FC = () => {
         </p>
         {(hasValidProfile || hasProfile || subjects.length > 0) && (
           <div className="flex flex-col items-center gap-2 pt-2">
-            <div className="text-sm text-green-600 flex items-center gap-2">
-              <CheckCircle className="w-4 h-4" />
-              💾 Your APS profile is saved in localStorage (persistent storage)
-            </div>
             <Button
               size="sm"
               variant="outline"
