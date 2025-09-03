@@ -290,6 +290,32 @@ const EnhancedAPSCalculator: React.FC = () => {
     }
   }, [storedSubjects, subjects.length]);
 
+  // Hydrate manual APS from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("userAPSManual");
+      if (saved && saved !== manualAPS) {
+        setManualAPS(saved);
+      }
+    } catch (e) {
+      console.warn("Failed to load manual APS", e);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist manual APS to localStorage
+  useEffect(() => {
+    try {
+      if (manualAPS === "" || manualAPS === null) {
+        localStorage.removeItem("userAPSManual");
+      } else {
+        localStorage.setItem("userAPSManual", manualAPS);
+      }
+    } catch (e) {
+      console.warn("Failed to save manual APS", e);
+    }
+  }, [manualAPS]);
+
   // Build university matches and university-specific scores when manual APS is entered
   useEffect(() => {
     const n = Number(manualAPS);
