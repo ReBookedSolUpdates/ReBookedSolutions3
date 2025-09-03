@@ -75,15 +75,7 @@ export const getUserProfileWithAddresses = async (
       console.warn("Failed to get encrypted addresses for shipment:", error);
     }
 
-    // Fallback to plaintext if encrypted addresses not available
-    if (!profile) {
-      profile = await getUserProfile<UserProfile>(
-        userId,
-        `id, name, email, pickup_address, shipping_address, addresses_same`,
-        false,
-      );
-      console.log("⚠️ Using plaintext addresses fallback for automatic shipment");
-    }
+    // No plaintext fallback allowed; if encrypted unavailable, we'll handle as manual shipment
 
     if (!profile) {
       console.warn(`[AutoShipment] No profile found for user ${userId}`);
