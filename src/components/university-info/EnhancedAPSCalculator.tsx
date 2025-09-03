@@ -860,48 +860,6 @@ const EnhancedAPSCalculator: React.FC = () => {
                 </Button>
               </div>
 
-              {/* Manual APS Entry */}
-              <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-2">
-                <h4 className="font-semibold text-gray-900">Enter APS Manually (Optional)</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
-                  <Input
-                    type="number"
-                    min={0}
-                    max={42}
-                    value={manualAPS}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      if (v === "") { setManualAPS(""); return; }
-                      let n = Number(v);
-                      if (isNaN(n)) return;
-                      if (n < 0) n = 0;
-                      if (n > 42) n = 42;
-                      setManualAPS(String(Math.floor(n)));
-                    }}
-                    placeholder="e.g., 30"
-                    className="bg-white"
-                  />
-                  <div className="text-sm text-gray-600">
-                    Current calculated APS: <span className="font-semibold text-book-700">{apsCalculation.totalAPS}</span>
-                    {manualAPS && (
-                      <span className="ml-2">• Manual APS: <span className="font-semibold">{manualAPS}</span></span>
-                    )}
-                  </div>
-                </div>
-                {manualSummary && (
-                  <div className="text-sm text-gray-700">
-                    Your APS: <span className="font-semibold">{manualAPS}</span> – You qualify for <span className="font-semibold">{manualSummary.qualified}</span> out of <span className="font-semibold">{manualSummary.total}</span> programs.
-                  </div>
-                )}
-                <Alert className="border-yellow-200 bg-yellow-50">
-                  <Info className="h-4 w-4 text-yellow-600" />
-                  <AlertDescription className="text-yellow-800 text-sm">
-                    Some programs require specific subjects and minimum levels. Entering only a total APS may not guarantee eligibility. The system assumes subject-specific minimums are met based on your total APS for guidance. For example, a perfect APS of 42 corresponds to distinctions across your best 6 subjects.
-                  </AlertDescription>
-                </Alert>
-              </div>
-
-
               {/* Added Subjects List */}
               {subjects.length > 0 && (
                 <div className="space-y-4">
@@ -980,6 +938,47 @@ const EnhancedAPSCalculator: React.FC = () => {
                   </div>
                 </div>
               )}
+
+              {/* Manual APS Entry */}
+              <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-2">
+                <h4 className="font-semibold text-gray-900">Enter APS Manually (Optional)</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                  <Input
+                    type="number"
+                    min={0}
+                    max={42}
+                    value={manualAPS}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === "") { setManualAPS(""); return; }
+                      let n = Number(v);
+                      if (isNaN(n)) return;
+                      if (n < 0) n = 0;
+                      if (n > 42) n = 42;
+                      setManualAPS(String(Math.floor(n)));
+                    }}
+                    placeholder="e.g., 30"
+                    className="bg-white"
+                  />
+                  <div className="text-sm text-gray-600">
+                    Current calculated APS: <span className="font-semibold text-book-700">{apsCalculation.totalAPS}</span>
+                    {manualAPS && (
+                      <span className="ml-2">• Manual APS: <span className="font-semibold">{manualAPS}</span></span>
+                    )}
+                  </div>
+                </div>
+                {manualSummary && (
+                  <div className="text-sm text-gray-700">
+                    Your APS: <span className="font-semibold">{manualAPS}</span> – You qualify for <span className="font-semibold">{manualSummary.qualified}</span> out of <span className="font-semibold">{manualSummary.total}</span> programs.
+                  </div>
+                )}
+                <Alert className="border-yellow-200 bg-yellow-50">
+                  <Info className="h-4 w-4 text-yellow-600" />
+                  <AlertDescription className="text-yellow-800 text-sm">
+                    Some programs require specific subjects and minimum levels. Entering only a total APS may not guarantee eligibility. The system assumes subject-specific minimums are met based on your total APS for guidance. For example, a perfect APS of 42 corresponds to distinctions across your best 6 subjects.
+                  </AlertDescription>
+                </Alert>
+              </div>
 
               {/* APS Score Display */}
               {subjects.length > 0 && (
