@@ -124,7 +124,8 @@ export const debugBookFetching = async () => {
 
 // Helper function to fix books by setting up missing pickup addresses
 export const fixBooksWithMissingAddresses = async () => {
-  console.log("🔧 Attempting to fix books with missing addresses...");
+  console.log("🔧 Address fixing disabled - plaintext storage prohibited");
+  return 0;
 
   try {
     // Get books without proper pickup addresses
