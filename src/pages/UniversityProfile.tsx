@@ -133,8 +133,6 @@ const UniversityProfile: React.FC = () => {
       : university.studentPopulation.toString()
     : "N/A";
 
-  const [searchParams] = useSearchParams();
-  const fromAPS = searchParams.get("fromAPS") === "true";
 
   return (
     <Layout>
