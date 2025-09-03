@@ -367,11 +367,20 @@ const CampusBooksSection = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredBooks.map((book) => (
-              <BookCard key={book.id} book={book} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredBooks.slice(0, 10).map((book) => (
+                <BookCard key={book.id} book={book} />
+              ))}
+            </div>
+            {filteredBooks.length > 10 && (
+              <div className="flex justify-center mt-6">
+                <Button onClick={() => navigate("/books")} className="bg-book-600 hover:bg-book-700">
+                  Go to Marketplace
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
