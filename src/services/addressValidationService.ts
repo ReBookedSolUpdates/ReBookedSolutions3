@@ -25,31 +25,74 @@ export const canUserListBooks = async (userId: string): Promise<boolean> => {
   try {
     let hasValidAddress = false;
 
+    // 1) Try the preferred encrypted path (profiles/books decryption via edge function)
     try {
       const { getSellerDeliveryAddress } = await import("@/services/simplifiedAddressService");
-      const encryptedAddress = await getSellerDeliveryAddress(userId);
+      const decrypted = await getSellerDeliveryAddress(userId);
 
-      if (
-        encryptedAddress &&
-        encryptedAddress.street &&
-        encryptedAddress.city &&
-        encryptedAddress.province &&
-        encryptedAddress.postal_code
-      ) {
+      if (decrypted && (decrypted.street || decrypted.streetAddress) && decrypted.city && decrypted.province && (decrypted.postal_code || decrypted.postalCode)) {
         hasValidAddress = true;
-        console.log("🔐 Using encrypted pickup address for listing validation");
+        console.log("🔐 Using decrypted pickup address for listing validation");
       }
     } catch (error) {
-      console.warn("Failed to check encrypted pickup address:", error);
+      console.warn("Failed to check decrypted pickup address:", error);
     }
 
     if (hasValidAddress) {
-      console.log(`✅ User ${userId} can list books - valid encrypted pickup address`);
+      console.log(`✅ User ${userId} can list books - valid pickup address (decrypted)`);
       return true;
     }
 
-    // No plaintext fallback allowed
-    console.log(`❌ User ${userId} cannot list books - encrypted pickup address missing`);
+    // 2) Fallback: check simplified stored addresses (unencrypted user_addresses table / fallback service)
+    try {
+      const { getBestAddress } = await import("@/services/fallbackAddressService");
+      const best = await getBestAddress(userId, 'pickup');
+      if (best && best.success && best.address) {
+        const addr = best.address as any;
+        if (addr.street || addr.streetAddress || addr.line1) {
+          if (addr.city && addr.province && (addr.postalCode || addr.postal_code || addr.zip)) {
+            console.log("📫 Using fallback user_addresses pickup address for listing validation");
+            return true;
+          }
+        }
+      }
+    } catch (error) {
+      console.warn("Fallback user_addresses check failed:", error);
+    }
+
+    // 3) Fallback: legacy plaintext pickup_address on profiles or books table
+    try {
+      const { getUserAddresses, getSellerPickupAddress } = await import("@/services/addressService");
+
+      // Check profile-level plaintext addresses (if any)
+      try {
+        const profileAddresses = await getUserAddresses(userId);
+        if (profileAddresses && profileAddresses.pickup_address) {
+          const pa: any = profileAddresses.pickup_address;
+          if ((pa.street || pa.streetAddress || pa.line1) && pa.city && pa.province && (pa.postalCode || pa.postal_code || pa.zip)) {
+            console.log("📄 Using addressService pickup address for listing validation");
+            return true;
+          }
+        }
+      } catch (err) {
+        console.warn("addressService.getUserAddresses failed:", err);
+      }
+
+      // Check books table legacy pickup address
+      try {
+        const bookPickup = await getSellerPickupAddress(userId);
+        if (bookPickup && (bookPickup.street || bookPickup.streetAddress) && bookPickup.city && bookPickup.province && (bookPickup.postal_code || bookPickup.postalCode)) {
+          console.log("📦 Using books table pickup address for listing validation");
+          return true;
+        }
+      } catch (err) {
+        console.warn("addressService.getSellerPickupAddress failed:", err);
+      }
+    } catch (error) {
+      console.warn("Legacy addressService fallback failed:", error);
+    }
+
+    console.log(`❌ User ${userId} cannot list books - no valid pickup address found`);
     return false;
   } catch (error) {
     safeLogError("Error in canUserListBooks", error, { userId });
