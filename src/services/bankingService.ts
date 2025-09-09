@@ -453,25 +453,81 @@ export class BankingService {
 
       let hasPickupAddress = false;
 
+      // 1) Preferred: try simplifiedAddressService decrypt path
       try {
         const { getSellerDeliveryAddress } = await import("@/services/simplifiedAddressService");
         const encryptedAddress = await getSellerDeliveryAddress(userId);
 
-        if (encryptedAddress) {
+        if (encryptedAddress && (encryptedAddress.street || encryptedAddress.streetAddress)) {
           hasPickupAddress = Boolean(
-            encryptedAddress.street &&
-            encryptedAddress.city &&
-            encryptedAddress.province &&
-            encryptedAddress.postal_code
+            (encryptedAddress.street || encryptedAddress.streetAddress) &&
+            (encryptedAddress.city || encryptedAddress.suburb) &&
+            (encryptedAddress.province) &&
+            (encryptedAddress.postal_code || encryptedAddress.postalCode || encryptedAddress.zip)
           );
-          console.log("🔐 Using encrypted pickup address for banking validation");
+          if (hasPickupAddress) console.log("🔐 Using simplifiedAddressService decrypted pickup address for banking validation");
         }
       } catch (error) {
-        console.warn("Failed to check encrypted pickup address:", error);
+        console.warn("Failed to check simplified encrypted pickup address:", error);
+      }
+
+      // 2) Fallback: check user_addresses via fallbackAddressService
+      if (!hasPickupAddress) {
+        try {
+          const fallbackModule = await import("@/services/fallbackAddressService");
+          const fallbackSvc = fallbackModule?.default || fallbackModule?.fallbackAddressService;
+          if (fallbackSvc && typeof fallbackSvc.getBestAddress === 'function') {
+            const best = await fallbackSvc.getBestAddress(userId, 'pickup');
+            if (best && best.success && best.address) {
+              const addr = best.address as any;
+              if ((addr.street || addr.streetAddress || addr.line1) && addr.city && addr.province && (addr.postalCode || addr.postal_code || addr.zip)) {
+                hasPickupAddress = true;
+                console.log("📫 Using fallback user_addresses pickup address for banking validation");
+              }
+            }
+          }
+        } catch (error) {
+          console.warn("Fallback user_addresses check failed:", error);
+        }
+      }
+
+      // 3) Fallback: use addressService which has multiple decryption strategies
+      if (!hasPickupAddress) {
+        try {
+          const addressModule = await import("@/services/addressService");
+          const { getUserAddresses, getSellerPickupAddress } = addressModule;
+
+          try {
+            const profileAddresses = await getUserAddresses(userId);
+            if (profileAddresses && profileAddresses.pickup_address) {
+              const pa: any = profileAddresses.pickup_address;
+              if ((pa.street || pa.streetAddress || pa.line1) && pa.city && pa.province && (pa.postalCode || pa.postal_code || pa.zip)) {
+                hasPickupAddress = true;
+                console.log("📄 Using addressService profile pickup address for banking validation");
+              }
+            }
+          } catch (err) {
+            console.warn("addressService.getUserAddresses failed:", err);
+          }
+
+          if (!hasPickupAddress) {
+            try {
+              const bookPickup = await getSellerPickupAddress(userId);
+              if (bookPickup && (bookPickup.street || bookPickup.streetAddress) && bookPickup.city && bookPickup.province && (bookPickup.postal_code || bookPickup.postalCode)) {
+                hasPickupAddress = true;
+                console.log("📦 Using books table pickup address for banking validation");
+              }
+            } catch (err) {
+              console.warn("addressService.getSellerPickupAddress failed:", err);
+            }
+          }
+        } catch (error) {
+          console.warn("Legacy addressService fallback failed:", error);
+        }
       }
 
       if (!hasPickupAddress) {
-        console.log("📍 [Address Debug] No encrypted pickup address found for user:", userId);
+        console.log("📍 [Address Debug] No pickup address found for user:", userId);
       }
 
       const { data: books } = await supabase
