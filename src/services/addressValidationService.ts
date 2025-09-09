@@ -45,14 +45,17 @@ export const canUserListBooks = async (userId: string): Promise<boolean> => {
 
     // 2) Fallback: check simplified stored addresses (unencrypted user_addresses table / fallback service)
     try {
-      const { getBestAddress } = await import("@/services/fallbackAddressService");
-      const best = await getBestAddress(userId, 'pickup');
-      if (best && best.success && best.address) {
-        const addr = best.address as any;
-        if (addr.street || addr.streetAddress || addr.line1) {
-          if (addr.city && addr.province && (addr.postalCode || addr.postal_code || addr.zip)) {
-            console.log("📫 Using fallback user_addresses pickup address for listing validation");
-            return true;
+      const fallbackModule = await import("@/services/fallbackAddressService");
+      const fallbackSvc = fallbackModule?.default || fallbackModule?.fallbackAddressService;
+      if (fallbackSvc && typeof fallbackSvc.getBestAddress === 'function') {
+        const best = await fallbackSvc.getBestAddress(userId, 'pickup');
+        if (best && best.success && best.address) {
+          const addr = best.address as any;
+          if (addr.street || addr.streetAddress || addr.line1) {
+            if (addr.city && addr.province && (addr.postalCode || addr.postal_code || addr.zip)) {
+              console.log("📫 Using fallback user_addresses pickup address for listing validation");
+              return true;
+            }
           }
         }
       }
