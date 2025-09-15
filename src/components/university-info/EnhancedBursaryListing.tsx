@@ -320,7 +320,7 @@ const EnhancedBursaryListing = () => {
           <CardDescription className="text-lg text-green-700">
             Get the latest news on bursaries and educational funding. Check{" "}
             <a
-              href="https://news.rebookedsolutions.co.za"
+              href="https://rebookednews.co.za"
               target="_blank"
               rel="noopener noreferrer"
               className="text-green-600 hover:text-green-800 underline font-semibold"

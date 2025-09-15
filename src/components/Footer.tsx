@@ -136,7 +136,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="https://news.rebookedsolutions.co.za"
+                  href="https://rebookednews.co.za"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 hover:text-book-600 text-sm"

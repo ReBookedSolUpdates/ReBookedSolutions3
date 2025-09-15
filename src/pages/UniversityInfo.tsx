@@ -790,7 +790,7 @@ const UniversityInfo = () => {
                         <p className="text-sm text-gray-600">
                           Stay updated with{" "}
                           <a
-                            href="https://news.rebookedsolutions.co.za"
+                            href="https://rebookednews.co.za"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-book-600 hover:text-book-800 underline font-medium"
