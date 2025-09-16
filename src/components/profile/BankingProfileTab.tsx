@@ -629,7 +629,7 @@ const BankingProfileTab = () => {
 
       {/* Setup Banking Details Dialog */}
       <Dialog open={showSetupDialog} onOpenChange={handleCancelSetup}>
-        <DialogContent className="max-w-2xl w-[calc(100vw-1rem)] sm:w-full max-h-[90vh] overflow-y-auto rounded-2xl mx-2">
+        <DialogContent className="w-[88vw] max-w-sm sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl mx-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <CreditCard className="h-5 w-5" />
