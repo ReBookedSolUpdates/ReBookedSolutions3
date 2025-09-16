@@ -79,8 +79,30 @@ const Profile = () => {
 
     try {
       setIsLoadingAddress(true);
+
+      // Quick UI: try local cache first to avoid blank loading on mobile
+      try {
+        const cacheKey = `cached_address_${user.id}`;
+        const cached = typeof window !== 'undefined' ? localStorage.getItem(cacheKey) : null;
+        if (cached) {
+          setAddressData(JSON.parse(cached));
+        }
+      } catch (cacheErr) {
+        // ignore cache errors
+      }
+
       const data = await getUserAddresses(user.id);
       setAddressData(data);
+
+      // Update cache for next fast load
+      try {
+        const cacheKey = `cached_address_${user.id}`;
+        if (typeof window !== 'undefined' && data) {
+          localStorage.setItem(cacheKey, JSON.stringify(data));
+        }
+      } catch (cacheErr) {
+        // ignore cache failures
+      }
     } catch (error) {
       const formattedError = handleAddressError(error, "load");
       console.error(formattedError.developerMessage, formattedError.originalError);

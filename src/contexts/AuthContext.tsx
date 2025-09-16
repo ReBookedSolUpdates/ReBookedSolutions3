@@ -393,6 +393,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 if (userProfile && userProfile.id === session.user?.id) {
                   setProfile(userProfile);
 
+                  // Prefetch addresses and banking requirements in background for snappy UI
+                  (async () => {
+                    try {
+                      const userId = session.user!.id;
+
+                      // Run address & banking checks in parallel
+                      const [addrRes, bankingReqRes, subacctRes] = await Promise.allSettled([
+                        import("@/services/addressService").then(m => m.getUserAddresses(userId)),
+                        import("@/services/bankingService").then(m => m.getSellerRequirements(userId)),
+                        import("@/services/paystackSubaccountService").then(m => m.getUserSubaccountStatus(userId)),
+                      ]);
+
+                      // Save address cache for fast UI
+                      if (addrRes.status === "fulfilled" && addrRes.value) {
+                        try {
+                          localStorage.setItem(`cached_address_${userId}`, JSON.stringify(addrRes.value));
+                        } catch (e) {
+                          // ignore storage errors
+                        }
+                      }
+
+                      // Save banking quick status cache
+                      if (bankingReqRes.status === "fulfilled") {
+                        try {
+                          localStorage.setItem(`banking_requirements_${userId}`, JSON.stringify(bankingReqRes.value));
+                        } catch (e) {}
+                      }
+
+                      // Save subaccount detection cache
+                      if (subacctRes.status === "fulfilled") {
+                        try {
+                          localStorage.setItem(`subaccount_status_${userId}`, JSON.stringify(subacctRes.value));
+                        } catch (e) {}
+                      }
+
+                      console.log("✅ Prefetched addresses and banking info for user", userId);
+                    } catch (prefetchError) {
+                      console.warn("Prefetch error (non-fatal):", prefetchError);
+                    }
+                  })();
+
                   // Check if this is a first-time login (profile exists but no welcome email sent)
                   // We'll use a simple heuristic: if profile was created recently (within 24 hours)
                   // and user is logging in, send welcome email
