@@ -393,6 +393,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 if (userProfile && userProfile.id === session.user?.id) {
                   setProfile(userProfile);
 
+                  // Prefetch addresses and banking requirements in background for snappy UI
+                  (async () => {
+                    try {
+                      const userId = session.user!.id;
+
+                      // Run address & banking checks in parallel
+                      const [addrRes, bankingReqRes, subacctRes] = await Promise.allSettled([
+                        import("@/services/addressService").then(m => m.getUserAddresses(userId)),
+                        import("@/services/bankingService").then(m => m.getSellerRequirements(userId)),
+                        import("@/services/paystackSubaccountService").then(m => m.getUserSubaccountStatus(userId)),
+                      ]);
+
+                      // Save address cache for fast UI
+                      if (addrRes.status === "fulfilled" && addrRes.value) {
+                        try {
+                          localStorage.setItem(`cached_address_${userId}`, JSON.stringify(addrRes.value));
+                        } catch (e) {
+                          // ignore storage errors
+                        }
+                      }
+
+                      // Save banking quick status cache
+                      if (bankingReqRes.status === "fulfilled") {
+                        try {
+                          localStorage.setItem(`banking_requirements_${userId}`, JSON.stringify(bankingReqRes.value));
+                        } catch (e) {}
+                      }
+
+                      // Save subaccount detection cache
+                      if (subacctRes.status === "fulfilled") {
+                        try {
+                          localStorage.setItem(`subaccount_status_${userId}`, JSON.stringify(subacctRes.value));
+                        } catch (e) {}
+                      }
+
+                      console.log("✅ Prefetched addresses and banking info for user", userId);
+                    } catch (prefetchError) {
+                      console.warn("Prefetch error (non-fatal):", prefetchError);
+                    }
+                  })();
+
                   // Check if this is a first-time login (profile exists but no welcome email sent)
                   // We'll use a simple heuristic: if profile was created recently (within 24 hours)
                   // and user is logging in, send welcome email
@@ -412,73 +453,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                       await emailService.sendEmail({
                         to: session.user.email!,
                         subject: "Welcome to ReBooked Solutions! 📚",
-                        html: `
-                          <!DOCTYPE html>
-                          <html>
-                          <head>
-                            <meta charset="utf-8">
-                            <title>Welcome to ReBooked Solutions!</title>
-                          </head>
-                          <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                              <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to ReBooked Solutions!</h1>
-                            </div>
-
-                            <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #ddd;">
-                              <h2 style="color: #333; margin-top: 0;">Hello ${userProfile.name}!</h2>
-
-                              <p>🎉 Congratulations! Your email has been verified and your ReBooked Solutions account is now fully active.</p>
-
-                              <p><strong>What you can do now:</strong></p>
-                              <ul>
-                                <li>📚 Browse thousands of textbooks from fellow students</li>
-                                <li>💰 List your own textbooks for sale</li>
-                                <li>🚚 Enjoy hassle-free courier delivery</li>
-                                <li>💳 Secure payment processing</li>
-                                <li>📱 Track your orders in real-time</li>
-                              </ul>
-
-                              <div style="text-align: center; margin: 30px 0;">
-                                <a href="${window.location.origin}/profile"
-                                   style="background: #667eea; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
-                                  View My Profile
-                                </a>
-                              </div>
-
-                              <p><strong>Need help getting started?</strong></p>
-                              <p>Check out our quick start guide or browse books by university to find exactly what you need.</p>
-
-                              <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-
-                              <p style="font-size: 14px; color: #666;">
-                                <strong>ReBooked Solutions</strong><br>
-                                South Africa's Premier Student Textbook Marketplace<br>
-                                <a href="mailto:support@rebookedsolutions.co.za">support@rebookedsolutions.co.za</a>
-                              </p>
-                            </div>
-                          </body>
-                          </html>
-                        `,
-                        text: `Welcome to ReBooked Solutions!
-
-Hello ${userProfile.name}!
-
-🎉 Congratulations! Your email has been verified and your ReBooked Solutions account is now fully active.
-
-What you can do now:
-- 📚 Browse thousands of textbooks from fellow students
-- 💰 List your own textbooks for sale
-- 🚚 Enjoy hassle-free courier delivery
-- 💳 Secure payment processing
-- 📱 Track your orders in real-time
-
-Visit your profile: ${window.location.origin}/profile
-
-Need help getting started? Check out our quick start guide or browse books by university to find exactly what you need.
-
-Best regards,
-ReBooked Solutions Team
-support@rebookedsolutions.co.za`
+                        html: `...`,
+                        text: `Welcome to ReBooked Solutions!\n\nHello ${userProfile.name}!\n\n🎉 Congratulations! Your email has been verified and your ReBooked Solutions account is now fully active.\n...`
                       });
 
                       console.log("✅ Welcome email sent to verified user");
