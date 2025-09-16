@@ -601,7 +601,7 @@ const BankingProfileTab = () => {
 
       {/* Update Banking Details Dialog */}
       <Dialog open={showUpdateDialog} onOpenChange={handleCancelUpdate}>
-        <DialogContent className="max-w-2xl w-[calc(100vw-1rem)] sm:w-full max-h-[90vh] overflow-y-auto rounded-2xl mx-2">
+        <DialogContent className="w-[88vw] max-w-sm sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl mx-auto">
           <DialogHeader>
             <DialogTitle>
               {!isPasswordVerified ? "Security Verification" : "Update Banking Details"}
