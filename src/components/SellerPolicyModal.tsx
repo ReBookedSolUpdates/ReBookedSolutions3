@@ -6,16 +6,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import {
-  Shield,
-  Clock,
-  DollarSign,
-  Package,
-  AlertTriangle,
-  CheckCircle,
-  BookOpen,
-} from "lucide-react";
 
 interface SellerPolicyModalProps {
   isOpen: boolean;
@@ -27,8 +17,7 @@ const SellerPolicyModal = ({ isOpen, onClose }: SellerPolicyModalProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="w-[90vw] max-w-[90vw] sm:max-w-2xl max-h-[85vh] mx-auto my-auto overflow-hidden">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-book-600">
-            <Shield className="h-5 w-5" />
+          <DialogTitle className="text-book-600">
             Seller Policy & Platform Rules
           </DialogTitle>
           <DialogDescription>
@@ -37,208 +26,140 @@ const SellerPolicyModal = ({ isOpen, onClose }: SellerPolicyModalProps) => {
         </DialogHeader>
 
         <ScrollArea className="h-[70vh] pr-4">
-          <div className="space-y-6">
-            {/* Overview */}
-            <div className="bg-book-50 p-4 rounded-lg border border-book-200">
-              <h3 className="font-semibold text-book-800 mb-2 flex items-center gap-2">
-                <BookOpen className="h-4 w-4" />
-                Welcome to ReBooked Marketplace
-              </h3>
-              <p className="text-sm text-book-700">
-                By listing books on ReBooked Marketplace, you agree to follow our platform
-                rules and provide a reliable service to student buyers. These
-                policies protect both buyers and sellers.
-              </p>
-            </div>
-
-            {/* Seller Responsibilities */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                <CheckCircle className="h-4 w-4" />
-                Your Responsibilities as a Seller
-              </h3>
-
-              <div className="space-y-3">
-                <div className="p-3 bg-green-50 rounded-lg border-l-4 border-green-400">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Package className="h-4 w-4 text-green-600" />
-                    <span className="font-medium text-green-800">
-                      Book Condition & Accuracy
-                    </span>
-                  </div>
-                  <ul className="text-sm text-green-700 space-y-1">
-                    <li>• Provide accurate descriptions of book condition</li>
-                    <li>• Upload clear, recent photos of the actual book</li>
-                    <li>• Ensure the book matches the listing description</li>
-                    <li>• Report any damage honestly in the description</li>
-                  </ul>
-                </div>
-
-                <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Clock className="h-4 w-4 text-blue-600" />
-                    <span className="font-medium text-blue-800">
-                      48-Hour Commit Rule
-                    </span>
-                    <Badge variant="outline" className="text-xs">
-                      Critical
-                    </Badge>
-                  </div>
-                  <ul className="text-sm text-blue-700 space-y-1">
-                    <li>
-                      • Commit to sales within 48 hours of receiving
-                      notification
-                    </li>
-                    <li>• Be available for courier pickup as scheduled</li>
-                    <li>
-                      • Failure to commit results in automatic cancellation
-                    </li>
-                    <li>
-                      • Repeated failures may result in account restrictions
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="p-3 bg-orange-50 rounded-lg border-l-4 border-orange-400">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Shield className="h-4 w-4 text-orange-600" />
-                    <span className="font-medium text-orange-800">
-                      Pickup Requirements
-                    </span>
-                  </div>
-                  <ul className="text-sm text-orange-700 space-y-1">
-                    <li>• Maintain a valid pickup address at all times</li>
-                    <li>
-                      • Be available during standard pickup hours (8 AM - 5 PM)
-                    </li>
-                    <li>• Package books securely for transport</li>
-                    <li>• Hand over books to authorized couriers only</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Pricing and Fees */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                <DollarSign className="h-4 w-4" />
-                Pricing & Fees
-              </h3>
-
-              <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-                <div>
-                  <p className="font-medium text-sm">ReBooked Commission:</p>
-                  <p className="text-sm text-gray-600">
-                    A small service fee is deducted from your sale amount to
-                    cover platform costs and payment processing.
-                  </p>
-                </div>
-                <div>
-                  <p className="font-medium text-sm">Pricing Guidelines:</p>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>
-                      • Price books fairly based on condition and market value
-                    </li>
-                    <li>
-                      • Consider the original retail price and current demand
-                    </li>
-                    <li>• Competitive pricing leads to faster sales</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Prohibited Activities */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-gray-800 flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" />
-                Prohibited Activities
-              </h3>
-
-              <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                <div className="space-y-2">
-                  <p className="font-medium text-sm text-red-800">
-                    The following are strictly prohibited:
-                  </p>
-                  <ul className="text-sm text-red-700 space-y-1">
-                    <li>
-                      • Selling counterfeit, stolen, or illegally obtained books
-                    </li>
-                    <li>• Misrepresenting book condition or content</li>
-                    <li>
-                      • Direct contact with buyers to circumvent the platform
-                    </li>
-                    <li>• Listing books you don't physically possess</li>
-                    <li>• Price manipulation or false scarcity tactics</li>
-                    <li>• Harassment or inappropriate communication</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Account Consequences */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-gray-800">
-                Account Actions & Consequences
-              </h3>
-
-              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                <div className="space-y-3">
-                  <div>
-                    <p className="font-medium text-sm text-yellow-800">
-                      Warning System:
-                    </p>
-                    <p className="text-sm text-yellow-700">
-                      Minor violations result in warnings. Multiple warnings may
-                      lead to restrictions.
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm text-yellow-800">
-                      Account Restrictions:
-                    </p>
-                    <p className="text-sm text-yellow-700">
-                      Repeated policy violations may result in temporary selling
-                      restrictions or account suspension.
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm text-yellow-800">
-                      Appeal Process:
-                    </p>
-                    <p className="text-sm text-yellow-700">
-                      If you believe an action was taken in error, you can
-                      appeal through our support system.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Support and Help */}
-            <div className="bg-book-50 p-4 rounded-lg border border-book-200">
-              <h3 className="font-semibold text-book-800 mb-2">Need Help?</h3>
-              <p className="text-sm text-book-700">
-                If you have questions about these policies or need assistance
-                with your listings, contact our support team through the help
-                section in your profile.
-              </p>
-            </div>
-
-            {/* Agreement */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-700">
-                <strong>
-                  By checking the agreement box, you confirm that:
-                </strong>
-              </p>
-              <ul className="text-sm text-gray-700 mt-2 space-y-1">
-                <li>• You have read and understood these policies</li>
-                <li>• You agree to follow all seller requirements</li>
-                <li>• You understand the consequences of policy violations</li>
-                <li>• You will maintain accurate and up-to-date listings</li>
+          <div className="space-y-6 text-sm text-gray-800">
+            {/* 1. Listing Requirements */}
+            <section className="space-y-2">
+              <h3 className="font-semibold text-base">1. Listing Requirements</h3>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>
+                  Sellers must provide accurate and complete information about each
+                  book, including title, author, edition, condition, and any defects.
+                </li>
+                <li>Clear photos must be uploaded to verify the book’s condition.</li>
+                <li>Misleading or false listings are strictly prohibited.</li>
               </ul>
-            </div>
+            </section>
+
+            {/* 2. Pricing & Fees */}
+            <section className="space-y-2">
+              <h3 className="font-semibold text-base">2. Pricing & Fees</h3>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>Sellers set their own prices for books.</li>
+                <li>ReBooked Solutions charges a 10% service fee on every successful sale.</li>
+                <li>A delivery/shipping fee is added at checkout and paid by the buyer.</li>
+              </ul>
+            </section>
+
+            {/* 3. Order Process & Payouts */}
+            <section className="space-y-2">
+              <h3 className="font-semibold text-base">3. Order Process & Payouts</h3>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>Once an order is placed, the seller must package the book securely for collection.</li>
+                <li>
+                  Funds from sales are held for 24–48 hours after successful delivery to allow buyers time to
+                  confirm the book matches the listing.
+                </li>
+                <li>If a buyer raises a complaint, funds are held until the case is resolved.</li>
+                <li>
+                  If the seller is at fault, the buyer receives a full refund, the seller forfeits the payout, and a
+                  fine may apply.
+                </li>
+              </ul>
+            </section>
+
+            {/* 4. Fine System */}
+            <section className="space-y-3">
+              <h3 className="font-semibold text-base">4. Fine System (Incorrect or Misleading Books)</h3>
+              <p>
+                To protect buyers and maintain trust, a tiered penalty system applies for sellers who provide incorrect
+                or misleading books:
+              </p>
+
+              <div className="space-y-2">
+                <h4 className="font-semibold">First Offense</h4>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Buyer receives a full refund.</li>
+                  <li>Seller receives no payout for the sale.</li>
+                  <li>Seller is fined the delivery fee from their address to the buyer’s address.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-semibold">Second Offense</h4>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Buyer receives a full refund.</li>
+                  <li>Seller receives no payout for the sale.</li>
+                  <li>Seller is fined the delivery fee plus R100 for misuse of ReBooked Solutions’ services.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-semibold">Third Offense</h4>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Buyer receives a full refund.</li>
+                  <li>Seller receives no payout for the sale.</li>
+                  <li>Seller is fined the delivery fee plus R250.</li>
+                  <li>Seller account may be suspended or permanently banned, pending review.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-semibold">Zero-Tolerance Clause</h4>
+                <p>The following are treated as an immediate Level 3 offense:</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Fraudulent or counterfeit book listings.</li>
+                  <li>Intentional scams or repeated misrepresentation.</li>
+                  <li>Attempts to bypass or abuse ReBooked Solutions’ systems.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-semibold">Penalty for Zero-Tolerance Violations:</h4>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Buyer receives a full refund.</li>
+                  <li>Seller receives no payout for the sale.</li>
+                  <li>Seller is fined the delivery fee plus R250.</li>
+                  <li>
+                    Seller is permanently banned. Any new accounts created by the seller will also be banned.
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            {/* 5. Book Return & Donation Policy in Disputes */}
+            <section className="space-y-2">
+              <h3 className="font-semibold text-base">5. Book Return & Donation Policy in Disputes</h3>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>
+                  If the buyer wants the incorrect book returned to the seller, the buyer must cover the return delivery
+                  cost.
+                </li>
+                <li>
+                  If neither party wants the book back, ReBooked Solutions may donate the book to partner charities that
+                  support students in need.
+                </li>
+                <li>This ensures that even disputes can have a positive impact.</li>
+              </ul>
+            </section>
+
+            {/* 6. Dispute Resolution */}
+            <section className="space-y-2">
+              <h3 className="font-semibold text-base">6. Dispute Resolution</h3>
+              <p>
+                ReBooked Solutions will act as mediator in disputes and its decision will be final within the platform.
+                Sellers may submit additional evidence if they believe a claim is unfair.
+              </p>
+            </section>
+
+            {/* 7. Policy Enforcement */}
+            <section className="space-y-2">
+              <h3 className="font-semibold text-base">7. Policy Enforcement</h3>
+              <p>
+                ReBooked Solutions reserves the right to withhold payouts, apply fines, or suspend seller accounts for any
+                breach of this policy. By selling on ReBooked Solutions, you agree to these rules to help maintain a fair,
+                safe, and socially impactful marketplace.
+              </p>
+            </section>
           </div>
         </ScrollArea>
       </DialogContent>
