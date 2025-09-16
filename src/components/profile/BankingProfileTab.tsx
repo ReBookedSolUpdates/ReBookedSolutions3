@@ -423,14 +423,6 @@ const BankingProfileTab = () => {
                   </Button>
                 )}
                 <Button
-                  onClick={refreshBankingDetails}
-                  variant="outline"
-                  size="sm"
-                  className="border-book-200 text-book-600 hover:bg-book-50"
-                >
-                  Refresh Status
-                </Button>
-                <Button
                   onClick={() => setShowUpdateDialog(true)}
                   variant="outline"
                   size="sm"
