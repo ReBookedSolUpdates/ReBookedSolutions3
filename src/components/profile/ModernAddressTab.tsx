@@ -50,7 +50,8 @@ const ModernAddressTab = ({
 
   // Check Google Maps availability
   const { isLoaded: mapsLoaded, loadError } = useGoogleMaps();
-  const useManualInput = !mapsLoaded || !!loadError;
+  // Prefer manual input on mobile for faster responsiveness; also fall back if maps not ready
+  const useManualInput = typeof window !== 'undefined' && window.innerWidth < 640 ? true : (!mapsLoaded || !!loadError);
 
   useEffect(() => {
     if (addressData) {
@@ -59,6 +60,29 @@ const ModernAddressTab = ({
       setSameAsPickup(addressData.addresses_same || false);
     }
   }, [addressData]);
+
+  // Small optimization: prefill addresses quickly without awaiting heavy decrypt flows elsewhere
+  useEffect(() => {
+    // if no address data yet, attempt a lightweight cached fetch (non-blocking)
+    let cancelled = false;
+    const tryPrefetch = async () => {
+      if (addressData) return;
+      try {
+        const cacheKey = `cached_address_${window?.__USER_ID__}`;
+        const cached = cacheKey ? (window as any)?.localStorage?.getItem?.(cacheKey) : null;
+        if (cached && !cancelled) {
+          const parsed = JSON.parse(cached);
+          setPickupAddress(parsed.pickup_address || null);
+          setShippingAddress(parsed.shipping_address || null);
+          setSameAsPickup(parsed.addresses_same || false);
+        }
+      } catch (e) {
+        // ignore cache failures
+      }
+    };
+    tryPrefetch();
+    return () => { cancelled = true; };
+  }, []);
 
   const formatAddress = (address: Address | null | undefined) => {
     if (!address) return null;
