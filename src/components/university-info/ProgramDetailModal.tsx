@@ -234,7 +234,7 @@ const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[90vw] max-w-[90vw] sm:max-w-2xl lg:max-w-4xl max-h-[85vh] mx-auto my-auto overflow-y-auto">
+      <DialogContent className="w-[92vw] max-w-[90vw] sm:max-w-2xl lg:max-w-4xl max-h-[85vh] mx-auto my-auto overflow-y-auto rounded-2xl">
         <DialogHeader>
           <div className="flex items-start gap-4">
             <div className="flex-1">
