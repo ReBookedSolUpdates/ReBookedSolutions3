@@ -644,10 +644,10 @@ const BursaryListing = () => {
                   </div>
                 </div>
 
-                {/* Amount */}
-                <div className="flex items-center gap-2 text-base sm:text-lg font-semibold text-green-600 mt-2">
-                  <DollarSign className="h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="text-sm sm:text-base">{bursary.amount}</span>
+                {/* Amount / Benefits */}
+                <div className="mt-3 rounded-lg border border-green-200 bg-green-50 text-green-800 px-3 py-2 flex items-center gap-2 text-sm sm:text-base font-semibold">
+                  <DollarSign className="h-4 w-4" />
+                  <span className="leading-snug">{bursary.amount}</span>
                 </div>
               </CardHeader>
 
@@ -686,7 +686,7 @@ const BursaryListing = () => {
                     {bursary.fieldsOfStudy.slice(0, 3).map((field, index) => (
                       <Badge
                         key={index}
-                        variant="secondary"
+                        variant="outline"
                         className="text-xs"
                       >
                         {field}
