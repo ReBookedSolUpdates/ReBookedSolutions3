@@ -651,7 +651,7 @@ const EnhancedBursaryListing = () => {
           return (
             <Card
               key={bursary.id}
-              className="transition-shadow hover:shadow-md"
+              className="rounded-xl border shadow-sm transition-shadow hover:shadow-md"
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -678,10 +678,10 @@ const EnhancedBursaryListing = () => {
                   </div>
                 </div>
 
-                {/* Amount */}
-                <div className="flex items-center gap-2 text-lg font-semibold text-green-600 mt-2">
-                  <DollarSign className="h-5 w-5" />
-                  {bursary.amount}
+                {/* Amount / Benefits */}
+                <div className="mt-3 rounded-lg border border-green-200 bg-green-50 text-green-800 px-3 py-2 flex items-center gap-2 text-sm sm:text-base font-semibold">
+                  <DollarSign className="h-4 w-4" />
+                  <span className="leading-snug">{bursary.amount}</span>
                 </div>
               </CardHeader>
 
@@ -750,7 +750,7 @@ const EnhancedBursaryListing = () => {
                     {bursary.fieldsOfStudy.slice(0, 3).map((field, index) => (
                       <Badge
                         key={index}
-                        variant="secondary"
+                        variant="outline"
                         className="text-xs"
                       >
                         {field}
