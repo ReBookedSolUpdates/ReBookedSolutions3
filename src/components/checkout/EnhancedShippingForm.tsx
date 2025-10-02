@@ -44,7 +44,7 @@ type ShippingFormData = z.infer<typeof shippingSchema>;
 
 interface DeliveryOption {
   id: string;
-  provider: "courier-guy" | "fastway";
+  provider: "bobgo" | "fastway";
   service_name: string;
   price: number;
   estimated_days: string;
@@ -248,7 +248,7 @@ const EnhancedShippingForm: React.FC<EnhancedShippingFormProps> = ({
       if (watchedValues.province === "Western Cape") {
         fallbackOptions.push({
           id: "local_delivery_fallback",
-          provider: "courier-guy",
+          provider: "bobgo",
           service_name: "Local Delivery - Cape Town",
           price: 50,
           estimated_days: "1-2 days",
@@ -259,8 +259,8 @@ const EnhancedShippingForm: React.FC<EnhancedShippingFormProps> = ({
       fallbackOptions.push(
         {
           id: "courier_guy_standard",
-          provider: "courier-guy",
-          service_name: "Courier Guy - Standard",
+          provider: "bobgo",
+          service_name: "Bob Go - Standard",
           price: 89,
           estimated_days: "3-5 days",
           description: "Reliable nationwide delivery",
@@ -326,7 +326,7 @@ const EnhancedShippingForm: React.FC<EnhancedShippingFormProps> = ({
       const emergencyOptions: DeliveryOption[] = [
         {
           id: "emergency_standard",
-          provider: "courier-guy",
+          provider: "bobgo",
           service_name: "Standard Delivery",
           price: 99,
           estimated_days: "3-5 days",
@@ -370,7 +370,7 @@ const EnhancedShippingForm: React.FC<EnhancedShippingFormProps> = ({
           : [
               {
                 id: "default_standard",
-                provider: "courier-guy" as const,
+                provider: "bobgo" as const,
                 service_name: "Standard Delivery",
                 price: 99,
                 estimated_days: "3-5 days",
