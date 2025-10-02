@@ -103,6 +103,22 @@ serve(async (req) => {
       }
     }
 
+    // Cancel shipment with Bob Go if applicable
+    try {
+      if (order.delivery_provider === "bobgo" || order.tracking_number) {
+        await fetch(`${SUPABASE_URL}/functions/v1/bobgo-cancel-shipment`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+          },
+          body: JSON.stringify({ order_id, tracking_number: order.tracking_number, reason: cancellation_reason || "Buyer cancelled" }),
+        });
+      }
+    } catch (cancelErr) {
+      console.warn("Bob Go cancellation attempt failed:", cancelErr);
+    }
+
     // Update order status to cancelled
     const { error: updateError } = await supabase
       .from("orders")
