@@ -112,7 +112,7 @@ const SimpleShippingForm: React.FC<SimpleShippingFormProps> = ({
       baseOptions.unshift({
         id: "gauteng_local",
         provider: "bobgo" as const,
-        service_name: "Gauteng Local Delivery",
+        service_name: "Bob Go - Gauteng Local Delivery",
         price: 65,
         estimated_days: "1-3 days",
         description: "Local delivery within Gauteng",
