@@ -32,7 +32,7 @@ export interface CheckoutBook {
 }
 
 export interface DeliveryOption {
-  courier: "courier-guy" | "fastway";
+  courier: "bobgo" | "fastway";
   service_name: string;
   price: number;
   estimated_days: number;
