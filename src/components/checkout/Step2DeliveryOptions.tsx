@@ -6,7 +6,6 @@ import {
   Truck,
   MapPin,
   Clock,
-  Package,
   ArrowRight,
   ArrowLeft,
   Loader2,
