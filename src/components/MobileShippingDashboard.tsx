@@ -19,18 +19,18 @@ import {
   Star,
   ChevronRight,
 } from "lucide-react";
-import CourierGuyTracker from "@/components/courier-guy/CourierGuyTracker";
+import UnifiedTrackingComponent from "@/components/delivery/UnifiedTrackingComponent";
 
 
 interface MobileShippingDashboardProps {
-  defaultProvider?: "courierGuy";
+  defaultProvider?: "bobgo";
 }
 
 const MobileShippingDashboard = ({
   defaultProvider = "courierGuy",
 }: MobileShippingDashboardProps) => {
   const [selectedProvider, setSelectedProvider] = useState<
-    "courierGuy"
+    "bobgo"
   >(defaultProvider);
   const [activeTab, setActiveTab] = useState<"track" | "quote">("track");
 
@@ -41,15 +41,15 @@ const MobileShippingDashboard = ({
       status: "delivered",
       recipient: "John Doe",
       date: "2024-01-15",
-      provider: "courierGuy",
+      provider: "bobgo",
     },
 
   ];
 
   const providers = [
     {
-      id: "courierGuy",
-      name: "Courier Guy",
+      id: "bobgo",
+      name: "Bob Go",
       logo: "🚚",
       rating: 4.5,
       features: ["Same day delivery", "Tracking", "Insurance", "Reliable service", "Nationwide coverage"],
@@ -99,7 +99,7 @@ const MobileShippingDashboard = ({
         <div className="flex items-center justify-center space-x-3 p-3">
           <span className="text-3xl">🚚</span>
           <div className="text-center">
-            <h2 className="font-semibold text-gray-900">Courier Guy</h2>
+            <h2 className="font-semibold text-gray-900">Bob Go</h2>
             <div className="flex items-center justify-center space-x-1 mt-1">
               <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
               <span className="text-xs text-gray-600">4.5</span>
@@ -171,10 +171,7 @@ const MobileShippingDashboard = ({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <CourierGuyTracker
-                  placeholder="Enter Courier Guy tracking number"
-                  showBranding={false}
-                />
+                <UnifiedTrackingComponent provider="bobgo" />
               </CardContent>
             </Card>
           </TabsContent>
