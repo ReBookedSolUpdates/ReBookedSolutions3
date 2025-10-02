@@ -70,7 +70,7 @@ const DeliveryQuoteComparison: React.FC<DeliveryQuoteComparisonProps> = ({
 
   const getProviderIcon = (provider: string) => {
     switch (provider) {
-      case "courier-guy":
+      case "bobgo":
         return "🚚";
       case "fastway":
         return "📦";

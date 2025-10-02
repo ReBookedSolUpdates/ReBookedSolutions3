@@ -18,8 +18,7 @@ const REQUIRED_ENV_VARS = [
 // Optional but recommended environment variables
 const OPTIONAL_ENV_VARS = [
   'VITE_GOOGLE_MAPS_API_KEY',
-  'VITE_COURIER_GUY_API_KEY',
-  'VITE_APP_URL'
+    'VITE_APP_URL'
 ];
 
 function checkEnvironmentVariables() {

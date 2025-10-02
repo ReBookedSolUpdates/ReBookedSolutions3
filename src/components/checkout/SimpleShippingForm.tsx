@@ -79,8 +79,8 @@ const SimpleShippingForm: React.FC<SimpleShippingFormProps> = ({
     const baseOptions = [
       {
         id: "courier_guy_standard",
-        provider: "courier-guy" as const,
-        service_name: "Courier Guy - Standard",
+        provider: "bobgo" as const,
+        service_name: "Bob Go - Standard",
         price: 89,
         estimated_days: "3-5 days",
         description: "Reliable nationwide delivery",
@@ -99,7 +99,7 @@ const SimpleShippingForm: React.FC<SimpleShippingFormProps> = ({
     if (shippingData.province === "Western Cape") {
       baseOptions.unshift({
         id: "local_delivery",
-        provider: "courier-guy" as const,
+        provider: "bobgo" as const,
         service_name: "Local Delivery - Cape Town",
         price: 50,
         estimated_days: "1-2 days",
@@ -111,8 +111,8 @@ const SimpleShippingForm: React.FC<SimpleShippingFormProps> = ({
     if (shippingData.province === "Gauteng") {
       baseOptions.unshift({
         id: "gauteng_local",
-        provider: "courier-guy" as const,
-        service_name: "Gauteng Local Delivery",
+        provider: "bobgo" as const,
+        service_name: "Bob Go - Gauteng Local Delivery",
         price: 65,
         estimated_days: "1-3 days",
         description: "Local delivery within Gauteng",

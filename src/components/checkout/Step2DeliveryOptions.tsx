@@ -76,16 +76,16 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
       else if (isProvincial) zoneType = "provincial";
       else zoneType = "national";
 
-      // ✅ Use accurate Courier Guy pricing only (as requested)
-      console.log("📞 Getting Courier Guy quotes for zone:", zoneType);
+      // Use Bob Go pricing only
+      console.log("📞 Getting Bob Go quotes for zone:", zoneType);
 
       const baseOptions: DeliveryOption[] = [];
 
       // Use accurate Courier Guy pricing based on zone
       if (zoneType === "local") {
         baseOptions.push({
-          courier: "courier-guy",
-          service_name: "Courier Guy - Overnight",
+          courier: "bobgo",
+          service_name: "Bob Go - Overnight",
           price: 105, // ✅ Actual Courier Guy overnight rate 2024
           estimated_days: 1,
           description: "Overnight delivery within 1-2 business days",
@@ -93,8 +93,8 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
         });
       } else if (zoneType === "provincial") {
         baseOptions.push({
-          courier: "courier-guy",
-          service_name: "Courier Guy - Provincial",
+          courier: "bobgo",
+          service_name: "Bob Go - Provincial",
           price: 140, // ✅ Estimated provincial rate based on distance
           estimated_days: 2,
           description: "Within province delivery, 2-3 business days",
@@ -102,8 +102,8 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
         });
       } else {
         baseOptions.push({
-          courier: "courier-guy",
-          service_name: "Courier Guy - National",
+          courier: "bobgo",
+          service_name: "Bob Go - National",
           price: 180, // ✅ Estimated national rate based on distance
           estimated_days: 3,
           description: "Cross-province delivery, 3-5 business days",
@@ -114,8 +114,8 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
       // Optional: Add express option for urgent deliveries
       if (zoneType === "local") {
         baseOptions.push({
-          courier: "courier-guy",
-          service_name: "Courier Guy - Same Day Economy",
+          courier: "bobgo",
+          service_name: "Bob Go - Same Day Economy",
           price: 555, // ✅ Actual same-day economy rate 2024
           estimated_days: 0,
           description: "Same day delivery by 17:00 (book before 10:00)",
@@ -125,10 +125,10 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
 
       // Ensure we always have at least one option
       if (baseOptions.length === 0) {
-        console.warn("⚠️ No delivery options generated, using default Courier Guy");
+        console.warn("⚠️ No delivery options generated, using default Bob Go");
         baseOptions.push({
-          courier: "courier-guy",
-          service_name: "Courier Guy - Overnight",
+          courier: "bobgo",
+          service_name: "Bob Go - Overnight",
           price: 105, // ✅ Actual overnight rate
           estimated_days: 2,
           description: "Standard overnight delivery within 1-2 business days",
