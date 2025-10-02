@@ -61,72 +61,47 @@ serve(async (req) => {
       );
     }
 
-    // Step 1: Get quotes from both couriers
-    let quotes = [];
+    // Step 1: Get quotes from Bob Go
+    let quotes: any[] = [];
     try {
-      const [courierGuyQuote, fastwayQuote] = await Promise.allSettled([
-        fetch(`${SUPABASE_URL}/functions/v1/courier-guy-quote`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-          },
-          body: JSON.stringify({
-            fromAddress: seller_address,
-            toAddress: buyer_address,
-            weight: weight || 1,
-            serviceType: "standard",
-          }),
+      const ratesResp = await fetch(`${SUPABASE_URL}/functions/v1/bobgo-get-rates`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+        },
+        body: JSON.stringify({
+          fromAddress: seller_address,
+          toAddress: buyer_address,
+          parcels: [{ weight: weight || 1, length: 25, width: 20, height: 3, value: 100 }],
+          serviceType: "standard",
         }),
-        fetch(`${SUPABASE_URL}/functions/v1/fastway-quote`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-          },
-          body: JSON.stringify({
-            fromAddress: seller_address,
-            toAddress: buyer_address,
-            weight: weight || 1,
-            serviceType: "standard",
-          }),
-        }),
-      ]);
-
-      if (courierGuyQuote.status === "fulfilled") {
-        try {
-          const cgData = await courierGuyQuote.value.json();
-          if (cgData.success && cgData.quotes) {
-            quotes.push(...cgData.quotes);
-          }
-        } catch (e) {
-          console.warn("Failed to parse courier guy response:", e);
-        }
-      }
-
-      if (fastwayQuote.status === "fulfilled") {
-        try {
-          const fwData = await fastwayQuote.value.json();
-          if (fwData.success && fwData.quotes) {
-            quotes.push(...fwData.quotes);
-          }
-        } catch (e) {
-          console.warn("Failed to parse fastway response:", e);
-        }
+      });
+      const ratesJson = await ratesResp.json().catch(() => ({}));
+      if (ratesJson?.quotes?.length) {
+        quotes = ratesJson.quotes.map((q: any) => ({
+          courier: "bobgo",
+          service_name: q.service_name,
+          price: q.cost,
+          estimated_days: q.transit_days || 3,
+          provider_slug: q.provider_slug,
+          service_level_code: q.service_level_code,
+        }));
       }
     } catch (quoteError) {
-      console.error("Failed to get quotes:", quoteError);
+      console.error("Failed to get Bob Go rates:", quoteError);
     }
 
     // Add fallback quote if no quotes received
     if (quotes.length === 0) {
-      console.warn("No quotes received, adding fallback quote");
+      console.warn("No quotes received, adding fallback Bob Go quote");
       quotes.push({
+        courier: "bobgo",
         service_name: "Standard Delivery",
         price: 95.0,
         estimated_days: 3,
-        service_code: "STANDARD",
-        courier: "courier-guy",
+        provider_slug: "simulated",
+        service_level_code: "STANDARD",
       });
     }
 
@@ -135,17 +110,12 @@ serve(async (req) => {
       current.price < best.price ? current : best,
     );
 
-    // Step 3: Create shipment with selected courier
+    // Step 3: Create shipment with Bob Go
     let shipmentResult = null;
     if (selectedQuote) {
       try {
-        const shipmentFunction =
-          selectedQuote.courier === "courier-guy"
-            ? "courier-guy-shipment"
-            : "fastway-shipment";
-
         const shipmentResponse = await fetch(
-          `${SUPABASE_URL}/functions/v1/${shipmentFunction}`,
+          `${SUPABASE_URL}/functions/v1/bobgo-create-shipment`,
           {
             method: "POST",
             headers: {
@@ -154,10 +124,11 @@ serve(async (req) => {
             },
             body: JSON.stringify({
               order_id,
-              service_code: selectedQuote.service_code,
+              provider_slug: selectedQuote.provider_slug,
+              service_level_code: selectedQuote.service_level_code,
               pickup_address: seller_address,
               delivery_address: buyer_address,
-              weight: weight || 1,
+              parcels: [{ weight: weight || 1, length: 25, width: 20, height: 3, value: 100 }],
               reference: `AUTO-${order_id}`,
             }),
           },
@@ -166,7 +137,7 @@ serve(async (req) => {
         const shipmentData = await shipmentResponse.json();
         shipmentResult = shipmentData;
       } catch (shipmentError) {
-        console.error("Failed to create shipment:", shipmentError);
+        console.error("Failed to create Bob Go shipment:", shipmentError);
       }
     }
 
@@ -175,14 +146,17 @@ serve(async (req) => {
       const updateData: any = {
         delivery_automated: true,
         delivery_automation_date: new Date().toISOString(),
-        selected_courier: selectedQuote.courier,
+        selected_courier: "bobgo",
         delivery_cost: selectedQuote.price,
+        delivery_provider: "bobgo",
       };
 
       if (shipmentResult?.success) {
         updateData.status = "courier_scheduled";
         updateData.tracking_number = shipmentResult.tracking_number;
         updateData.courier_reference = shipmentResult.shipment_id;
+        updateData.delivery_provider = "bobgo";
+        updateData.delivery_data = shipmentResult;
       }
 
       const { error: updateError } = await supabase
@@ -220,7 +194,7 @@ serve(async (req) => {
         success: true,
         automation_status: shipmentResult?.success ? "complete" : "partial",
         quotes_received: quotes.length,
-        selected_courier: selectedQuote?.courier,
+        selected_courier: "bobgo",
         delivery_cost: selectedQuote?.price,
         tracking_number: shipmentResult?.tracking_number,
         shipment_created: !!shipmentResult?.success,
