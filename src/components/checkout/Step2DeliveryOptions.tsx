@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { CheckoutAddress, DeliveryOption } from "@/types/checkout";
 import { toast } from "sonner";
-import { getAllDeliveryQuotes } from "@/services/unifiedDeliveryService";
+import { getAllDeliveryQuotes, type UnifiedQuote } from "@/services/unifiedDeliveryService";
 
 interface Step2DeliveryOptionsProps {
   buyerAddress: CheckoutAddress;
@@ -39,6 +39,7 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
   selectedDelivery,
 }) => {
   const [deliveryOptions, setDeliveryOptions] = useState<DeliveryOption[]>([]);
+  const [quotes, setQuotes] = useState<UnifiedQuote[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,7 +57,7 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
         to: buyerAddress,
       });
 
-      const quotes = await getAllDeliveryQuotes({
+      const quotesResp = await getAllDeliveryQuotes({
         from: {
           streetAddress: sellerAddress.street,
           suburb: sellerAddress.city,
@@ -74,7 +75,9 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
         weight: 1,
       });
 
-      const options: DeliveryOption[] = quotes.map((q) => ({
+      setQuotes(quotesResp);
+
+      const options: DeliveryOption[] = quotesResp.map((q) => ({
         courier: "bobgo",
         service_name: q.service_name,
         price: q.cost,
@@ -170,7 +173,7 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Delivery Options
+          Available Shipping Options
         </h1>
         <p className="text-gray-600">
           Choose how you'd like to receive your book
@@ -217,53 +220,64 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
         </CardContent>
       </Card>
 
-      {/* Delivery Options */}
-      <div className="space-y-4">
-        {deliveryOptions.map((option, index) => (
-          <Card
-            key={index}
-            className={`cursor-pointer transition-all hover:shadow-md ${
-              selectedDelivery?.service_name === option.service_name
-                ? "ring-2 ring-blue-500 bg-blue-50"
-                : "hover:border-gray-300"
-            }`}
-            onClick={() => onSelectDelivery(option)}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gray-100 rounded-lg">
-                    <Truck className="w-6 h-6 text-gray-600" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold">{option.service_name}</h3>
-                      <Badge className={getZoneBadgeColor(option.zone_type)}>
-                        {option.zone_type}
-                      </Badge>
+      {/* Delivery Options grouped by courier */}
+      <div className="space-y-6">
+        {Object.entries(
+          quotes.reduce<Record<string, UnifiedQuote[]>>((acc, q) => {
+            const key = q.provider_name || "Unknown";
+            acc[key] = acc[key] || [];
+            acc[key].push(q);
+            return acc;
+          }, {})
+        ).map(([courier, items]) => (
+          <Card key={courier}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Truck className="w-5 h-5" /> {courier}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {items.map((q, idx) => {
+                const option: DeliveryOption = {
+                  courier: "bobgo",
+                  service_name: q.service_name,
+                  price: q.cost,
+                  estimated_days: typeof q.transit_days === "number" ? q.transit_days : 3,
+                  description: `${courier}`,
+                  zone_type:
+                    buyerAddress.province === sellerAddress.province
+                      ? buyerAddress.city === sellerAddress.city
+                        ? "local"
+                        : "provincial"
+                      : "national",
+                };
+                const isSelected = selectedDelivery?.service_name === option.service_name;
+                return (
+                  <div
+                    key={idx}
+                    className={`flex items-center justify-between p-3 rounded-md cursor-pointer ${
+                      isSelected ? "bg-blue-50 ring-1 ring-blue-400" : "hover:bg-gray-50"
+                    }`}
+                    onClick={() => onSelectDelivery(option)}
+                  >
+                    <div>
+                      <div className="font-medium">{q.service_name} — R{q.cost.toFixed(2)} {q.price_excl != null && (
+                        <span className="text-gray-600">(excl. VAT: R{q.price_excl.toFixed(2)})</span>
+                      )}
+                      </div>
+                      {q.collection_cutoff && (
+                        <div className="text-xs text-gray-500">Cut-off: {q.collection_cutoff}</div>
+                      )}
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {option.description}
-                    </p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <div className="flex items-center gap-1">
+                    <div className="text-right">
+                      <div className="text-sm text-gray-600 flex items-center justify-end gap-2">
                         <Clock className="w-4 h-4" />
-                        {option.estimated_days} day
-                        {option.estimated_days > 1 ? "s" : ""}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Package className="w-4 h-4" />
-                        {option.courier}
+                        {option.estimated_days} day{option.estimated_days > 1 ? "s" : ""}
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-xl font-bold text-green-600">
-                    R{option.price.toFixed(2)}
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </CardContent>
           </Card>
         ))}
