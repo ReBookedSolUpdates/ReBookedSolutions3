@@ -170,7 +170,7 @@ const UnifiedTrackingComponent: React.FC<UnifiedTrackingComponentProps> = ({
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
               <Input
-                placeholder="Enter tracking number (e.g., CG1234567890)"
+                placeholder="Enter tracking number (e.g., BOG123456789)"
                 value={trackingNumber}
                 onChange={(e) => setTrackingNumber(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleTrack()}
