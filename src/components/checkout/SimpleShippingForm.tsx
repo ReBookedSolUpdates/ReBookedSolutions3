@@ -80,7 +80,7 @@ const SimpleShippingForm: React.FC<SimpleShippingFormProps> = ({
       {
         id: "courier_guy_standard",
         provider: "bobgo" as const,
-        service_name: "Courier Guy - Standard",
+        service_name: "Bob Go - Standard",
         price: 89,
         estimated_days: "3-5 days",
         description: "Reliable nationwide delivery",
