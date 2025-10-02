@@ -64,6 +64,27 @@ serve(async (req) => {
     // Step 1: Get quotes from Bob Go
     let quotes: any[] = [];
     try {
+      const provinceMap: Record<string, string> = {
+        "eastern cape": "EC",
+        "free state": "FS",
+        "gauteng": "GP",
+        "kwazulu-natal": "KZN",
+        "kwa zulu natal": "KZN",
+        "limpopo": "LP",
+        "mpumalanga": "MP",
+        "northern cape": "NC",
+        "north west": "NW",
+        "western cape": "WC",
+      };
+      const toCode = (p: string = "") => provinceMap[p.toLowerCase()] || (p.length <= 3 ? p.toUpperCase() : p.toUpperCase().slice(0, 3));
+      const normalizeAddress = (a: any) => ({
+        suburb: a?.suburb || a?.city || "",
+        province: toCode(a?.province || a?.state || ""),
+        postalCode: a?.postalCode || a?.postal_code || "",
+        streetAddress: a?.streetAddress || a?.street || a?.address || "",
+        city: a?.city || a?.suburb || "",
+      });
+
       const ratesResp = await fetch(`${SUPABASE_URL}/functions/v1/bobgo-get-rates`, {
         method: "POST",
         headers: {
@@ -71,8 +92,8 @@ serve(async (req) => {
           Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
         },
         body: JSON.stringify({
-          fromAddress: seller_address,
-          toAddress: buyer_address,
+          fromAddress: normalizeAddress(seller_address),
+          toAddress: normalizeAddress(buyer_address),
           parcels: [{ weight: weight || 1, length: 25, width: 20, height: 3, value: 100 }],
           serviceType: "standard",
         }),
