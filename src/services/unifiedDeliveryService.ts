@@ -1,11 +1,4 @@
 import { supabase } from "@/integrations/supabase/client";
-import {
-  getCourierGuyQuote,
-  createCourierGuyShipment,
-  trackCourierGuyShipment,
-  CourierGuyShipmentData,
-} from "./courierGuyService";
-
 
 // Unified delivery types
 export interface UnifiedAddress {
@@ -19,14 +12,14 @@ export interface UnifiedAddress {
   complex?: string;
   suburb?: string;
   city: string;
-  province: string;
+  province: string; // Accept full name; will be converted to short code for Bob Go
   postalCode: string;
   country?: string;
 }
 
 export interface UnifiedParcel {
-  reference: string;
-  description: string;
+  reference?: string;
+  description?: string;
   weight: number; // in kg
   length?: number; // in cm
   width?: number; // in cm
@@ -38,13 +31,12 @@ export interface UnifiedShipmentRequest {
   collection: UnifiedAddress;
   delivery: UnifiedAddress;
   parcels: UnifiedParcel[];
-  service_type: "standard" | "express" | "overnight";
-  collection_date?: string;
+  service_type?: "standard" | "express" | "overnight";
   special_instructions?: string;
-  require_signature?: boolean;
-  insurance?: boolean;
   reference?: string;
-  preferred_provider?: "courier-guy";
+  preferred_provider?: "bobgo";
+  provider_slug?: string; // from quote
+  service_level_code?: string; // from quote
 }
 
 export interface UnifiedQuoteRequest {
@@ -58,48 +50,43 @@ export interface UnifiedQuoteRequest {
 }
 
 export interface UnifiedQuote {
-  provider: "courier-guy";
+  provider: "bobgo";
   provider_name: string;
-  service_code: string;
+  provider_slug: string;
+  service_level_code: string;
   service_name: string;
   cost: number;
-  cost_breakdown?: {
-    base_cost: number;
-    gst?: number;
-    fuel_surcharge?: number;
-    insurance?: number;
-  };
+  currency?: string;
   transit_days: number;
   collection_cutoff?: string;
-  estimated_delivery: string;
+  estimated_delivery?: string;
   features: string[];
   terms?: string;
 }
 
 export interface UnifiedShipment {
-  provider: "courier-guy";
+  provider: "bobgo";
   shipment_id: string;
   tracking_number: string;
-  barcode?: string;
-  labels: string[]; // Base64 encoded labels
-  cost: number;
-  service_code: string;
-  collection_date: string;
-  estimated_delivery_date: string;
+  labels?: string[];
+  cost?: number;
+  service_level_code?: string;
+  collection_date?: string;
+  estimated_delivery_date?: string;
   reference?: string;
-  tracking_url: string;
+  tracking_url?: string;
 }
 
 export interface UnifiedTrackingEvent {
   timestamp: string;
   status: string;
-  location: string;
-  description: string;
+  location?: string;
+  description?: string;
   signature?: string;
 }
 
 export interface UnifiedTrackingResponse {
-  provider: "courier-guy";
+  provider: "bobgo";
   tracking_number: string;
   status:
     | "pending"
@@ -110,281 +97,210 @@ export interface UnifiedTrackingResponse {
     | "failed"
     | "cancelled";
   current_location?: string;
-  estimated_delivery: string;
+  estimated_delivery?: string;
   actual_delivery?: string;
   events: UnifiedTrackingEvent[];
   recipient_signature?: string;
   proof_of_delivery?: string;
-  tracking_url: string;
+  tracking_url?: string;
 }
 
-/**
- * Get quotes from all available courier providers
- */
+const PROVINCE_CODE_MAP: Record<string, string> = {
+  "eastern cape": "EC",
+  "free state": "FS",
+  "gauteng": "GP",
+  "kwazulu-natal": "ZN",
+  "kwaZulu-Natal": "ZN",
+  "limpopo": "LP",
+  "mpumalanga": "MP",
+  "northern cape": "NC",
+  "north west": "NW",
+  "western cape": "WC",
+};
+
+function toProvinceCode(input: string): string {
+  const s = (input || "").toLowerCase().trim();
+  if (PROVINCE_CODE_MAP[s]) return PROVINCE_CODE_MAP[s];
+  // If already code-like, return as-is (max 3 chars)
+  if (s.length <= 3) return input.toUpperCase();
+  return input.toUpperCase().slice(0, 2);
+}
+
+/** Get quotes from Bob Go */
 export const getAllDeliveryQuotes = async (
   request: UnifiedQuoteRequest,
 ): Promise<UnifiedQuote[]> => {
   try {
-    console.log("Getting quotes from all providers:", request);
+    const body = {
+      fromAddress: {
+        suburb: request.from.suburb || request.from.city,
+        province: toProvinceCode(request.from.province),
+        postalCode: request.from.postalCode,
+        streetAddress: request.from.streetAddress,
+        city: request.from.city,
+      },
+      toAddress: {
+        suburb: request.to.suburb || request.to.city,
+        province: toProvinceCode(request.to.province),
+        postalCode: request.to.postalCode,
+        streetAddress: request.to.streetAddress,
+        city: request.to.city,
+      },
+      parcels: [
+        {
+          weight: request.weight || 1,
+          length: request.length || 25,
+          width: request.width || 20,
+          height: request.height || 3,
+          value: 100,
+        },
+      ],
+      serviceType: request.service_type || "standard",
+    };
 
-    const quotes: UnifiedQuote[] = [];
-    const errors: string[] = [];
+    const { data, error } = await supabase.functions.invoke("bobgo-get-rates", { body });
+    if (error) throw new Error(error.message);
 
-    // Get quotes from all providers in parallel
-    const quotePromises = [
-      getCourierGuyQuotes(request).catch((err) => {
-        errors.push(`Courier Guy: ${err.message}`);
-        return [];
-      }),
+    const quotes: UnifiedQuote[] = (data?.quotes || []).map((q: any) => ({
+      provider: "bobgo",
+      provider_name: q.carrier || "Bob Go",
+      provider_slug: q.provider_slug,
+      service_level_code: q.service_level_code,
+      service_name: q.service_name,
+      cost: q.cost,
+      currency: q.currency || "ZAR",
+      transit_days: q.transit_days || 3,
+      features: ["Tracking included", "Door-to-door"],
+      terms: undefined,
+    }));
 
-    ];
-
-    const results = await Promise.allSettled(quotePromises);
-
-    results.forEach((result, index) => {
-      if (result.status === "fulfilled" && result.value) {
-        quotes.push(...result.value);
-      }
-    });
-
-    // Sort by cost (cheapest first)
+    if (!quotes.length) return generateFallbackQuotes(request);
     quotes.sort((a, b) => a.cost - b.cost);
-
-    if (quotes.length === 0) {
-      console.warn("No quotes available from any provider. Errors:", errors);
-      return generateFallbackQuotes(request);
-    }
-
-    console.log(`Retrieved ${quotes.length} quotes from providers`);
     return quotes;
-  } catch (error) {
-    console.error("Error getting delivery quotes:", error);
+  } catch (err) {
+    console.error("getAllDeliveryQuotes error:", err);
     return generateFallbackQuotes(request);
   }
 };
 
-/**
- * Create shipment with specified or best provider
- */
+/** Create shipment using Bob Go */
 export const createUnifiedShipment = async (
   request: UnifiedShipmentRequest,
-  selectedQuote?: UnifiedQuote,
+  selected?: UnifiedQuote,
 ): Promise<UnifiedShipment> => {
-  try {
-    console.log("Creating unified shipment:", { request, selectedQuote });
+  const parcels = (request.parcels?.length ? request.parcels : [{ weight: 1, length: 25, width: 20, height: 3, value: 100 }]) as UnifiedParcel[];
 
-    let provider = request.preferred_provider;
-
-    // If no provider specified, get quotes and use cheapest
-    if (!provider && !selectedQuote) {
-      const quotes = await getAllDeliveryQuotes({
-        from: request.collection,
-        to: request.delivery,
-        weight: request.parcels[0]?.weight || 1,
-        service_type: request.service_type,
-      });
-
-      if (quotes.length > 0) {
-        selectedQuote = quotes[0]; // Cheapest option
-        provider = selectedQuote.provider;
-      } else {
-        provider = "courier-guy"; // Fallback
-      }
-    } else if (selectedQuote) {
-      provider = selectedQuote.provider;
-    }
-
-    console.log(`Creating shipment with provider: ${provider}`);
-
-    switch (provider) {
-      case "courier-guy":
-        return await createCourierGuyShipmentUnified(request);
-
-      default:
-        throw new Error(`Unknown provider: ${provider}`);
-    }
-  } catch (error) {
-    console.error("Error creating unified shipment:", error);
-    throw error;
+  let quote = selected;
+  if (!quote) {
+    const quotes = await getAllDeliveryQuotes({
+      from: request.collection,
+      to: request.delivery,
+      weight: parcels[0].weight || 1,
+    });
+    if (quotes.length === 0) throw new Error("No rates available");
+    quote = quotes[0];
   }
+
+  const { data, error } = await supabase.functions.invoke("bobgo-create-shipment", {
+    body: {
+      order_id: request.reference || `order-${Date.now()}`,
+      provider_slug: quote.provider_slug,
+      service_level_code: quote.service_level_code,
+      pickup_address: {
+        company: request.collection.company,
+        streetAddress: request.collection.streetAddress,
+        suburb: request.collection.suburb || request.collection.city,
+        city: request.collection.city,
+        province: toProvinceCode(request.collection.province),
+        postalCode: request.collection.postalCode,
+        contact_name: request.collection.contactName || request.collection.name,
+        contact_phone: request.collection.phone,
+        contact_email: request.collection.email,
+      },
+      delivery_address: {
+        company: request.delivery.company,
+        streetAddress: request.delivery.streetAddress,
+        suburb: request.delivery.suburb || request.delivery.city,
+        city: request.delivery.city,
+        province: toProvinceCode(request.delivery.province),
+        postalCode: request.delivery.postalCode,
+        contact_name: request.delivery.contactName || request.delivery.name,
+        contact_phone: request.delivery.phone,
+        contact_email: request.delivery.email,
+      },
+      parcels: parcels.map((p) => ({
+        weight: p.weight || 1,
+        length: p.length || 25,
+        width: p.width || 20,
+        height: p.height || 3,
+        value: p.value || 100,
+        description: p.description || "Book",
+      })),
+      reference: request.reference,
+      special_instructions: request.special_instructions,
+    },
+  });
+
+  if (error) throw new Error(error.message);
+  if (!data?.success) throw new Error(data?.error || "Shipment creation failed");
+
+  return {
+    provider: "bobgo",
+    shipment_id: data.shipment_id,
+    tracking_number: data.tracking_number,
+    cost: data.cost,
+    service_level_code: quote!.service_level_code,
+    estimated_delivery_date: data.estimated_delivery,
+    reference: request.reference,
+    tracking_url: undefined,
+  };
 };
 
-/**
- * Track shipment from any provider
- */
+/** Track shipment via Bob Go */
 export const trackUnifiedShipment = async (
   trackingNumber: string,
-  provider?: "courier-guy",
+  provider?: "bobgo",
 ): Promise<UnifiedTrackingResponse> => {
-  try {
-    console.log("Tracking shipment:", { trackingNumber, provider });
-
-    // If provider not specified, try to detect from tracking number format
-    if (!provider) {
-      provider = detectProviderFromTrackingNumber(trackingNumber);
-    }
-
-    switch (provider) {
-      case "courier-guy":
-        return await trackCourierGuyShipmentUnified(trackingNumber);
-
-      default:
-        throw new Error(`Unknown provider: ${provider}`);
-    }
-  } catch (error) {
-    console.error("Error tracking shipment:", error);
-    throw error;
-  }
+  const { data, error } = await supabase.functions.invoke(`bobgo-track-shipment/${encodeURIComponent(trackingNumber)}`, { method: "GET" as any });
+  if (error) throw new Error(error.message);
+  const t = data?.tracking || {};
+  const events = (t.events || []).map((e: any) => ({
+    timestamp: e.timestamp,
+    status: (e.status || "").toLowerCase(),
+    location: e.location,
+    description: e.message || e.status_friendly || e.status,
+  }));
+  return {
+    provider: "bobgo",
+    tracking_number: trackingNumber,
+    status: (t.status || "pending").toLowerCase(),
+    current_location: t.current_location,
+    estimated_delivery: t.estimated_delivery,
+    actual_delivery: t.delivered_at,
+    events,
+    recipient_signature: t.recipient_signature,
+    proof_of_delivery: undefined,
+    tracking_url: undefined,
+  };
 };
 
-// Provider-specific quote functions
-async function getCourierGuyQuotes(
-  request: UnifiedQuoteRequest,
-): Promise<UnifiedQuote[]> {
-  const quote = await getCourierGuyQuote(
-    request.from.city,
-    request.to.city,
-    request.weight,
-  );
-
-  return [
-    {
-      provider: "courier-guy",
-      provider_name: "Courier Guy",
-      service_code: "STANDARD",
-      service_name: "Courier Guy Standard",
-      cost: quote.price,
-      transit_days: quote.estimatedDays,
-      estimated_delivery: new Date(
-        Date.now() + quote.estimatedDays * 24 * 60 * 60 * 1000,
-      ).toISOString(),
-      features: ["Local courier", "Reliable tracking", "Door-to-door delivery"],
-    },
-  ];
-}
-
-
-
-// Provider-specific shipment creation functions
-async function createCourierGuyShipmentUnified(
-  request: UnifiedShipmentRequest,
-): Promise<UnifiedShipment> {
-  const shipmentData: CourierGuyShipmentData = {
-    senderName:
-      request.collection.contactName || request.collection.name || "Sender",
-    senderPhone: request.collection.phone || "+27000000000",
-    senderEmail: request.collection.email || "",
-    senderAddress: `${request.collection.streetAddress}, ${request.collection.city}, ${request.collection.province}`,
-    recipientName:
-      request.delivery.contactName || request.delivery.name || "Recipient",
-    recipientPhone: request.delivery.phone || "+27000000000",
-    recipientEmail: request.delivery.email || "",
-    recipientAddress: `${request.delivery.streetAddress}, ${request.delivery.city}, ${request.delivery.province}`,
-    parcelDescription: request.parcels[0]?.description || "Package",
-    parcelWeight: request.parcels[0]?.weight || 1,
-    parcelValue: request.parcels[0]?.value || 100,
-    specialInstructions: request.special_instructions,
-    requireSignature: request.require_signature || false,
-  };
-
-  const shipment = await createCourierGuyShipment(shipmentData);
-
-  return {
-    provider: "courier-guy",
-    shipment_id: shipment.id,
-    tracking_number: shipment.tracking_number,
-    barcode: shipment.barcode,
-    labels: shipment.labels,
-    cost: shipment.cost,
-    service_code: shipment.service_code,
-    collection_date: shipment.collection_date,
-    estimated_delivery_date: shipment.estimated_delivery_date,
-    reference: request.reference,
-    tracking_url: `https://www.courierguy.co.za/track/${shipment.tracking_number}`,
-  };
-}
-
-
-
-// Provider-specific tracking functions
-async function trackCourierGuyShipmentUnified(
-  trackingNumber: string,
-): Promise<UnifiedTrackingResponse> {
-  const tracking = await trackCourierGuyShipment(trackingNumber);
-
-  return {
-    provider: "courier-guy",
-    tracking_number: trackingNumber,
-    status: mapCourierGuyStatus(tracking.status),
-    current_location: tracking.current_location,
-    estimated_delivery: tracking.estimated_delivery,
-    actual_delivery: tracking.actual_delivery,
-    events:
-      tracking.events?.map((e) => ({
-        timestamp: e.timestamp,
-        status: e.status,
-        location: e.location,
-        description: e.description,
-        signature: e.signature,
-      })) || [],
-    recipient_signature: tracking.recipient_signature,
-    proof_of_delivery: tracking.proof_of_delivery,
-    tracking_url: `https://www.courierguy.co.za/track/${trackingNumber}`,
-  };
-}
-
-
-
-// Helper functions
-function detectProviderFromTrackingNumber(
-  trackingNumber: string,
-): "courier-guy" {
-  // Only using Courier Guy now
-  return "courier-guy";
-}
-
-function mapCourierGuyStatus(
-  status: string,
-): UnifiedTrackingResponse["status"] {
-  switch (status?.toLowerCase()) {
-    case "pending":
-    case "created":
-      return "pending";
-    case "collected":
-    case "picked_up":
-      return "collected";
-    case "in_transit":
-    case "in_delivery":
-      return "in_transit";
-    case "out_for_delivery":
-      return "out_for_delivery";
-    case "delivered":
-      return "delivered";
-    case "failed":
-    case "exception":
-      return "failed";
-    default:
-      return "pending";
-  }
+function detectProviderFromTrackingNumber(_trackingNumber: string): "bobgo" {
+  return "bobgo";
 }
 
 function generateFallbackQuotes(request: UnifiedQuoteRequest): UnifiedQuote[] {
   const basePrice = Math.max(50, request.weight * 15);
-
   return [
     {
-      provider: "courier-guy",
-      provider_name: "Courier Guy",
-      service_code: "STANDARD",
+      provider: "bobgo",
+      provider_name: "Bob Go",
+      provider_slug: "simulated",
+      service_level_code: "STANDARD",
       service_name: "Standard Delivery",
       cost: Math.round(basePrice),
       transit_days: 3,
-      estimated_delivery: new Date(
-        Date.now() + 3 * 24 * 60 * 60 * 1000,
-      ).toISOString(),
-      features: ["Reliable delivery", "Local courier", "Tracking included"],
+      features: ["Reliable delivery", "Tracking included"],
     },
-
   ];
 }
 
