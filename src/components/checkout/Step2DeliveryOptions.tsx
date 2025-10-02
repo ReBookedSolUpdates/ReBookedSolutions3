@@ -16,6 +16,7 @@ import {
 import { CheckoutAddress, DeliveryOption } from "@/types/checkout";
 import { toast } from "sonner";
 import { getAllDeliveryQuotes, type UnifiedQuote } from "@/services/unifiedDeliveryService";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface Step2DeliveryOptionsProps {
   buyerAddress: CheckoutAddress;
@@ -218,68 +219,85 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
         </CardContent>
       </Card>
 
-      {/* Delivery Options grouped by courier */}
-      <div className="space-y-6">
+      {/* Delivery Options grouped by courier (clean accordion) */}
+      <Accordion type="multiple" className="space-y-4">
         {Object.entries(
           quotes.reduce<Record<string, UnifiedQuote[]>>((acc, q) => {
             const key = q.provider_name || "Unknown";
-            acc[key] = acc[key] || [];
-            acc[key].push(q);
+            (acc[key] ||= []).push(q);
             return acc;
           }, {})
         ).map(([courier, items]) => (
-          <Card key={courier}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Truck className="w-5 h-5" /> {courier}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {items.map((q, idx) => {
-                const option: DeliveryOption = {
-                  courier: "bobgo",
-                  service_name: q.service_name,
-                  price: q.cost,
-                  estimated_days: typeof q.transit_days === "number" ? q.transit_days : 3,
-                  description: `${courier}`,
-                  zone_type:
-                    buyerAddress.province === sellerAddress.province
-                      ? buyerAddress.city === sellerAddress.city
-                        ? "local"
-                        : "provincial"
-                      : "national",
-                };
-                const isSelected = selectedDelivery?.service_name === option.service_name;
-                return (
-                  <div
-                    key={idx}
-                    className={`flex items-center justify-between p-3 rounded-md cursor-pointer ${
-                      isSelected ? "bg-blue-50 ring-1 ring-blue-400" : "hover:bg-gray-50"
-                    }`}
-                    onClick={() => onSelectDelivery(option)}
-                  >
-                    <div>
-                      <div className="font-medium">{q.service_name} — R{q.cost.toFixed(2)} {q.price_excl != null && (
-                        <span className="text-gray-600">(excl. VAT: R{q.price_excl.toFixed(2)})</span>
-                      )}
+          <AccordionItem key={courier} value={courier} className="rounded-lg border bg-white">
+            <AccordionTrigger className="px-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-md bg-gray-100"><Truck className="w-5 h-5 text-gray-700" /></div>
+                <span className="text-base font-semibold text-gray-900">{courier}</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="divide-y">
+                {items.map((q, idx) => {
+                  const option: DeliveryOption = {
+                    courier: "bobgo",
+                    service_name: q.service_name,
+                    price: q.cost,
+                    estimated_days: typeof q.transit_days === "number" ? q.transit_days : 3,
+                    description: `${courier}`,
+                    zone_type:
+                      buyerAddress.province === sellerAddress.province
+                        ? buyerAddress.city === sellerAddress.city
+                          ? "local"
+                          : "provincial"
+                        : "national",
+                  };
+                  const isSelected = !!selectedDelivery &&
+                    selectedDelivery.service_name === option.service_name &&
+                    selectedDelivery.price === option.price;
+                  return (
+                    <div
+                      key={idx}
+                      className={`flex items-center justify-between gap-4 p-4 transition-colors ${
+                        isSelected ? "bg-blue-50" : "hover:bg-gray-50"
+                      }`}
+                      onClick={() => onSelectDelivery(option)}
+                    >
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                          <span className="font-medium text-gray-900 truncate">{q.service_name}</span>
+                          <span className="text-gray-700">— R{q.cost.toFixed(2)}</span>
+                          {q.price_excl != null && (
+                            <span className="text-gray-600">(excl. VAT: R{q.price_excl.toFixed(2)})</span>
+                          )}
+                        </div>
+                        <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                          <span className="inline-flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5" />
+                            {option.estimated_days} day{option.estimated_days > 1 ? "s" : ""}
+                          </span>
+                          {q.collection_cutoff && (
+                            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-gray-700">Cut-off: {q.collection_cutoff}</span>
+                          )}
+                        </div>
                       </div>
-                      {q.collection_cutoff && (
-                        <div className="text-xs text-gray-500">Cut-off: {q.collection_cutoff}</div>
-                      )}
+                      <button
+                        className={`shrink-0 inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors border ${
+                          isSelected
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-white text-gray-900 border-gray-300 hover:bg-gray-100"
+                        }`}
+                        onClick={(e) => { e.stopPropagation(); onSelectDelivery(option); }}
+                      >
+                        {isSelected ? "Selected" : "Select"}
+                      </button>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm text-gray-600 flex items-center justify-end gap-2">
-                        <Clock className="w-4 h-4" />
-                        {option.estimated_days} day{option.estimated_days > 1 ? "s" : ""}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </CardContent>
-          </Card>
+                  );
+                })}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </div>
+      </Accordion>
 
       {!selectedDelivery && (
         <Alert>
