@@ -22,6 +22,7 @@ import {
   UnifiedTrackingResponse,
 } from "@/services/unifiedDeliveryService";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UnifiedTrackingComponentProps {
   initialTrackingNumber?: string;
@@ -70,6 +71,24 @@ const UnifiedTrackingComponent: React.FC<UnifiedTrackingComponentProps> = ({
         "Unable to track this shipment. Please check the tracking number and try again.",
       );
       toast.error("Failed to track shipment");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelShipment = async () => {
+    if (!trackingNumber) return;
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.functions.invoke("bobgo-cancel-shipment", {
+        body: { tracking_number: trackingNumber, reason: "Cancelled by user" },
+      });
+      if (error || !data?.success) throw new Error(error?.message || data?.error || "Cancel failed");
+      toast.success("Shipment cancellation requested");
+      await handleTrack();
+    } catch (err) {
+      console.error("Cancel shipment failed:", err);
+      toast.error("Unable to cancel shipment");
     } finally {
       setLoading(false);
     }
@@ -298,7 +317,7 @@ const UnifiedTrackingComponent: React.FC<UnifiedTrackingComponentProps> = ({
               )}
 
               {/* External Tracking Link */}
-              <div className="pt-2">
+              <div className="pt-2 flex gap-2 flex-wrap">
                 <Button
                   variant="outline"
                   size="sm"
@@ -309,6 +328,16 @@ const UnifiedTrackingComponent: React.FC<UnifiedTrackingComponentProps> = ({
                   <ExternalLink className="h-4 w-4 mr-2" />
                   View on Courier Website
                 </Button>
+                {trackingData.status !== "delivered" && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleCancelShipment}
+                    disabled={loading}
+                  >
+                    Cancel Shipment
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
