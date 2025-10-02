@@ -56,6 +56,7 @@ export interface UnifiedQuote {
   service_level_code: string;
   service_name: string;
   cost: number;
+  price_excl?: number;
   currency?: string;
   transit_days: number;
   collection_cutoff?: string;
@@ -162,18 +163,47 @@ export const getAllDeliveryQuotes = async (
     const { data, error } = await supabase.functions.invoke("bobgo-get-rates", { body });
     if (error) throw new Error(error.message);
 
-    const quotes: UnifiedQuote[] = (data?.quotes || []).map((q: any) => ({
-      provider: "bobgo",
-      provider_name: q.carrier || "Bob Go",
-      provider_slug: q.provider_slug,
-      service_level_code: q.service_level_code,
-      service_name: q.service_name,
-      cost: q.cost,
-      currency: q.currency || "ZAR",
-      transit_days: q.transit_days || 3,
-      features: ["Tracking included", "Door-to-door"],
-      terms: undefined,
-    }));
+    // Prefer the raw provider_rate_requests if present, to surface all providers/services
+    let quotes: UnifiedQuote[] = [];
+    const providerRequests = data?.raw?.provider_rate_requests as any[] | undefined;
+    if (Array.isArray(providerRequests)) {
+      quotes = providerRequests
+        .filter((p) => p && p.status === "success" && Array.isArray(p.responses))
+        .flatMap((p) =>
+          p.responses
+            .filter((r: any) => !r.status || r.status === "success")
+            .map((r: any) => ({
+              provider: "bobgo" as const,
+              provider_name: p.provider_name || p.courier_name || "Unknown",
+              provider_slug: p.provider_slug || "unknown",
+              service_level_code: r.service_level?.code || r.service_level_code || "",
+              service_name: r.service_level?.name || r.service_name || "Unknown Service",
+              cost: Number(r.rate_amount) || 0,
+              price_excl: typeof r.rate_amount_excl_vat === "number" ? r.rate_amount_excl_vat : undefined,
+              currency: "ZAR",
+              transit_days: r.service_level?.service_level_days ?? (r.service_level?.type === "express" ? 1 : 3),
+              collection_cutoff: r.service_level?.collection_cut_off_time,
+              features: ["Tracking included", "Door-to-door"],
+              terms: undefined,
+            }))
+        );
+    }
+
+    // Fallback to simplified quotes mapping if raw not present
+    if (!quotes.length) {
+      quotes = (data?.quotes || []).map((q: any) => ({
+        provider: "bobgo" as const,
+        provider_name: q.carrier || "Bob Go",
+        provider_slug: q.provider_slug,
+        service_level_code: q.service_level_code,
+        service_name: q.service_name,
+        cost: q.cost,
+        currency: q.currency || "ZAR",
+        transit_days: q.transit_days || 3,
+        features: ["Tracking included", "Door-to-door"],
+        terms: undefined,
+      }));
+    }
 
     if (!quotes.length) return generateFallbackQuotes(request);
     quotes.sort((a, b) => a.cost - b.cost);
