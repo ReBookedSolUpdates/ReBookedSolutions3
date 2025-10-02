@@ -16,8 +16,8 @@ import {
   Edit3,
 } from "lucide-react";
 import { CheckoutAddress, DeliveryOption } from "@/types/checkout";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { getAllDeliveryQuotes } from "@/services/unifiedDeliveryService";
 
 interface Step2DeliveryOptionsProps {
   buyerAddress: CheckoutAddress;
@@ -46,113 +46,67 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
     fetchDeliveryOptions();
   }, [buyerAddress, sellerAddress]);
 
-  /**
-   * 🚚 API Equivalent: POST /api/delivery/calculate
-   * Uses seller address + buyer address + courier APIs to get delivery options
-   */
   const fetchDeliveryOptions = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      console.log(
-        "🚚 POST /api/delivery/calculate - Fetching delivery options...",
-        {
-          from: sellerAddress,
-          to: buyerAddress,
+      console.log("🚚 Fetching Bob Go delivery options...", {
+        from: sellerAddress,
+        to: buyerAddress,
+      });
+
+      const quotes = await getAllDeliveryQuotes({
+        from: {
+          streetAddress: sellerAddress.street,
+          suburb: sellerAddress.city,
+          city: sellerAddress.city,
+          province: sellerAddress.province,
+          postalCode: sellerAddress.postal_code,
         },
-      );
+        to: {
+          streetAddress: buyerAddress.street,
+          suburb: buyerAddress.city,
+          city: buyerAddress.city,
+          province: buyerAddress.province,
+          postalCode: buyerAddress.postal_code,
+        },
+        weight: 1,
+      });
 
-      // Determine zone type based on provinces
-      const isLocal =
-        buyerAddress.province === sellerAddress.province &&
-        buyerAddress.city === sellerAddress.city;
-      const isProvincial =
-        buyerAddress.province === sellerAddress.province && !isLocal;
-      const isNational = buyerAddress.province !== sellerAddress.province;
+      const options: DeliveryOption[] = quotes.map((q) => ({
+        courier: "bobgo",
+        service_name: q.service_name,
+        price: q.cost,
+        estimated_days: q.transit_days,
+        description: `${q.provider_name} - ${q.features?.join(", ") || "Tracked"}`,
+        zone_type: buyerAddress.province === sellerAddress.province
+          ? (buyerAddress.city === sellerAddress.city ? "local" : "provincial")
+          : "national",
+      }));
 
-      let zoneType: "local" | "provincial" | "national";
-      if (isLocal) zoneType = "local";
-      else if (isProvincial) zoneType = "provincial";
-      else zoneType = "national";
-
-      // Use Bob Go pricing only
-      console.log("📞 Getting Bob Go quotes for zone:", zoneType);
-
-      const baseOptions: DeliveryOption[] = [];
-
-      // Use accurate Courier Guy pricing based on zone
-      if (zoneType === "local") {
-        baseOptions.push({
-          courier: "bobgo",
-          service_name: "Bob Go - Overnight",
-          price: 105, // ✅ Actual Courier Guy overnight rate 2024
-          estimated_days: 1,
-          description: "Overnight delivery within 1-2 business days",
-          zone_type: "local",
-        });
-      } else if (zoneType === "provincial") {
-        baseOptions.push({
-          courier: "bobgo",
-          service_name: "Bob Go - Provincial",
-          price: 140, // ✅ Estimated provincial rate based on distance
-          estimated_days: 2,
-          description: "Within province delivery, 2-3 business days",
-          zone_type: "provincial",
-        });
-      } else {
-        baseOptions.push({
-          courier: "bobgo",
-          service_name: "Bob Go - National",
-          price: 180, // ✅ Estimated national rate based on distance
-          estimated_days: 3,
-          description: "Cross-province delivery, 3-5 business days",
-          zone_type: "national",
-        });
+      if (options.length === 0) {
+        throw new Error("No quotes available");
       }
 
-      // Optional: Add express option for urgent deliveries
-      if (zoneType === "local") {
-        baseOptions.push({
-          courier: "bobgo",
-          service_name: "Bob Go - Same Day Economy",
-          price: 555, // ✅ Actual same-day economy rate 2024
-          estimated_days: 0,
-          description: "Same day delivery by 17:00 (book before 10:00)",
-          zone_type: "local",
-        });
-      }
-
-      // Ensure we always have at least one option
-      if (baseOptions.length === 0) {
-        console.warn("⚠️ No delivery options generated, using default Bob Go");
-        baseOptions.push({
-          courier: "bobgo",
-          service_name: "Bob Go - Overnight",
-          price: 105, // ✅ Actual overnight rate
-          estimated_days: 2,
-          description: "Standard overnight delivery within 1-2 business days",
-          zone_type: zoneType,
-        });
-      }
-
-      console.log("✅ Setting delivery options:", baseOptions);
-      setDeliveryOptions(baseOptions);
+      console.log("✅ Bob Go options:", options);
+      setDeliveryOptions(options);
     } catch (err) {
-      console.error("Error fetching delivery options:", err);
-
-      // Even if there's an error, provide fallback Courier Guy options
-      const fallbackOptions: DeliveryOption[] = [{
-        courier: "courier-guy",
-        service_name: "Courier Guy - Overnight",
-        price: 105, // ✅ Actual rate from Courier Guy 2024
-        estimated_days: 2,
-        description: "Standard overnight delivery within 1-2 business days",
-        zone_type: "national",
-      }];
-
-      setDeliveryOptions(fallbackOptions);
-      toast.warning("Using standard delivery rates");
+      console.error("Error fetching Bob Go options:", err);
+      setError("Failed to load delivery options");
+      setDeliveryOptions([
+        {
+          courier: "bobgo",
+          service_name: "Standard Delivery",
+          price: 95,
+          estimated_days: 3,
+          description: "Estimated rate - tracking included",
+          zone_type: buyerAddress.province === sellerAddress.province
+            ? (buyerAddress.city === sellerAddress.city ? "local" : "provincial")
+            : "national",
+        },
+      ]);
+      toast.warning("Using estimated delivery rate");
     } finally {
       setLoading(false);
     }
