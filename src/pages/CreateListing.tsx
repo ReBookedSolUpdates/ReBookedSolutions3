@@ -337,6 +337,7 @@ const CreateListing = () => {
         backCover: "",
         insidePages: "",
         additionalImages: [],
+        quantity: 1,
       });
 
       setBookImages({
