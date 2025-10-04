@@ -301,7 +301,7 @@ const SellerProfile = () => {
                   Books for Sale ({books.length})
                 </h2>
                 <p className="text-gray-600">
-                  All books listed by {seller.name}
+                  {seller.name && seller.name.trim() ? `All books listed by ${seller.name}` : "All books by this seller"}
                 </p>
               </div>
 
