@@ -62,6 +62,8 @@ const CreateListing = () => {
     frontCover: "",
     backCover: "",
     insidePages: "",
+    extra1: "",
+    extra2: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -332,6 +334,8 @@ const CreateListing = () => {
         frontCover: "",
         backCover: "",
         insidePages: "",
+        extra1: "",
+        extra2: "",
       });
 
       setErrors({});
@@ -452,7 +456,7 @@ const CreateListing = () => {
                     setBookImages(images as typeof bookImages)
                   }
                   variant="object"
-                  maxImages={3}
+                  maxImages={5}
                 />
                 {(errors.frontCover ||
                   errors.backCover ||

@@ -681,12 +681,12 @@ const UniversityInfo = () => {
                 <span className="text-xs sm:text-sm font-medium">Books</span>
               </TabsTrigger>
               <TabsTrigger
-                value="accommodation"
+                value="private-institutions"
                 className="flex flex-col items-center gap-1 py-2.5 px-2 text-center data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100 data-[state=active]:scale-105"
               >
                 <Building className="h-3 w-3 sm:h-4 sm:w-4 transition-colors" />
                 <span className="text-xs sm:text-sm font-medium">
-                  Accommodation
+                  Private Institutions
                 </span>
               </TabsTrigger>
             </TabsList>
@@ -821,7 +821,7 @@ const UniversityInfo = () => {
               </Suspense>
             </TabsContent>
 
-            <TabsContent value="accommodation" className="space-y-6">
+            <TabsContent value="private-institutions" className="space-y-6">
               <div className="relative overflow-hidden">
                 {/* Background decoration */}
                 <div className="absolute inset-0 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50"></div>
@@ -836,7 +836,7 @@ const UniversityInfo = () => {
                       Housing Solutions
                     </div>
                     <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                      Student Accommodation
+                      Private Institutions
                     </h2>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                       Discover comfortable and affordable housing options
@@ -864,8 +864,7 @@ const UniversityInfo = () => {
                           <Star className="w-8 h-8 text-yellow-300" />
                         </h3>
                         <p className="text-xl text-green-50 leading-relaxed">
-                          We're crafting an amazing accommodation platform to
-                          help you find the perfect home away from home!
+                          Explore accredited private institutions across South Africa. Profiles match our university pages, without APS requirements.
                         </p>
                       </div>
 
@@ -909,8 +908,7 @@ const UniversityInfo = () => {
                       {/* Call to action */}
                       <div className="bg-gradient-to-r from-gray-50 to-green-50 rounded-xl p-6 border border-green-100">
                         <p className="text-gray-700 mb-4">
-                          Be the first to know when we launch! Get notified
-                          about exclusive early access.
+                          Get notified when new private institutions are added and profiles go live.
                         </p>
                         {isAuthenticated ? (
                           <Button
@@ -926,7 +924,7 @@ const UniversityInfo = () => {
                             ) : (
                               <>
                                 <Bell className="w-4 h-4 mr-2" />
-                                Notify Me When Available
+                                Notify Me About Private Institutions
                               </>
                             )}
                           </Button>
@@ -937,7 +935,7 @@ const UniversityInfo = () => {
                               className="bg-gray-400 text-white px-8 py-3 rounded-xl font-semibold cursor-not-allowed"
                             >
                               <Lock className="w-4 h-4 mr-2" />
-                              Login Required to Get Notified
+                              Login Required to Get Updates
                             </Button>
                             <p className="text-sm text-gray-500 text-center">
                               <button
