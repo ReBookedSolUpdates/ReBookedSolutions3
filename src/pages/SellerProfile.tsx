@@ -66,7 +66,7 @@ const SellerProfile = () => {
         setSeller({ ...(sellerData as any), name: displayName, province: derivedProvince });
       } else {
         // Keep a minimal shell so the page can still render books list if available
-        setSeller({ id: sellerId!, name: displayName, email: "", created_at: new Date().toISOString(), province });
+        setSeller({ id: sellerId!, name: displayName, email: "", created_at: new Date().toISOString(), province: undefined });
       }
 
       // Fetch seller's books
