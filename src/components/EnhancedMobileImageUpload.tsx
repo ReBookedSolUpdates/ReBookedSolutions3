@@ -34,6 +34,8 @@ interface BookImages {
   frontCover: string;
   backCover: string;
   insidePages: string;
+  extra1?: string;
+  extra2?: string;
 }
 
 interface EnhancedMobileImageUploadProps {
@@ -64,20 +66,24 @@ const EnhancedMobileImageUpload = ({
   const frontCameraInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const isMobile = useIsMobile();
 
-  // Convert images to array format for consistent handling
+  // Convert images to array format for consistent handling (preserve indices)
   const getImageArray = (): string[] => {
+    const max = Math.max(3, maxImages);
     if (variant === "object") {
       const bookImages = (currentImages || images) as BookImages;
-      if (!bookImages) return [];
-      return [
-        bookImages.frontCover,
-        bookImages.backCover,
-        bookImages.insidePages,
-      ]
-        .filter(Boolean)
-        .slice(0, 3);
+      const arr = [
+        bookImages?.frontCover || "",
+        bookImages?.backCover || "",
+        bookImages?.insidePages || "",
+        bookImages?.extra1 || "",
+        bookImages?.extra2 || "",
+      ];
+      return arr.slice(0, max);
     }
-    return ((images || []) as string[]).slice(0, 3);
+    const arr = Array.isArray(images) ? (images as string[]) : [];
+    // Ensure fixed length with empty slots preserved
+    const filled = Array.from({ length: max }, (_, i) => arr[i] || "");
+    return filled;
   };
 
   // Convert array back to appropriate format
@@ -87,6 +93,8 @@ const EnhancedMobileImageUpload = ({
         frontCover: newImages[0] || "",
         backCover: newImages[1] || "",
         insidePages: newImages[2] || "",
+        extra1: newImages[3] || "",
+        extra2: newImages[4] || "",
       };
       onImagesChange(bookImages);
     } else {
@@ -96,29 +104,39 @@ const EnhancedMobileImageUpload = ({
 
   const imageArray = getImageArray();
 
-  const slots = [
-    { 
-      label: "Front Cover", 
-      index: 0, 
+  const baseSlots = [
+    {
+      label: "Front Cover",
+      index: 0,
+      required: true,
       description: "Clear photo of book front",
       orientation: "portrait",
       tips: "Hold phone vertically, ensure good lighting"
     },
-    { 
-      label: "Back Cover", 
-      index: 1, 
+    {
+      label: "Back Cover",
+      index: 1,
+      required: true,
       description: "Clear photo of book back",
-      orientation: "portrait", 
+      orientation: "portrait",
       tips: "Hold phone vertically, capture entire back cover"
     },
-    { 
-      label: "Inside Pages", 
-      index: 2, 
+    {
+      label: "Inside Pages",
+      index: 2,
+      required: true,
       description: "Open book showing content",
       orientation: "landscape",
       tips: "Hold phone horizontally, show 2 pages clearly"
     },
   ];
+
+  const optionalSlots = [
+    { label: "Extra Photo 1", index: 3, required: false, description: "Optional extra angle or page", orientation: "portrait", tips: "Use good lighting" },
+    { label: "Extra Photo 2", index: 4, required: false, description: "Optional extra angle or page", orientation: "portrait", tips: "Use good lighting" },
+  ];
+
+  const slots = [...baseSlots, ...optionalSlots].slice(0, Math.max(3, maxImages));
 
   const uploadImage = async (file: File): Promise<string> => {
     const fileExt = file.name.split(".").pop();
@@ -252,7 +270,7 @@ const EnhancedMobileImageUpload = ({
       )}
 
       <div
-        className={`grid ${isMobile ? "grid-cols-1 gap-4" : "grid-cols-3 gap-6"}`}
+        className={`grid ${isMobile ? "grid-cols-1 gap-4" : `grid-cols-${Math.max(3, Math.min(5, maxImages))} gap-6`}`}
       >
         {slots.map((slot) => {
           const index = slot.index;
@@ -263,7 +281,7 @@ const EnhancedMobileImageUpload = ({
             <div key={slot.label} className="space-y-2">
               <div className="flex items-center justify-center gap-2">
                 <h3 className={`font-medium text-center ${isMobile ? "text-sm" : "text-base"}`}>
-                  {slot.label} <span className="text-red-500">*</span>
+                  {slot.label} {slot.required ? <span className="text-red-500">*</span> : <span className="text-gray-400 text-xs">(optional)</span>}
                 </h3>
                 <Badge variant="outline" className="text-xs">
                   {slot.orientation === 'portrait' ? (
