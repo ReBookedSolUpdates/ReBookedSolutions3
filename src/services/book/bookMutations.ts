@@ -62,6 +62,8 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
     }
 
     // Create book data with all required fields (no plaintext address storage)
+    const quantity = Math.max(1, Number((bookData as any).quantity || 1));
+
     const fullBookData = {
       seller_id: user.id,
       title: bookData.title,
@@ -80,6 +82,10 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
       province: province,
       seller_subaccount_code: paystackSubaccountCode,
       requires_banking_setup: false, // Set to false since user passed banking requirements
+      // Quantity fields at creation
+      initial_quantity: quantity,
+      available_quantity: quantity,
+      sold_quantity: 0,
     };
 
     console.log("📍 Creating book with address and banking info:", {
