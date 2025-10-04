@@ -12,6 +12,7 @@ export const BookSchema = z.object({
   frontCover: z.string().optional(),
   backCover: z.string().optional(),
   insidePages: z.string().optional(),
+  additionalImages: z.array(z.string()).optional(),
 });
 
 export type BookInput = z.infer<typeof BookSchema>;
