@@ -56,6 +56,7 @@ const CreateListing = () => {
     frontCover: "",
     backCover: "",
     insidePages: "",
+    quantity: 1,
   });
 
   const [bookImages, setBookImages] = useState({
@@ -155,6 +156,8 @@ const CreateListing = () => {
       newErrors.price = "Valid price is required (must be greater than 0)";
     if (!formData.category) newErrors.category = "Category is required";
     if (!formData.condition) newErrors.condition = "Condition is required";
+    if (!formData.quantity || formData.quantity < 1)
+      newErrors.quantity = "Quantity must be at least 1";
 
     if (bookType === "school" && !formData.grade) {
       newErrors.grade = "Grade is required for school books";
@@ -243,7 +246,10 @@ const CreateListing = () => {
         throw new Error("Please enter a valid price greater than R0");
       }
 
-      const createdBook = await createBook(bookData);
+      const createdBook = await createBook({
+        ...bookData,
+        quantity: formData.quantity || 1,
+      });
 
       // Create success notification
       try {
