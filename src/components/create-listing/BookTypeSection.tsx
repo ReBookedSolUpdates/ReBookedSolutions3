@@ -10,7 +10,6 @@ import {
 import { School, GraduationCap } from "lucide-react";
 import { UNIVERSITY_YEARS, SOUTH_AFRICAN_UNIVERSITIES_SIMPLE } from "@/constants/universities";
 import { BookFormData } from "@/types/book";
-import { LISTING_CATEGORIES } from "@/constants/listingCategories";
 
 interface BookTypeSectionProps {
   bookType: "school" | "university";
@@ -27,8 +26,98 @@ export const BookTypeSection = ({
   onBookTypeChange,
   onSelectChange,
 }: BookTypeSectionProps) => {
-  // Use a shared, deduplicated category list so Create Listing and Filters stay in sync
-  const categories = LISTING_CATEGORIES;
+  const baseCategories = [
+    "Computer Science",
+    "Mathematics",
+    "Biology",
+    "Chemistry",
+    "Physics",
+    "Economics",
+    "Psychology",
+    "English",
+    "History",
+    "Geography",
+    "Business Studies",
+    "Accounting",
+    "Life Sciences",
+    "Physical Sciences",
+    "Engineering",
+    "Medicine",
+    "Law",
+    "Arts",
+    "Languages",
+    "Reader",
+    "Other",
+  ];
+
+  const additionalCategories = [
+    // Languages (Home & Additional)
+    "Afrikaans Home Language",
+    "Afrikaans First Additional Language",
+    "English Home Language",
+    "English First Additional Language",
+    "isiXhosa Home Language",
+    "isiXhosa First Additional Language",
+    "isiZulu Home Language",
+    "isiZulu First Additional Language",
+    "Sepedi (Northern Sotho) Home Language",
+    "Sepedi First Additional Language",
+    "Sesotho Home Language",
+    "Sesotho First Additional Language",
+    "Setswana Home Language",
+    "Setswana First Additional Language",
+    "Xitsonga Home Language",
+    "Xitsonga First Additional Language",
+    "French",
+    "German",
+    "Portuguese",
+    "Spanish",
+    "Italian",
+    "Other foreign languages",
+    // Mathematics & Related
+    "Mathematical Literacy",
+    // Sciences
+    "Physical Sciences",
+    "Life Sciences (Biology)",
+    "Agricultural Sciences",
+    "Environmental Management",
+    // Commerce / Business
+    "Economics",
+    "Entrepreneurship",
+    "Financial Literacy",
+    "Tourism",
+    "Hospitality Studies",
+    // Technology / IT / Practical Subjects
+    "Engineering Graphics and Design (EGD)",
+    "Information Technology (IT)",
+    "Computer Applications Technology (CAT)",
+    "Technology (General)",
+    "Music Technology",
+    // Arts & Culture
+    "Visual Arts",
+    "Music",
+    "Drama / Performing Arts",
+    "Dance Studies",
+    "Media Studies",
+    "Design / Graphic Design",
+    // Humanities
+    "History",
+    "Geography",
+    "Psychology (private or Cambridge schools)",
+    "Sociology (private or Cambridge schools)",
+    "Religious Studies / Theology",
+    // Other / Life Skills
+    "Life Orientation (LO)",
+    "Consumer Studies",
+    "Sports Science / Physical Education",
+  ];
+
+  const categories = Array.from(
+    new Map(
+      [...baseCategories, ...additionalCategories]
+        .map((c) => [c.trim().toLowerCase(), c.trim()])
+    ).values()
+  );
 
   const conditions = ["New", "Good", "Better", "Average", "Below Average"];
 
