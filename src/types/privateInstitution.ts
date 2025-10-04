@@ -1,13 +1,15 @@
-export type ProgramMode = "full-time" | "part-time" | "online" | "hybrid";
+export type ProgramMode = "full-time" | "part-time" | "online" | "hybrid" | "contact" | "distance" | "blended";
 
 export type ProgramType =
   | "short-course"
   | "certificate"
+  | "advanced-certificate"
   | "higher-certificate"
   | "diploma"
   | "advanced-diploma"
   | "bachelor"
   | "honours"
+  | "postgraduate-certificate"
   | "postgraduate-diploma"
   | "masters"
   | "phd";
@@ -23,6 +25,8 @@ export interface Program {
   campus?: string;
   faculty?: string;
   website?: string;
+  credits?: number;
+  nqfLevel?: number | string;
 }
 
 export interface AccreditationInfo {
