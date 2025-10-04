@@ -10,6 +10,7 @@ import {
 import { School, GraduationCap } from "lucide-react";
 import { UNIVERSITY_YEARS, SOUTH_AFRICAN_UNIVERSITIES_SIMPLE } from "@/constants/universities";
 import { CREATE_LISTING_CATEGORIES } from "@/constants/createListingCategories";
+import { Label } from "@/components/ui/label";
 import { BookFormData } from "@/types/book";
 
 interface BookTypeSectionProps {
