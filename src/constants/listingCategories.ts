@@ -1,0 +1,83 @@
+export const LISTING_CATEGORIES: string[] = Array.from(
+  new Map(
+    [
+      // Base
+      "Computer Science",
+      "Mathematics",
+      "Biology",
+      "Chemistry",
+      "Physics",
+      "Economics",
+      "Psychology",
+      "English",
+      "History",
+      "Geography",
+      "Business Studies",
+      "Accounting",
+      "Life Sciences",
+      "Physical Sciences",
+      "Engineering",
+      "Medicine",
+      "Law",
+      "Arts",
+      "Languages",
+      "Reader",
+      "Other",
+      // Languages (Home & Additional)
+      "Afrikaans Home Language",
+      "Afrikaans First Additional Language",
+      "English Home Language",
+      "English First Additional Language",
+      "isiXhosa Home Language",
+      "isiXhosa First Additional Language",
+      "isiZulu Home Language",
+      "isiZulu First Additional Language",
+      "Sepedi (Northern Sotho) Home Language",
+      "Sepedi First Additional Language",
+      "Sesotho Home Language",
+      "Sesotho First Additional Language",
+      "Setswana Home Language",
+      "Setswana First Additional Language",
+      "Xitsonga Home Language",
+      "Xitsonga First Additional Language",
+      "French",
+      "German",
+      "Portuguese",
+      "Spanish",
+      "Italian",
+      "Other foreign languages",
+      // Mathematics & Related
+      "Mathematical Literacy",
+      // Sciences
+      "Life Sciences (Biology)",
+      "Agricultural Sciences",
+      "Environmental Management",
+      // Commerce / Business
+      "Entrepreneurship",
+      "Financial Literacy",
+      "Tourism",
+      "Hospitality Studies",
+      // Technology / IT / Practical Subjects
+      "Engineering Graphics and Design (EGD)",
+      "Information Technology (IT)",
+      "Computer Applications Technology (CAT)",
+      "Technology (General)",
+      "Music Technology",
+      // Arts & Culture
+      "Visual Arts",
+      "Music",
+      "Drama / Performing Arts",
+      "Dance Studies",
+      "Media Studies",
+      "Design / Graphic Design",
+      // Humanities
+      "Psychology (private or Cambridge schools)",
+      "Sociology (private or Cambridge schools)",
+      "Religious Studies / Theology",
+      // Other / Life Skills
+      "Life Orientation (LO)",
+      "Consumer Studies",
+      "Sports Science / Physical Education",
+    ].map((c) => [c.trim().toLowerCase(), c.trim()])
+  ).values()
+);

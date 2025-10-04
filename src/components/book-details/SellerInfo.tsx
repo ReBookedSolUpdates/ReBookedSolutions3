@@ -36,7 +36,9 @@ const SellerInfo = ({ seller, onViewProfile }: SellerInfoProps) => {
             className="w-full bg-book-600 hover:bg-book-700"
           >
             <Store className="h-4 w-4 mr-2" />
-            View {seller?.name}'s ReBooked Mini
+            {seller?.name && !/^User\s[0-9a-fA-F]{8}/.test(seller.name)
+              ? `View ${seller.name}'s ReBooked Mini`
+              : "View ReBooked Mini"}
           </Button>
           <div className="p-3 bg-book-50 rounded-lg">
             <p className="text-sm text-book-800">
