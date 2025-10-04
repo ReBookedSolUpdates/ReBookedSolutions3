@@ -333,6 +333,12 @@ const PrivateInstitutionProfile: React.FC = () => {
                                     {p.description ? (
                                       <p className="text-sm leading-relaxed mb-3 text-gray-600 line-clamp-2">{p.description}</p>
                                     ) : null}
+                                    {(institution.locations && institution.locations.length > 0) && (
+                                      <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
+                                        <MapPin className="h-3.5 w-3.5" />
+                                        <span className="truncate">{institution.locations.join(" • ")}</span>
+                                      </div>
+                                    )}
                                     <div className="flex flex-wrap gap-2">
                                       <Badge variant="secondary" className="bg-book-100 text-book-800 border-book-200 capitalize">
                                         {p.type.replace(/-/g, " ")}
