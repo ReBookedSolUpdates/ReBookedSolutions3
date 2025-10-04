@@ -27,7 +27,6 @@ export const BookTypeSection = ({
   onSelectChange,
 }: BookTypeSectionProps) => {
   // Use a shared, deduplicated category list so Create Listing and Filters stay in sync
-  const { LISTING_CATEGORIES } = await import("@/constants/listingCategories");
   const categories = LISTING_CATEGORIES;
 
   const conditions = ["New", "Good", "Better", "Average", "Below Average"];
