@@ -4,7 +4,6 @@ import { ArrowLeft, MapPin, Bug } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LockerSearch from '@/components/LockerSearch';
-import LockerApiDebug from '@/components/LockerApiDebug';
 import { LockerLocation } from '@/services/lockerService';
 
 const LockerSearchPage: React.FC = () => {
@@ -67,9 +66,6 @@ const LockerSearchPage: React.FC = () => {
             />
           </TabsContent>
 
-          <TabsContent value="debug" className="mt-6">
-            <LockerApiDebug />
-          </TabsContent>
         </Tabs>
       </div>
     </div>
