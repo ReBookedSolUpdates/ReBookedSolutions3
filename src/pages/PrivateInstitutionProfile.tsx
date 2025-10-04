@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import PrivateProgramDetailModal from "@/components/private-institutions/PrivateProgramDetailModal";
 import type { Program } from "@/types/privateInstitution";
 import {
   ArrowLeft,
@@ -501,44 +501,12 @@ const PrivateInstitutionProfile: React.FC = () => {
         </div>
       </div>
 
-      <Dialog open={isProgramDialogOpen} onOpenChange={setIsProgramDialogOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-gray-900">{selectedProgram?.name}</DialogTitle>
-            <DialogDescription className="text-gray-600 capitalize">{selectedProgram?.type?.replace(/-/g, " ")}</DialogDescription>
-          </DialogHeader>
-          {selectedProgram && (
-            <div className="space-y-3">
-              {selectedProgram.description && (
-                <p className="text-gray-700">{selectedProgram.description}</p>
-              )}
-              <div className="flex flex-wrap gap-2">
-                {selectedProgram.mode && (
-                  <Badge variant="outline" className="border-book-200 text-book-700 bg-book-50 capitalize">
-                    {Array.isArray(selectedProgram.mode) ? selectedProgram.mode.join(" • ") : selectedProgram.mode}
-                  </Badge>
-                )}
-                {selectedProgram.duration && (
-                  <Badge variant="outline" className="border-gray-200 text-gray-700">{selectedProgram.duration}</Badge>
-                )}
-                {typeof selectedProgram.credits === "number" && (
-                  <Badge variant="outline" className="border-gray-200 text-gray-700">{selectedProgram.credits} credits</Badge>
-                )}
-                {selectedProgram.nqfLevel && (
-                  <Badge variant="outline" className="border-gray-200 text-gray-700">NQF {selectedProgram.nqfLevel}</Badge>
-                )}
-              </div>
-              {selectedProgram.website && (
-                <div>
-                  <a href={selectedProgram.website} target="_blank" rel="noopener noreferrer" className="text-book-600 hover:text-book-700 underline">
-                    Program Website
-                  </a>
-                </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <PrivateProgramDetailModal
+        program={selectedProgram}
+        institution={institution}
+        isOpen={isProgramDialogOpen}
+        onClose={() => setIsProgramDialogOpen(false)}
+      />
     </Layout>
   );
 };
