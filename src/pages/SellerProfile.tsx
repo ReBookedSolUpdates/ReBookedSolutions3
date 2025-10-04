@@ -232,29 +232,29 @@ const SellerProfile = () => {
         {/* Header */}
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <Avatar className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24">
                 <AvatarImage src={seller.profile_picture_url} />
-                <AvatarFallback className="bg-book-100 text-book-700 text-lg">
-                  {seller.name.charAt(0).toUpperCase()}
+                <AvatarFallback className="bg-book-100 text-book-700 text-lg md:text-2xl">
+                  {(seller.name || "R").charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {seller.name}'s ReBooked Mini
+              <div className="flex-1 min-w-0">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 truncate">
+                  {seller.name && seller.name.trim() ? `${seller.name}'s ReBooked Mini` : "ReBooked Mini"}
                 </h1>
                 <p className="text-gray-600 flex items-center gap-2 mt-1">
                   <Calendar className="h-4 w-4" />
                   Member since {memberSince}
                 </p>
-                {seller.province && (
+                {(seller.province || books.find((b) => b.province)) && (
                   <p className="text-gray-600 flex items-center gap-2 mt-1">
                     <MapPin className="h-4 w-4" />
-                    {seller.province}
+                    {seller.province || books.find((b) => b.province)?.province}
                   </p>
                 )}
                 {seller.bio && (
-                  <p className="text-gray-700 mt-2 max-w-2xl">{seller.bio}</p>
+                  <p className="text-gray-700 mt-2 max-w-2xl break-words">{seller.bio}</p>
                 )}
               </div>
               <div className="flex items-center gap-4">
