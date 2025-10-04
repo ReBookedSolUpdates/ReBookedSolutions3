@@ -55,7 +55,7 @@ const SellerProfile = () => {
       // Fetch seller profile
       const { data: sellerData, error: sellerError } = await supabase
         .from("profiles")
-        .select("id, name, email, bio, profile_picture_url, created_at")
+        .select("id, name, email, bio, profile_picture_url, created_at, pickup_address")
         .eq("id", sellerId)
         .maybeSingle();
 
@@ -63,7 +63,9 @@ const SellerProfile = () => {
         throw new Error("Seller not found");
       }
 
-      setSeller(sellerData);
+      // Derive province from pickup_address if available
+      const derivedProvince = (sellerData as any)?.pickup_address?.province || undefined;
+      setSeller({ ...(sellerData as any), province: derivedProvince });
 
       // Fetch seller's books
       const { data: booksData, error: booksError } = await supabase
@@ -233,6 +235,12 @@ const SellerProfile = () => {
                   <Calendar className="h-4 w-4" />
                   Member since {memberSince}
                 </p>
+                {seller.province && (
+                  <p className="text-gray-600 flex items-center gap-2 mt-1">
+                    <MapPin className="h-4 w-4" />
+                    {seller.province}
+                  </p>
+                )}
                 {seller.bio && (
                   <p className="text-gray-700 mt-2 max-w-2xl">{seller.bio}</p>
                 )}
