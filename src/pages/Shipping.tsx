@@ -1,7 +1,7 @@
 import React from "react";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
-import InformativeShippingDashboard from "@/components/InformativeShippingDashboard";
+import BobGoRatesExplorer from "@/components/delivery/BobGoRatesExplorer";
 
 const Shipping = () => {
   return (
@@ -17,15 +17,14 @@ const Shipping = () => {
         <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-book-800 mb-2 sm:mb-4">
-              Shipping & Delivery Information
+              Shipping Options
             </h1>
             <p className="text-gray-600 text-sm sm:text-base max-w-3xl mx-auto px-4">
-              Learn how we deliver your textbooks safely and track your orders in real-time.
-              All shipments are handled by our trusted partner Courier Guy for reliable delivery across South Africa.
+              Compare live courier options via BobGo. See the cheapest, fastest, and our recommended delivery.
             </p>
           </div>
 
-          <InformativeShippingDashboard />
+          <BobGoRatesExplorer />
         </div>
       </div>
     </Layout>

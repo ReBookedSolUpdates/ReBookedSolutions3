@@ -2,9 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Filter, Search, School, GraduationCap, BookOpen, MapPin } from "lucide-react";
 import { UniversitySelector } from "@/components/ui/university-selector";
 import { UNIVERSITY_YEARS } from "@/constants/universities";
+import { CREATE_LISTING_CATEGORIES } from "@/constants/createListingCategories";
 
 interface BookFiltersProps {
   searchQuery: string;
@@ -57,15 +59,7 @@ const BookFilters = ({
   onUpdateFilters,
   onClearFilters,
 }: BookFiltersProps) => {
-  const categories = [
-    "Computer Science",
-    "Mathematics",
-    "Biology",
-    "Chemistry",
-    "Physics",
-    "Economics",
-    "Psychology",
-  ];
+  const categories = CREATE_LISTING_CATEGORIES;
   const conditions = ["New", "Good", "Better", "Average", "Below Average"];
   const grades = [
     "Grade 1",
@@ -298,28 +292,22 @@ const BookFilters = ({
 
           {/* Category Filter */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">
-              Categories
-            </h3>
-            <div className="space-y-2">
-              {categories.map((category) => (
-                <div key={category} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`category-${category}`}
-                    checked={selectedCategory === category}
-                    onChange={() => handleCategoryChange(category)}
-                    className="h-4 w-4 text-book-600 focus:ring-book-500 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor={`category-${category}`}
-                    className="ml-2 text-sm text-gray-700"
-                  >
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Category</h3>
+            <Select
+              value={selectedCategory}
+              onValueChange={(value) => setSelectedCategory(value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent className="max-h-72">
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>
                     {category}
-                  </label>
-                </div>
-              ))}
-            </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Province Filter */}

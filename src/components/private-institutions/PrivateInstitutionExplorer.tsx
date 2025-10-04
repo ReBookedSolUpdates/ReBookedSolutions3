@@ -4,21 +4,47 @@ import { PRIVATE_INSTITUTIONS } from "@/constants/private-institutions";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building, Search, ExternalLink, BookOpen, Globe } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Building, Search, ExternalLink, Globe } from "lucide-react";
 
 const PrivateInstitutionExplorer = () => {
   const [query, setQuery] = useState("");
+  const [level, setLevel] = useState("");
+  const [showAll, setShowAll] = useState(false);
+
+  const LEVEL_OPTIONS = [
+    "Bachelor",
+    "Honours",
+    "Master's",
+    "PhD",
+    "Diploma",
+    "Higher Certificate",
+    "Certificate",
+    "Postgraduate Diploma",
+  ];
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return PRIVATE_INSTITUTIONS;
+    const lev = level.trim().toLowerCase();
     return PRIVATE_INSTITUTIONS.filter((inst) => {
-      const inName = inst.name.toLowerCase().includes(q);
-      const inAbbr = inst.abbreviation?.toLowerCase().includes(q);
-      const inProg = inst.programs?.some((p) => p.name.toLowerCase().includes(q));
-      return inName || inAbbr || inProg;
+      const inName = q ? inst.name.toLowerCase().includes(q) : true;
+      const inAbbr = q ? (inst.abbreviation?.toLowerCase().includes(q) ?? false) : true;
+      const inProgName = q ? (inst.programs?.some((p) => p.name.toLowerCase().includes(q)) ?? false) : true;
+      const matchesQuery = inName || inAbbr || inProgName;
+
+      const matchesLevel = lev
+        ? (inst.programs?.some((p) => {
+            const t = `${p.qualification || p.type || ""}`.toLowerCase();
+            return (
+              t.includes(lev) ||
+              (lev === "master's" && (t.includes("masters") || t.includes("master")))
+            );
+          }) ?? false)
+        : true;
+
+      return matchesQuery && matchesLevel;
     });
-  }, [query]);
+  }, [query, level]);
 
   return (
     <div className="space-y-6">
@@ -35,23 +61,38 @@ const PrivateInstitutionExplorer = () => {
       </div>
 
       {/* Search */}
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-2 shadow-sm">
-          <Search className="w-5 h-5 text-gray-500" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search institutions or programs"
-            className="flex-1 bg-transparent outline-none text-sm"
-            aria-label="Search institutions or programs"
-          />
+      <div className="max-w-3xl mx-auto w-full">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-2 shadow-sm flex-1">
+            <Search className="w-5 h-5 text-gray-500" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search institutions or programs"
+              className="flex-1 bg-transparent outline-none text-sm"
+              aria-label="Search institutions or programs"
+            />
+          </div>
+          <div className="w-full sm:w-64">
+            <Select value={level} onValueChange={(v) => setLevel(v)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by level" />
+              </SelectTrigger>
+              <SelectContent>
+                {LEVEL_OPTIONS.map((opt) => (
+                  <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
       {/* Grid */}
       {filtered.length > 0 ? (
+        <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {filtered.map((inst) => (
+          {(showAll ? filtered : filtered.slice(0, 9)).map((inst) => (
             <Card key={inst.id} className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:border-book-200">
               <CardHeader className="pb-3">
                 <div className="flex items-start gap-3 min-w-0">
@@ -96,12 +137,6 @@ const PrivateInstitutionExplorer = () => {
                       View Profile
                     </Button>
                   </Link>
-                  <Link to={`/books?search=${encodeURIComponent(inst.abbreviation || inst.name)}`} className="sm:flex-1">
-                    <Button className="w-full bg-book-600 hover:bg-book-700 text-white">
-                      <BookOpen className="w-4 h-4 mr-2" />
-                      Find Textbooks
-                    </Button>
-                  </Link>
                   {inst.contact?.website && (
                     <a href={inst.contact.website} target="_blank" rel="noopener noreferrer" className="sm:flex-1">
                       <Button variant="outline" className="w-full border-book-200 text-book-600 hover:bg-book-50">
@@ -115,6 +150,14 @@ const PrivateInstitutionExplorer = () => {
             </Card>
           ))}
         </div>
+        {!showAll && filtered.length > 9 && (
+          <div className="flex justify-center">
+            <Button onClick={() => setShowAll(true)} variant="outline" className="mt-2">
+              View More
+            </Button>
+          </div>
+        )}
+        </>
       ) : (
         <Card className="border-0 shadow-sm">
           <CardContent className="py-10 text-center space-y-3">

@@ -27,6 +27,7 @@ interface SellerProfile {
   profile_picture_url?: string;
   created_at: string;
   province?: string;
+  hasName?: boolean;
 }
 
 const SellerProfile = () => {
@@ -59,14 +60,13 @@ const SellerProfile = () => {
         .eq("id", sellerId)
         .maybeSingle();
 
-      // Build a minimal seller object even if not found
-      const displayName = sellerData?.name || (sellerData as any)?.full_name || sellerData?.email?.split("@")[0] || "Seller";
+      const hasProfileName = Boolean(sellerData?.name && String(sellerData.name).trim());
+      const displayName = sellerData?.name || (sellerData as any)?.full_name || sellerData?.email?.split("@")[0] || "";
       const derivedProvince = (sellerData as any)?.pickup_address?.province || undefined;
       if (sellerData) {
-        setSeller({ ...(sellerData as any), name: displayName, province: derivedProvince });
+        setSeller({ ...(sellerData as any), name: displayName, province: derivedProvince, hasName: hasProfileName });
       } else {
-        // Keep a minimal shell so the page can still render books list if available
-        setSeller({ id: sellerId!, name: displayName, email: "", created_at: new Date().toISOString(), province: undefined });
+        setSeller({ id: sellerId!, name: displayName, email: "", created_at: new Date().toISOString(), province: undefined, hasName: false });
       }
 
       // Fetch seller's books
@@ -114,8 +114,13 @@ const SellerProfile = () => {
 
       setBooks(transformedBooks);
 
-      // If profile truly missing AND no books, then show not found
-      if (!sellerData && (transformedBooks.length === 0)) {
+      // Fallback province from books if profile missing it
+      const fallbackProvince = transformedBooks.find((b) => !!b.province)?.province;
+      if (!derivedProvince && fallbackProvince) {
+        setSeller((prev) => (prev ? { ...prev, province: fallbackProvince } : prev));
+      }
+
+      if (!sellerData && transformedBooks.length === 0) {
         throw new Error("Seller not found");
       }
     } catch (err) {
@@ -142,9 +147,12 @@ const SellerProfile = () => {
     if (!seller) return;
 
     const profileUrl = `${window.location.origin}/seller/${seller.id}`;
+    const titleText = seller.name && seller.name.trim().length > 0 ? `${seller.name}'s ReBooked Mini` : "ReBooked Mini";
     const shareData = {
-      title: `${seller.name}'s ReBooked Mini`,
-      text: `Check out ${seller.name}'s books on ReBooked! They have ${books.length} books available.`,
+      title: titleText,
+      text: seller.hasName && seller.name
+        ? `Check out ${seller.name}'s books on ReBooked! They have ${books.length} books available.`
+        : `Check out this seller's books on ReBooked! They have ${books.length} books available.`,
       url: profileUrl,
     };
 
@@ -227,32 +235,32 @@ const SellerProfile = () => {
         {/* Header */}
         <div className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
-                <AvatarImage src={seller.profile_picture_url} />
-                <AvatarFallback className="bg-book-100 text-book-700 text-lg">
-                  {seller.name.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {seller.name}'s ReBooked Mini
-                </h1>
-                <p className="text-gray-600 flex items-center gap-2 mt-1">
-                  <Calendar className="h-4 w-4" />
-                  Member since {memberSince}
-                </p>
-                {seller.province && (
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16 sm:h-20 sm:w-20">
+                  <AvatarImage src={seller.profile_picture_url} />
+                  <AvatarFallback className="bg-book-100 text-book-700 text-lg">
+                    {(seller.name || "?").charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-2xl font-bold text-gray-900 truncate">
+                    {seller.name && seller.name.trim().length > 0 ? `${seller.name}'s ReBooked Mini` : "ReBooked Mini"}
+                  </h1>
+                  <p className="text-gray-600 flex items-center gap-2 mt-1">
+                    <Calendar className="h-4 w-4" />
+                    Member since {memberSince}
+                  </p>
                   <p className="text-gray-600 flex items-center gap-2 mt-1">
                     <MapPin className="h-4 w-4" />
-                    {seller.province}
+                    {seller.province || "Province not set"}
                   </p>
-                )}
-                {seller.bio && (
-                  <p className="text-gray-700 mt-2 max-w-2xl">{seller.bio}</p>
-                )}
+                  {seller.bio && (
+                    <p className="text-gray-700 mt-2 max-w-2xl">{seller.bio}</p>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 sm:ml-auto">
                 <div className="text-right">
                   <div className="text-sm text-gray-500">Books Available</div>
                   <div className="text-2xl font-bold text-book-600">

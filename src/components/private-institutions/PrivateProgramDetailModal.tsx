@@ -155,6 +155,14 @@ const PrivateProgramDetailModal: React.FC<PrivateProgramDetailModalProps> = ({ p
                         <span className="text-book-600 flex items-center"><MapPin className="h-4 w-4 mr-1" />{program.campus}</span>
                       </div>
                     )}
+                    {institution.locations && institution.locations.length > 0 && (
+                      <div className="p-4 bg-gray-50 rounded-lg">
+                        <div className="font-medium mb-1">Locations</div>
+                        <div className="text-book-600 text-sm">
+                          {institution.locations.join(" • ")}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
