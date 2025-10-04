@@ -6,9 +6,9 @@ interface BookImageSectionProps {
 }
 
 const BookImageSection = ({ book }: BookImageSectionProps) => {
-  const images = [book.frontCover, book.backCover, book.insidePages]
-    .filter(Boolean)
-    .slice(0, 3) as string[]; // Limit to maximum 3 images
+  const base = [book.frontCover, book.backCover, book.insidePages].filter(Boolean) as string[];
+  const extras = Array.isArray(book.additionalImages) ? book.additionalImages.filter(Boolean) : [];
+  const images = [...base, ...extras].slice(0, 5);
 
   return (
     <div className="space-y-4">
