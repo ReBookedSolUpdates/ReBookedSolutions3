@@ -67,6 +67,11 @@ const BookDetails = () => {
       return;
     }
 
+    if (typeof book.availableQuantity === 'number' && book.availableQuantity <= 0) {
+      toast.error("This book is out of stock");
+      return;
+    }
+
     if (user.id === book.seller?.id) {
       toast.error("You cannot buy your own book");
       return;

@@ -56,6 +56,7 @@ const CreateListing = () => {
     frontCover: "",
     backCover: "",
     insidePages: "",
+    quantity: 1,
   });
 
   const [bookImages, setBookImages] = useState({
@@ -155,6 +156,8 @@ const CreateListing = () => {
       newErrors.price = "Valid price is required (must be greater than 0)";
     if (!formData.category) newErrors.category = "Category is required";
     if (!formData.condition) newErrors.condition = "Condition is required";
+    if (!formData.quantity || formData.quantity < 1)
+      newErrors.quantity = "Quantity must be at least 1";
 
     if (bookType === "school" && !formData.grade) {
       newErrors.grade = "Grade is required for school books";
@@ -243,7 +246,10 @@ const CreateListing = () => {
         throw new Error("Please enter a valid price greater than R0");
       }
 
-      const createdBook = await createBook(bookData);
+      const createdBook = await createBook({
+        ...bookData,
+        quantity: formData.quantity || 1,
+      });
 
       // Create success notification
       try {
@@ -331,6 +337,7 @@ const CreateListing = () => {
         backCover: "",
         insidePages: "",
         additionalImages: [],
+        quantity: 1,
       });
 
       setBookImages({
@@ -368,7 +375,7 @@ const CreateListing = () => {
   return (
     <Layout>
       <div
-        className={`container mx-auto ${isMobile ? "px-2" : "px-4"} py-4 md:py-8 max-w-2xl`}
+        className="container mx-auto px-4 md:px-8 py-4 md:py-8 max-w-5xl"
       >
         {/* Address Requirement Alert */}
         {!isCheckingAddress && canListBooks === false && (
@@ -417,17 +424,17 @@ const CreateListing = () => {
             className={`bg-white rounded-lg shadow-md ${isMobile ? "p-4" : "p-8"}`}
           >
             <h1
-              className={`${isMobile ? "text-xl" : "text-3xl"} font-bold text-book-800 mb-6 text-center`}
+              className="text-xl md:text-3xl font-bold text-book-800 mb-6 text-center"
             >
               Create New Listing
             </h1>
 
             <form
               onSubmit={handleSubmit}
-              className={`space-y-${isMobile ? "4" : "6"}`}
+              className="space-y-4 md:space-y-6"
             >
               <div
-                className={`grid grid-cols-1 ${isMobile ? "gap-4" : "md:grid-cols-2 gap-6"}`}
+                className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6"
               >
                 <BookInformationForm
                   formData={formData}
@@ -435,7 +442,7 @@ const CreateListing = () => {
                   onInputChange={handleInputChange}
                 />
 
-                <div className={`space-y-${isMobile ? "3" : "4"}`}>
+                <div className="space-y-3 md:space-y-4">
                   <PricingSection
                     formData={formData}
                     errors={errors}
@@ -541,13 +548,7 @@ const CreateListing = () => {
                   !canProceedWithBanking ||
                   !sellerPolicyAccepted
                 }
-                className={`w-full transition-all duration-200 font-semibold ${
-                  canListBooks === false || !canProceedWithBanking || !sellerPolicyAccepted
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-book-600 hover:bg-book-700 hover:shadow-lg active:scale-[0.98]"
-                } text-white ${
-                  isMobile ? "py-4 h-12 text-base" : "py-4 text-lg"
-                } touch-manipulation rounded-lg`}
+                className="w-full transition-all duration-200 font-semibold bg-book-600 hover:bg-book-700 hover:shadow-lg active:scale-[0.98] text-white py-4 h-12 md:h-14 md:text-lg touch-manipulation rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <>

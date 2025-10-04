@@ -1,4 +1,3 @@
-
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Book } from '@/types/book';
@@ -33,6 +32,12 @@ const BookInfo = ({ book }: BookInfoProps) => {
               <span className="font-medium">Condition:</span>
               <p className="text-gray-600">{book.condition}</p>
             </div>
+            {typeof book.availableQuantity === 'number' && (
+              <div>
+                <span className="font-medium">Available:</span>
+                <p className="text-gray-600">{book.availableQuantity}</p>
+              </div>
+            )}
             {book.universityYear && (
               <div>
                 <span className="font-medium">University Year:</span>

@@ -17,6 +17,10 @@ export interface Book {
   universityYear?: string;
   university?: string;
   province?: string;
+  // Quantity fields
+  initialQuantity?: number;
+  availableQuantity?: number;
+  soldQuantity?: number;
   seller: {
     id: string;
     name: string;
@@ -40,4 +44,6 @@ export interface BookFormData {
   universityYear?: string;
   university?: string;
   province?: string;
+  // Quantity to create listing with
+  quantity?: number;
 }
