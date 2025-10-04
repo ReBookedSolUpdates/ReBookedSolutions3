@@ -143,9 +143,13 @@ const SellerProfile = () => {
     if (!seller) return;
 
     const profileUrl = `${window.location.origin}/seller/${seller.id}`;
+    const hasName = !!(seller.name && seller.name.trim());
+    const heading = hasName ? `${seller.name}'s ReBooked Mini` : "ReBooked Mini";
     const shareData = {
-      title: `${seller.name}'s ReBooked Mini`,
-      text: `Check out ${seller.name}'s books on ReBooked! They have ${books.length} books available.`,
+      title: heading,
+      text: hasName
+        ? `Check out ${seller.name}'s books on ReBooked! They have ${books.length} books available.`
+        : `Check out this ReBooked Mini page! They have ${books.length} books available.`,
       url: profileUrl,
     };
 
