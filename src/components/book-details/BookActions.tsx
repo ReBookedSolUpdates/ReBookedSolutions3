@@ -92,11 +92,13 @@ const BookActions = ({
             <div className="space-y-3">
               <Button
                 onClick={onBuyNow}
-                className="w-full bg-book-600 hover:bg-book-700"
+                className="w-full bg-book-600 hover:bg-book-700 disabled:bg-gray-400"
                 size="lg"
+                disabled={typeof book.availableQuantity === 'number' && book.availableQuantity <= 0}
+                title={typeof book.availableQuantity === 'number' && book.availableQuantity <= 0 ? 'Out of stock' : undefined}
               >
                 <CreditCard className="mr-2 h-4 w-4" />
-                Buy Now
+                {typeof book.availableQuantity === 'number' && book.availableQuantity <= 0 ? 'Out of stock' : 'Buy Now'}
               </Button>
               <Button
                 onClick={onAddToCart}
