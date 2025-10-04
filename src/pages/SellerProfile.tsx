@@ -55,7 +55,7 @@ const SellerProfile = () => {
       // Fetch seller profile (include possible alternate name field)
       const { data: sellerData, error: sellerError } = await supabase
         .from("profiles")
-        .select("id, name, email, bio, profile_picture_url, created_at, pickup_address")
+        .select("id, name, full_name, email, bio, profile_picture_url, created_at, pickup_address")
         .eq("id", sellerId)
         .maybeSingle();
 
