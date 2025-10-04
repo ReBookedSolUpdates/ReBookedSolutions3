@@ -312,9 +312,14 @@ const PrivateInstitutionProfile: React.FC = () => {
                   <div className="space-y-8">
                     {programsByType.map(({ type, label, programs }) => (
                       <Card key={type} className="border-0 shadow-lg">
-                        <CardHeader className="pb-0">
-                          <CardTitle className="text-xl text-gray-900">{label}</CardTitle>
-                          <CardDescription className="text-gray-600">{programs.length} program{programs.length > 1 ? "s" : ""}</CardDescription>
+                        <CardHeader className="bg-gradient-to-r from-gray-50 to-white">
+                          <CardTitle className="text-xl flex items-center justify-between text-gray-900">
+                            <div className="flex items-center">
+                              <GraduationCap className="h-6 w-6 mr-3 text-book-500" />
+                              {label}
+                            </div>
+                          </CardTitle>
+                          <p className="text-gray-600 mt-2">{programs.length} program{programs.length > 1 ? "s" : ""}</p>
                         </CardHeader>
                         <CardContent className="pt-6">
                           <div className="grid gap-4">
