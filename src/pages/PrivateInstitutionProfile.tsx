@@ -489,8 +489,8 @@ const PrivateInstitutionProfile: React.FC = () => {
       <Dialog open={isProgramDialogOpen} onOpenChange={setIsProgramDialogOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <h3 className="text-xl font-semibold text-gray-900">{selectedProgram?.name}</h3>
-            <p className="text-gray-600 capitalize">{selectedProgram?.type?.replace(/-/g, " ")}</p>
+            <DialogTitle className="text-xl font-semibold text-gray-900">{selectedProgram?.name}</DialogTitle>
+            <DialogDescription className="text-gray-600 capitalize">{selectedProgram?.type?.replace(/-/g, " ")}</DialogDescription>
           </DialogHeader>
           {selectedProgram && (
             <div className="space-y-3">
