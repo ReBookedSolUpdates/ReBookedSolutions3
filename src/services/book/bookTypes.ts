@@ -28,6 +28,7 @@ export interface BookQueryResult {
   front_cover?: string;
   back_cover?: string;
   inside_pages?: string;
+  additional_images?: string[] | null;
   sold: boolean;
   created_at: string;
   grade?: string;
