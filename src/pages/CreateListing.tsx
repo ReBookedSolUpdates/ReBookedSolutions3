@@ -218,11 +218,13 @@ const CreateListing = () => {
     setIsSubmitting(true);
 
     try {
+      const additionalImages = [bookImages.extra1, bookImages.extra2].filter((u) => !!u);
       const bookData = {
         ...formData,
         frontCover: bookImages.frontCover,
         backCover: bookImages.backCover,
         insidePages: bookImages.insidePages,
+        additionalImages,
       };
 
       // Additional validation for images
@@ -328,6 +330,7 @@ const CreateListing = () => {
         frontCover: "",
         backCover: "",
         insidePages: "",
+        additionalImages: [],
       });
 
       setBookImages({

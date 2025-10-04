@@ -50,6 +50,7 @@ const EditBook = () => {
       frontCover: "",
       backCover: "",
       insidePages: "",
+      additionalImages: [],
     },
     mode: "onChange",
   });
@@ -96,6 +97,7 @@ const EditBook = () => {
             frontCover: bookData.frontCover || "",
             backCover: bookData.backCover || "",
             insidePages: bookData.insidePages || "",
+            additionalImages: Array.isArray(bookData.additionalImages) ? bookData.additionalImages : [],
           };
 
           form.reset(formattedData);
@@ -207,10 +209,13 @@ const EditBook = () => {
     );
   }
 
+  const watchedAdditional = form.watch("additionalImages") || [];
   const currentImages = {
     frontCover: form.watch("frontCover") || "",
     backCover: form.watch("backCover") || "",
     insidePages: form.watch("insidePages") || "",
+    extra1: watchedAdditional[0] || "",
+    extra2: watchedAdditional[1] || "",
   };
 
   return (
@@ -328,13 +333,18 @@ const EditBook = () => {
                     frontCover: string;
                     backCover: string;
                     insidePages: string;
+                    extra1?: string;
+                    extra2?: string;
                   };
                   form.setValue("frontCover", bookImages.frontCover || "");
                   form.setValue("backCover", bookImages.backCover || "");
                   form.setValue("insidePages", bookImages.insidePages || "");
+                  const extras = [bookImages.extra1 || "", bookImages.extra2 || ""].filter(Boolean);
+                  form.setValue("additionalImages", extras);
                 }}
                 variant="object"
                 currentImages={currentImages}
+                maxImages={5}
               />
             </div>
 

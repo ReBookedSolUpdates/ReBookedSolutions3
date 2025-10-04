@@ -29,10 +29,12 @@ export const mapBookFromDatabase = (bookData: BookQueryResult): Book => {
     imageUrl:
       bookData.front_cover ||
       bookData.image_url ||
+      (Array.isArray(bookData.additional_images) && bookData.additional_images[0]) ||
       "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=300&fit=crop&auto=format&q=80",
-    frontCover: bookData.front_cover,
-    backCover: bookData.back_cover,
-    insidePages: bookData.inside_pages,
+    frontCover: bookData.front_cover || undefined,
+    backCover: bookData.back_cover || undefined,
+    insidePages: bookData.inside_pages || undefined,
+    additionalImages: Array.isArray(bookData.additional_images) ? bookData.additional_images : undefined,
     sold: bookData.sold || false,
     createdAt: bookData.created_at || new Date().toISOString(),
     grade: bookData.grade,
