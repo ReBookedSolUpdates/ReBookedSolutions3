@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import {
   ArrowLeft,
   Award,
@@ -16,6 +17,7 @@ import {
   GraduationCap,
   MapPin,
   TrendingUp,
+  Eye,
 } from "lucide-react";
 
 const PrivateInstitutionProfile: React.FC = () => {
