@@ -287,7 +287,7 @@ const SellerProfile = () => {
                   No Books Available
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  {seller.name} doesn't have any books for sale at the moment.
+                  {seller.name && seller.name.trim() ? `${seller.name} doesn't` : "This seller doesn't"} have any books for sale at the moment.
                 </p>
                 <Button onClick={() => navigate("/books")} variant="outline">
                   Browse Other Books
