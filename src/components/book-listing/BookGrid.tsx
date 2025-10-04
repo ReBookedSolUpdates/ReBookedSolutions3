@@ -161,7 +161,7 @@ const BookGrid = ({
                     <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-full text-sm font-semibold text-book-800">
                       R{book.price.toLocaleString()}
                     </div>
-                    {typeof (book as any).availableQuantity === 'number' && (
+                    {typeof (book as any).availableQuantity === 'number' && (book as any).availableQuantity > 1 && (
                       <div className="absolute bottom-2 right-2 bg-white/90 px-2 py-1 rounded-full text-xs font-medium text-green-700">
                         {(book as any).availableQuantity} available
                       </div>
@@ -264,7 +264,7 @@ const BookGrid = ({
                     <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-full text-sm font-semibold text-book-800">
                       R{book.price.toLocaleString()}
                     </div>
-                    {typeof (book as any).availableQuantity === 'number' && (
+                    {typeof (book as any).availableQuantity === 'number' && (book as any).availableQuantity > 1 && (
                       <div className="absolute bottom-2 right-2 bg-white/90 px-2 py-1 rounded-full text-xs font-medium text-green-700">
                         {(book as any).availableQuantity} available
                       </div>
