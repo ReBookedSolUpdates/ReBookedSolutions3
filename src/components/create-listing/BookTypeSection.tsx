@@ -26,29 +26,8 @@ export const BookTypeSection = ({
   onBookTypeChange,
   onSelectChange,
 }: BookTypeSectionProps) => {
-  const baseCategories = [
-    "Computer Science",
-    "Mathematics",
-    "Biology",
-    "Chemistry",
-    "Physics",
-    "Economics",
-    "Psychology",
-    "English",
-    "History",
-    "Geography",
-    "Business Studies",
-    "Accounting",
-    "Life Sciences",
-    "Physical Sciences",
-    "Engineering",
-    "Medicine",
-    "Law",
-    "Arts",
-    "Languages",
-    "Reader",
-    "Other",
-  ];
+  // Use shared category list across app
+  // Imported from constants to keep Create Listing and Books filters in sync
 
   const additionalCategories = [
     // Languages (Home & Additional)
