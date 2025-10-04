@@ -39,6 +39,7 @@ import Checkout from "./pages/Checkout";
 // University Pages
 import UniversityInfo from "./pages/UniversityInfo";
 import UniversityProfile from "./pages/UniversityProfile";
+import PrivateInstitutionProfile from "./pages/PrivateInstitutionProfile";
 import StudyResources from "./pages/StudyResources";
 import UniversityDataTest from "./components/UniversityDataTest";
 
@@ -151,6 +152,10 @@ function App() {
                       <Route
                         path="/university/:id"
                         element={<UniversityProfile />}
+                      />
+                      <Route
+                        path="/private-institution/:id"
+                        element={<PrivateInstitutionProfile />}
                       />
                       <Route
                         path="/study-resources"
