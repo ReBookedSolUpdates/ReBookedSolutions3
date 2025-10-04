@@ -147,7 +147,7 @@ const SellerProfile = () => {
     if (!seller) return;
 
     const profileUrl = `${window.location.origin}/seller/${seller.id}`;
-    const titleText = seller.hasName && seller.name ? `${seller.name}'s ReBooked Mini` : "ReBooked Mini";
+    const titleText = seller.name && seller.name.trim().length > 0 ? `${seller.name}'s ReBooked Mini` : "ReBooked Mini";
     const shareData = {
       title: titleText,
       text: seller.hasName && seller.name
@@ -245,7 +245,7 @@ const SellerProfile = () => {
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <h1 className="text-2xl font-bold text-gray-900 truncate">
-                    {seller.hasName && seller.name ? `${seller.name}'s ReBooked Mini` : "ReBooked Mini"}
+                    {seller.name && seller.name.trim().length > 0 ? `${seller.name}'s ReBooked Mini` : "ReBooked Mini"}
                   </h1>
                   <p className="text-gray-600 flex items-center gap-2 mt-1">
                     <Calendar className="h-4 w-4" />
