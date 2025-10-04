@@ -11,7 +11,6 @@ import { useCommit } from "@/hooks/useCommit";
 import { useAuth } from "@/contexts/AuthContext";
 import { clearAllBrowseBooks } from "@/utils/clearBrowseBooks";
 import { Button } from "@/components/ui/button";
-import GoogleAdsense from "@/components/GoogleAdsense";
 import { debugBookFetching, fixBooksWithMissingAddresses } from "@/utils/debugBooks";
 import { emergencyBookTest } from "@/utils/emergencyBookTest";
 
@@ -334,11 +333,6 @@ const BookListing = () => {
               </Button>
             </div>
           )}
-        </div>
-
-        {/* Ad Placement - Top of Books Page */}
-        <div className="mb-4 sm:mb-8 flex justify-center">
-          <GoogleAdsense />
         </div>
 
 

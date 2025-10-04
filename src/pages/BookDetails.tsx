@@ -17,7 +17,6 @@ import { ArrowLeft, AlertTriangle, BookOpen } from "lucide-react";
 import { useBookDetails } from "@/hooks/useBookDetails";
 import { extractBookId } from "@/utils/bookUtils";
 import { toast } from "sonner";
-import GoogleAdsense from "@/components/GoogleAdsense";
 
 const BookDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -281,10 +280,6 @@ const BookDetails = () => {
           </div>
         </div>
 
-        {/* Ad Placement - After Book Details */}
-        <div className="mt-8 flex justify-center">
-          <GoogleAdsense />
-        </div>
 
         <ReportBookDialog
           isOpen={isReportDialogOpen}
