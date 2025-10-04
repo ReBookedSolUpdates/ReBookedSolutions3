@@ -6,7 +6,8 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import type { Program } from "@/types/privateInstitution";
 import {
   ArrowLeft,
   Award,
@@ -18,13 +19,16 @@ import {
   MapPin,
   TrendingUp,
   Eye,
+  BookOpen,
 } from "lucide-react";
 
 const PrivateInstitutionProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("programs");
-  const [expanded, setExpanded] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+  const [isProgramDialogOpen, setIsProgramDialogOpen] = useState(false);
+  const [expandedTypes, setExpandedTypes] = useState<Record<string, boolean>>({});
 
   const institution = useMemo(() => (id ? getPrivateInstitutionById(id) : null), [id]);
 
@@ -70,7 +74,61 @@ const PrivateInstitutionProfile: React.FC = () => {
     .filter((n): n is number => typeof n === "number");
   const nqfRange = nqfLevels.length ? `${Math.min(...nqfLevels)}–${Math.max(...nqfLevels)}` : "N/A";
 
-  const visiblePrograms = expanded ? institution.programs : (institution.programs || []).slice(0, 6);
+  const programsByType = useMemo(() => {
+    const map = new Map<string, Program[]>();
+    (institution.programs || []).forEach((p) => {
+      const key = p.type;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(p);
+    });
+    const order: string[] = [
+      "short-course",
+      "certificate",
+      "advanced-certificate",
+      "higher-certificate",
+      "diploma",
+      "advanced-diploma",
+      "bachelor",
+      "honours",
+      "postgraduate-certificate",
+      "postgraduate-diploma",
+      "masters",
+      "phd",
+    ];
+    const label = (t: string) => {
+      switch (t) {
+        case "short-course":
+          return "Short Courses";
+        case "certificate":
+          return "Certificates";
+        case "advanced-certificate":
+          return "Advanced Certificates";
+        case "higher-certificate":
+          return "Higher Certificates";
+        case "diploma":
+          return "Diplomas";
+        case "advanced-diploma":
+          return "Advanced Diplomas";
+        case "bachelor":
+          return "Bachelor's Degrees";
+        case "honours":
+          return "Honours Degrees";
+        case "postgraduate-certificate":
+          return "Postgraduate Certificates";
+        case "postgraduate-diploma":
+          return "Postgraduate Diplomas";
+        case "masters":
+          return "Master's Degrees";
+        case "phd":
+          return "Doctoral Degrees (PhD)";
+        default:
+          return t;
+      }
+    };
+    return order
+      .filter((t) => map.has(t))
+      .map((t) => ({ type: t, label: label(t), programs: map.get(t)! }));
+  }, [institution.programs]);
 
   return (
     <Layout>
@@ -143,6 +201,12 @@ const PrivateInstitutionProfile: React.FC = () => {
                     ) : null}
 
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                      <Link to={`/books?search=${encodeURIComponent(institution.abbreviation || institution.name)}`} className="w-full sm:w-auto">
+                        <Button size="lg" className="w-full bg-book-600 hover:bg-book-700 text-white">
+                          <BookOpen className="h-5 w-5 mr-2" />
+                          Find Textbooks
+                        </Button>
+                      </Link>
                       {institution.contact?.website && (
                         <Button size="lg" variant="outline" className="border-2 hover:border-book-500 hover:text-book-600 w-full sm:w-auto" asChild>
                           <a href={institution.contact.website} target="_blank" rel="noopener noreferrer">
@@ -245,62 +309,77 @@ const PrivateInstitutionProfile: React.FC = () => {
                 </div>
 
                 {totalPrograms > 0 ? (
-                  <Card className="border-0 shadow-lg">
-                    <CardContent className="pt-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {visiblePrograms!.map((p) => (
-                          <div key={p.id} className="group bg-white border rounded-xl p-5 hover:shadow-md transition-all duration-200 border-gray-200 hover:border-book-200">
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <h5 className="font-semibold mb-0 text-gray-900 group-hover:text-book-700 transition-colors">
-                                    {p.name}
-                                  </h5>
-                                </div>
-                                {p.description ? (
-                                  <p className="text-sm leading-relaxed mb-3 text-gray-600 line-clamp-3">{p.description}</p>
-                                ) : null}
-                                <div className="flex flex-wrap gap-2">
-                                  <Badge variant="secondary" className="bg-book-100 text-book-800 border-book-200 capitalize">
-                                    {p.type.replace(/-/g, " ")}
-                                  </Badge>
-                                  {p.mode ? (
-                                    <Badge variant="outline" className="border-book-200 text-book-700 bg-book-50 capitalize">
-                                      {Array.isArray(p.mode) ? p.mode.join(" • ") : p.mode}
-                                    </Badge>
-                                  ) : null}
-                                  {p.duration ? (
-                                    <Badge variant="outline" className="border-gray-200 text-gray-700">
-                                      {p.duration}
-                                    </Badge>
-                                  ) : null}
-                                  {typeof p.credits === "number" ? (
-                                    <Badge variant="outline" className="border-gray-200 text-gray-700">{p.credits} credits</Badge>
-                                  ) : null}
-                                  {p.nqfLevel ? (
-                                    <Badge variant="outline" className="border-gray-200 text-gray-700">NQF {p.nqfLevel}</Badge>
-                                  ) : null}
+                  <div className="space-y-8">
+                    {programsByType.map(({ type, label, programs }) => (
+                      <Card key={type} className="border-0 shadow-lg">
+                        <CardHeader className="bg-gradient-to-r from-gray-50 to-white">
+                          <CardTitle className="text-xl flex items-center justify-between text-gray-900">
+                            <div className="flex items-center">
+                              <GraduationCap className="h-6 w-6 mr-3 text-book-500" />
+                              {label}
+                            </div>
+                          </CardTitle>
+                          <p className="text-gray-600 mt-2">{programs.length} program{programs.length > 1 ? "s" : ""}</p>
+                        </CardHeader>
+                        <CardContent className="pt-6">
+                          <div className="grid gap-4">
+                            {(expandedTypes[type] ? programs : programs.slice(0, 3)).map((p) => (
+                              <div key={p.id} className="group bg-white border rounded-xl p-5 hover:shadow-md transition-all duration-200 border-gray-200 hover:border-book-200">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="min-w-0">
+                                    <h5 className="font-semibold mb-1 text-gray-900 group-hover:text-book-700 transition-colors">
+                                      {p.name}
+                                    </h5>
+                                    {p.description ? (
+                                      <p className="text-sm leading-relaxed mb-3 text-gray-600 line-clamp-2">{p.description}</p>
+                                    ) : null}
+                                    <div className="flex flex-wrap gap-2">
+                                      <Badge variant="secondary" className="bg-book-100 text-book-800 border-book-200 capitalize">
+                                        {p.type.replace(/-/g, " ")}
+                                      </Badge>
+                                      {p.mode ? (
+                                        <Badge variant="outline" className="border-book-200 text-book-700 bg-book-50 capitalize">
+                                          {Array.isArray(p.mode) ? p.mode.join(" • ") : p.mode}
+                                        </Badge>
+                                      ) : null}
+                                      {p.duration ? (
+                                        <Badge variant="outline" className="border-gray-200 text-gray-700">
+                                          {p.duration}
+                                        </Badge>
+                                      ) : null}
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    {p.nqfLevel ? (
+                                      <Badge className="bg-book-100 text-book-800 border-book-200">NQF {p.nqfLevel}</Badge>
+                                    ) : typeof p.credits === "number" ? (
+                                      <Badge className="bg-book-100 text-book-800 border-book-200">{p.credits} credits</Badge>
+                                    ) : null}
+                                    <Button size="sm" variant="outline" className="border-book-200 text-book-600 hover:bg-book-50" onClick={() => { setSelectedProgram(p); setIsProgramDialogOpen(true); }}>
+                                      <Eye className="h-4 w-4 mr-1" />
+                                      View More
+                                    </Button>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-
-                      {totalPrograms > 6 && (
-                        <div className="text-center py-4">
-                          <Button
-                            variant="outline"
-                            className="border-book-200 text-book-600 hover:bg-book-50"
-                            onClick={() => setExpanded((v) => !v)}
-                          >
-                            <TrendingUp className={`h-4 w-4 mr-2 ${expanded ? "rotate-180" : ""}`} />
-                            {expanded ? "Show Less" : `View ${totalPrograms - 6} more programs`}
-                          </Button>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
+                          {programs.length > 3 && (
+                            <div className="text-center py-4">
+                              <Button
+                                variant="outline"
+                                className="border-book-200 text-book-600 hover:bg-book-50"
+                                onClick={() => setExpandedTypes((prev) => ({ ...prev, [type]: !prev[type] }))}
+                              >
+                                <TrendingUp className={`h-4 w-4 mr-2 ${expandedTypes[type] ? "rotate-180" : ""}`} />
+                                {expandedTypes[type] ? "Show Less" : `View ${programs.length - 3} more programs`}
+                              </Button>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
                 ) : (
                   <Card className="border-0 shadow-lg">
                     <CardContent className="text-center py-16">
@@ -421,6 +500,45 @@ const PrivateInstitutionProfile: React.FC = () => {
           </Tabs>
         </div>
       </div>
+
+      <Dialog open={isProgramDialogOpen} onOpenChange={setIsProgramDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold text-gray-900">{selectedProgram?.name}</DialogTitle>
+            <DialogDescription className="text-gray-600 capitalize">{selectedProgram?.type?.replace(/-/g, " ")}</DialogDescription>
+          </DialogHeader>
+          {selectedProgram && (
+            <div className="space-y-3">
+              {selectedProgram.description && (
+                <p className="text-gray-700">{selectedProgram.description}</p>
+              )}
+              <div className="flex flex-wrap gap-2">
+                {selectedProgram.mode && (
+                  <Badge variant="outline" className="border-book-200 text-book-700 bg-book-50 capitalize">
+                    {Array.isArray(selectedProgram.mode) ? selectedProgram.mode.join(" • ") : selectedProgram.mode}
+                  </Badge>
+                )}
+                {selectedProgram.duration && (
+                  <Badge variant="outline" className="border-gray-200 text-gray-700">{selectedProgram.duration}</Badge>
+                )}
+                {typeof selectedProgram.credits === "number" && (
+                  <Badge variant="outline" className="border-gray-200 text-gray-700">{selectedProgram.credits} credits</Badge>
+                )}
+                {selectedProgram.nqfLevel && (
+                  <Badge variant="outline" className="border-gray-200 text-gray-700">NQF {selectedProgram.nqfLevel}</Badge>
+                )}
+              </div>
+              {selectedProgram.website && (
+                <div>
+                  <a href={selectedProgram.website} target="_blank" rel="noopener noreferrer" className="text-book-600 hover:text-book-700 underline">
+                    Program Website
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };

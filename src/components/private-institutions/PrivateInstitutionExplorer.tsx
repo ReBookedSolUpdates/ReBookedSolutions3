@@ -4,7 +4,7 @@ import { PRIVATE_INSTITUTIONS } from "@/constants/private-institutions";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building, Search, ExternalLink } from "lucide-react";
+import { Building, Search, ExternalLink, BookOpen, Globe } from "lucide-react";
 
 const PrivateInstitutionExplorer = () => {
   const [query, setQuery] = useState("");
@@ -89,13 +89,27 @@ const PrivateInstitutionExplorer = () => {
                     </Badge>
                   ) : null}
                 </div>
-                <div className="flex gap-2">
-                  <Link to={`/private-institution/${inst.id}`} className="flex-1">
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Link to={`/private-institution/${inst.id}`} className="sm:flex-1">
                     <Button variant="outline" className="w-full hover:bg-book-50 hover:border-book-300 text-book-600 border-book-200">
                       <ExternalLink className="w-4 h-4 mr-2" />
                       View Profile
                     </Button>
                   </Link>
+                  <Link to={`/books?search=${encodeURIComponent(inst.abbreviation || inst.name)}`} className="sm:flex-1">
+                    <Button className="w-full bg-book-600 hover:bg-book-700 text-white">
+                      <BookOpen className="w-4 h-4 mr-2" />
+                      Find Textbooks
+                    </Button>
+                  </Link>
+                  {inst.contact?.website && (
+                    <a href={inst.contact.website} target="_blank" rel="noopener noreferrer" className="sm:flex-1">
+                      <Button variant="outline" className="w-full border-book-200 text-book-600 hover:bg-book-50">
+                        <Globe className="w-4 h-4 mr-2" />
+                        Official Website
+                      </Button>
+                    </a>
+                  )}
                 </div>
               </CardContent>
             </Card>
