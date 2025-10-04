@@ -60,7 +60,8 @@ const SellerProfile = () => {
         .maybeSingle();
 
       // Build a minimal seller object even if not found
-      const displayName = sellerData?.name || (sellerData as any)?.full_name || sellerData?.email?.split("@")[0] || "Seller";
+      const rawName = (sellerData?.name || (sellerData as any)?.full_name || "").toString().trim();
+      const displayName = rawName || "";
       const derivedProvince = (sellerData as any)?.pickup_address?.province || undefined;
       if (sellerData) {
         setSeller({ ...(sellerData as any), name: displayName, province: derivedProvince });
