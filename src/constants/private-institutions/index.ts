@@ -6,6 +6,7 @@ import { PRIVATE_GROUP_3 } from "./data/group3";
 export const PRIVATE_INSTITUTIONS: PrivateInstitution[] = [
   ...PRIVATE_GROUP_1,
   ...PRIVATE_GROUP_2,
+  ...PRIVATE_GROUP_3,
 ];
 
 export const getPrivateInstitutionById = (id: string): PrivateInstitution | null => {
