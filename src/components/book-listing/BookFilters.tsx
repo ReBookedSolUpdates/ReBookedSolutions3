@@ -5,8 +5,6 @@ import { Slider } from "@/components/ui/slider";
 import { Filter, Search, School, GraduationCap, BookOpen, MapPin } from "lucide-react";
 import { UniversitySelector } from "@/components/ui/university-selector";
 import { UNIVERSITY_YEARS } from "@/constants/universities";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LISTING_CATEGORIES } from "@/constants/listingCategories";
 
 interface BookFiltersProps {
   searchQuery: string;
@@ -59,7 +57,15 @@ const BookFilters = ({
   onUpdateFilters,
   onClearFilters,
 }: BookFiltersProps) => {
-  const categories = LISTING_CATEGORIES;
+  const categories = [
+    "Computer Science",
+    "Mathematics",
+    "Biology",
+    "Chemistry",
+    "Physics",
+    "Economics",
+    "Psychology",
+  ];
   const conditions = ["New", "Good", "Better", "Average", "Below Average"];
   const grades = [
     "Grade 1",
@@ -290,25 +296,30 @@ const BookFilters = ({
             </div>
           )}
 
-          {/* Category Filter - Dropdown */}
+          {/* Category Filter */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Category</h3>
-            <Select
-              value={selectedCategory || ""}
-              onValueChange={(value) => setSelectedCategory(value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
+              Categories
+            </h3>
+            <div className="space-y-2">
+              {categories.map((category) => (
+                <div key={category} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`category-${category}`}
+                    checked={selectedCategory === category}
+                    onChange={() => handleCategoryChange(category)}
+                    className="h-4 w-4 text-book-600 focus:ring-book-500 border-gray-300 rounded"
+                  />
+                  <label
+                    htmlFor={`category-${category}`}
+                    className="ml-2 text-sm text-gray-700"
+                  >
                     {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Province Filter */}
