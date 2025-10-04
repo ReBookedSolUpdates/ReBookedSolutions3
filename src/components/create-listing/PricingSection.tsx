@@ -171,7 +171,7 @@ export const PricingSection = ({
           onKeyDown={handleKeyDown}
           placeholder="0.00"
           className={`pl-8 ${errors.price ? "border-red-500" : ""} ${isMobile ? "h-12 text-base" : ""}`}
-          style={{ fontSize: isMobile ? "16px" : undefined }} // Prevents zoom on iOS
+          style={{ fontSize: isMobile ? "16px" : undefined }}
           autoComplete="off"
           required
         />
@@ -181,6 +181,35 @@ export const PricingSection = ({
           {errors.price}
         </p>
       )}
+
+      {/* Quantity */}
+      <div className="mt-4">
+        <Label htmlFor="quantity" className={`${isMobile ? "text-sm" : "text-base"} font-medium`}>
+          Quantity <span className="text-red-500">*</span>
+        </Label>
+        <Input
+          id="quantity"
+          name="quantity"
+          type="number"
+          inputMode="numeric"
+          min={1}
+          step={1}
+          value={typeof formData.quantity === 'number' ? formData.quantity : (formData.quantity ? Number(formData.quantity) : 1)}
+          onChange={(e) => {
+            const raw = e.target.value.replace(/[^0-9]/g, "");
+            const val = raw === "" ? "" : String(Math.max(1, parseInt(raw, 10)));
+            const modifiedEvent = {
+              ...e,
+              target: { ...e.target, value: val, name: "quantity" },
+            } as unknown as React.ChangeEvent<HTMLInputElement>;
+            onInputChange(modifiedEvent);
+          }}
+          className={`${errors.quantity ? "border-red-500" : ""} ${isMobile ? "h-12 text-base" : ""}`}
+        />
+        {errors.quantity && (
+          <p className={`${isMobile ? "text-xs" : "text-sm"} text-red-500 mt-1`}>{errors.quantity}</p>
+        )}
+      </div>
 
       {formData.price > 0 && (
         <div
