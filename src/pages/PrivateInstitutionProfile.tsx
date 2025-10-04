@@ -28,6 +28,7 @@ const PrivateInstitutionProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("programs");
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const [isProgramDialogOpen, setIsProgramDialogOpen] = useState(false);
+  const [expandedTypes, setExpandedTypes] = useState<Record<string, boolean>>({});
 
   const institution = useMemo(() => (id ? getPrivateInstitutionById(id) : null), [id]);
 
@@ -317,7 +318,7 @@ const PrivateInstitutionProfile: React.FC = () => {
                         </CardHeader>
                         <CardContent className="pt-6">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {programs.map((p) => (
+                            {(expandedTypes[type] ? programs : programs.slice(0, 3)).map((p) => (
                               <div key={p.id} className="group bg-white border rounded-xl p-5 hover:shadow-md transition-all duration-200 border-gray-200 hover:border-book-200">
                                 <div className="flex items-start justify-between gap-3">
                                   <div className="min-w-0">
@@ -351,16 +352,42 @@ const PrivateInstitutionProfile: React.FC = () => {
                                       ) : null}
                                     </div>
                                   </div>
-                                  <div className="shrink-0">
+                                  <div className="flex flex-col sm:flex-row gap-2 shrink-0">
                                     <Button size="sm" variant="outline" className="border-book-200 text-book-600 hover:bg-book-50" onClick={() => { setSelectedProgram(p); setIsProgramDialogOpen(true); }}>
                                       <Eye className="h-4 w-4 mr-1" />
                                       View More
                                     </Button>
+                                    <Link to={`/books?search=${encodeURIComponent(p.name)}`}>
+                                      <Button size="sm" className="bg-book-600 hover:bg-book-700 text-white">
+                                        <BookOpen className="h-4 w-4 mr-1" />
+                                        Find Textbooks
+                                      </Button>
+                                    </Link>
+                                    {p.website && (
+                                      <a href={p.website} target="_blank" rel="noopener noreferrer">
+                                        <Button size="sm" variant="outline" className="border-book-200 text-book-600 hover:bg-book-50">
+                                          <ExternalLink className="h-4 w-4 mr-1" />
+                                          Website
+                                        </Button>
+                                      </a>
+                                    )}
                                   </div>
                                 </div>
                               </div>
                             ))}
                           </div>
+                          {programs.length > 3 && (
+                            <div className="text-center py-4">
+                              <Button
+                                variant="outline"
+                                className="border-book-200 text-book-600 hover:bg-book-50"
+                                onClick={() => setExpandedTypes((prev) => ({ ...prev, [type]: !prev[type] }))}
+                              >
+                                <TrendingUp className={`h-4 w-4 mr-2 ${expandedTypes[type] ? "rotate-180" : ""}`} />
+                                {expandedTypes[type] ? "Show Less" : `View ${programs.length - 3} more programs`}
+                              </Button>
+                            </div>
+                          )}
                         </CardContent>
                       </Card>
                     ))}
