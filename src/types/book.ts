@@ -10,6 +10,7 @@ export interface Book {
   frontCover?: string;
   backCover?: string;
   insidePages?: string;
+  additionalImages?: string[];
   sold: boolean;
   createdAt: string;
   grade?: string;
@@ -34,6 +35,7 @@ export interface BookFormData {
   frontCover?: string;
   backCover?: string;
   insidePages?: string;
+  additionalImages?: string[];
   grade?: string;
   universityYear?: string;
   university?: string;
