@@ -52,28 +52,30 @@ const SellerProfile = () => {
     try {
       setLoading(true);
 
-      // Fetch seller profile
+      // Fetch seller profile (include possible alternate name field)
       const { data: sellerData, error: sellerError } = await supabase
         .from("profiles")
         .select("id, name, email, bio, profile_picture_url, created_at, pickup_address")
         .eq("id", sellerId)
         .maybeSingle();
 
-      if (sellerError || !sellerData) {
-        throw new Error("Seller not found");
-      }
-
-      // Derive province from pickup_address if available
+      // Build a minimal seller object even if not found
+      const displayName = sellerData?.name || (sellerData as any)?.full_name || sellerData?.email?.split("@")[0] || "Seller";
       const derivedProvince = (sellerData as any)?.pickup_address?.province || undefined;
-      setSeller({ ...(sellerData as any), province: derivedProvince });
+      if (sellerData) {
+        setSeller({ ...(sellerData as any), name: displayName, province: derivedProvince });
+      } else {
+        // Keep a minimal shell so the page can still render books list if available
+        setSeller({ id: sellerId!, name: displayName, email: "", created_at: new Date().toISOString(), province: undefined });
+      }
 
       // Fetch seller's books
       const { data: booksData, error: booksError } = await supabase
         .from("books")
         .select(
           `
-          id, title, author, description, price, category, condition, 
-          image_url, front_cover, back_cover, inside_pages, sold, 
+          id, title, author, description, price, category, condition,
+          image_url, front_cover, back_cover, inside_pages, sold,
           created_at, grade, university_year, province
         `,
         )
@@ -104,13 +106,18 @@ const SellerProfile = () => {
         universityYear: book.university_year,
         province: book.province,
         seller: {
-          id: sellerData.id,
-          name: sellerData.name,
-          email: sellerData.email,
+          id: sellerId!,
+          name: displayName,
+          email: sellerData?.email || "",
         },
       }));
 
       setBooks(transformedBooks);
+
+      // If profile truly missing AND no books, then show not found
+      if (!sellerData && (transformedBooks.length === 0)) {
+        throw new Error("Seller not found");
+      }
     } catch (err) {
       console.error("Error fetching seller data:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
