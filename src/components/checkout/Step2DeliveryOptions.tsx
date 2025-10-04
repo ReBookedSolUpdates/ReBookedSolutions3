@@ -41,6 +41,15 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
   const [quotes, setQuotes] = useState<UnifiedQuote[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const cheapest = useMemo(() => {
+    if (!quotes.length) return null;
+    return quotes.reduce((min, q) => (q.cost < min.cost ? q : min), quotes[0]);
+  }, [quotes]);
+  const fastest = useMemo(() => {
+    if (!quotes.length) return null;
+    return quotes.reduce((min, q) => (q.transit_days < min.transit_days ? q : min), quotes[0]);
+  }, [quotes]);
+  const recommended = cheapest; // Simple rule: cheapest overall
 
   useEffect(() => {
     fetchDeliveryOptions();
@@ -170,7 +179,7 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div className="text-center mb-8">
+      <div className="text-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Available Shipping Options
         </h1>
@@ -178,6 +187,25 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
           Choose how you'd like to receive your book
         </p>
       </div>
+      {quotes.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="rounded-lg border p-3 bg-white text-center">
+            <div className="text-xs font-medium text-green-700">Cheapest</div>
+            <div className="text-lg font-semibold">R{cheapest?.cost.toFixed(2)}</div>
+            <div className="text-xs text-gray-500">{cheapest?.service_name}</div>
+          </div>
+          <div className="rounded-lg border p-3 bg-white text-center">
+            <div className="text-xs font-medium text-blue-700">Fastest</div>
+            <div className="text-lg font-semibold">{fastest?.transit_days} day{fastest && fastest.transit_days > 1 ? "s" : ""}</div>
+            <div className="text-xs text-gray-500">{fastest?.service_name}</div>
+          </div>
+          <div className="rounded-lg border p-3 bg-white text-center">
+            <div className="text-xs font-medium text-purple-700">Recommended</div>
+            <div className="text-lg font-semibold">R{recommended?.cost.toFixed(2)}</div>
+            <div className="text-xs text-gray-500">{recommended?.service_name}</div>
+          </div>
+        </div>
+      )}
 
       {/* Address Summary */}
       <Card>
@@ -254,6 +282,9 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
                   const isSelected = !!selectedDelivery &&
                     selectedDelivery.service_name === option.service_name &&
                     selectedDelivery.price === option.price;
+                  const isCheapest = cheapest && q.cost === cheapest.cost && q.service_name === cheapest.service_name;
+                  const isFastest = fastest && q.transit_days === fastest.transit_days && q.service_name === fastest.service_name;
+                  const isRecommended = recommended && q.cost === recommended.cost && q.service_name === recommended.service_name;
                   return (
                     <div
                       key={idx}
@@ -268,6 +299,15 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
                           <span className="text-gray-700">— R{q.cost.toFixed(2)}</span>
                           {q.price_excl != null && (
                             <span className="text-gray-600">(excl. VAT: R{q.price_excl.toFixed(2)})</span>
+                          )}
+                          {isRecommended && (
+                            <span className="ml-2 inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-800">Recommended</span>
+                          )}
+                          {isCheapest && !isRecommended && (
+                            <span className="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">Cheapest</span>
+                          )}
+                          {isFastest && !isRecommended && (
+                            <span className="ml-2 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">Fastest</span>
                           )}
                         </div>
                         <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-500">
