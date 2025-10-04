@@ -35,6 +35,10 @@ export interface BookQueryResult {
   university_year?: string;
   university?: string;
   province?: string;
+  // Quantity fields from DB
+  initial_quantity?: number | null;
+  available_quantity?: number | null;
+  sold_quantity?: number | null;
   seller_id: string;
   profiles?: ProfileData | null;
 }
