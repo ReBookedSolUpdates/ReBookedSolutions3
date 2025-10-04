@@ -317,18 +317,16 @@ const PrivateInstitutionProfile: React.FC = () => {
                           <CardDescription className="text-gray-600">{programs.length} program{programs.length > 1 ? "s" : ""}</CardDescription>
                         </CardHeader>
                         <CardContent className="pt-6">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="grid gap-4">
                             {(expandedTypes[type] ? programs : programs.slice(0, 3)).map((p) => (
                               <div key={p.id} className="group bg-white border rounded-xl p-5 hover:shadow-md transition-all duration-200 border-gray-200 hover:border-book-200">
                                 <div className="flex items-start justify-between gap-3">
                                   <div className="min-w-0">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <h5 className="font-semibold mb-0 text-gray-900 group-hover:text-book-700 transition-colors">
-                                        {p.name}
-                                      </h5>
-                                    </div>
+                                    <h5 className="font-semibold mb-1 text-gray-900 group-hover:text-book-700 transition-colors">
+                                      {p.name}
+                                    </h5>
                                     {p.description ? (
-                                      <p className="text-sm leading-relaxed mb-3 text-gray-600 line-clamp-3">{p.description}</p>
+                                      <p className="text-sm leading-relaxed mb-3 text-gray-600 line-clamp-2">{p.description}</p>
                                     ) : null}
                                     <div className="flex flex-wrap gap-2">
                                       <Badge variant="secondary" className="bg-book-100 text-book-800 border-book-200 capitalize">
@@ -344,33 +342,18 @@ const PrivateInstitutionProfile: React.FC = () => {
                                           {p.duration}
                                         </Badge>
                                       ) : null}
-                                      {typeof p.credits === "number" ? (
-                                        <Badge variant="outline" className="border-gray-200 text-gray-700">{p.credits} credits</Badge>
-                                      ) : null}
-                                      {p.nqfLevel ? (
-                                        <Badge variant="outline" className="border-gray-200 text-gray-700">NQF {p.nqfLevel}</Badge>
-                                      ) : null}
                                     </div>
                                   </div>
-                                  <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    {p.nqfLevel ? (
+                                      <Badge className="bg-book-100 text-book-800 border-book-200">NQF {p.nqfLevel}</Badge>
+                                    ) : typeof p.credits === "number" ? (
+                                      <Badge className="bg-book-100 text-book-800 border-book-200">{p.credits} credits</Badge>
+                                    ) : null}
                                     <Button size="sm" variant="outline" className="border-book-200 text-book-600 hover:bg-book-50" onClick={() => { setSelectedProgram(p); setIsProgramDialogOpen(true); }}>
                                       <Eye className="h-4 w-4 mr-1" />
                                       View More
                                     </Button>
-                                    <Link to={`/books?search=${encodeURIComponent(p.name)}`}>
-                                      <Button size="sm" className="bg-book-600 hover:bg-book-700 text-white">
-                                        <BookOpen className="h-4 w-4 mr-1" />
-                                        Find Textbooks
-                                      </Button>
-                                    </Link>
-                                    {p.website && (
-                                      <a href={p.website} target="_blank" rel="noopener noreferrer">
-                                        <Button size="sm" variant="outline" className="border-book-200 text-book-600 hover:bg-book-50">
-                                          <ExternalLink className="h-4 w-4 mr-1" />
-                                          Website
-                                        </Button>
-                                      </a>
-                                    )}
                                   </div>
                                 </div>
                               </div>
