@@ -172,6 +172,7 @@ const GettingStarted = () => {
                         <li className="flex gap-2"><ShieldCheck className="w-4 h-4 text-blue-700 mt-0.5" />Place the printed label flat on the outside (not a seam).</li>
                         <li className="flex gap-2"><ShieldCheck className="w-4 h-4 text-blue-700 mt-0.5" />Cover with clear tape so it stays readable.</li>
                         <li className="flex gap-2"><ShieldCheck className="w-4 h-4 text-blue-700 mt-0.5" />Ensure the barcode isn’t wrinkled or bent.</li>
+                        <li className="flex gap-2"><ShieldCheck className="w-4 h-4 text-blue-700 mt-0.5" />No printer? Clearly handwrite recipient name, full delivery address, phone number, order number and courier reference (if provided) on the padded envelope — large, legible, and visible.</li>
                       </ul>
                     </div>
                   </div>
