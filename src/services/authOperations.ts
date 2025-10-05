@@ -403,13 +403,20 @@ export const createUserProfile = async (user: User): Promise<Profile> => {
     const userEmail = user.email || "";
     const isAdmin = adminEmails.includes(userEmail.toLowerCase());
 
+    const firstName = user.user_metadata?.first_name || (user.user_metadata?.name ? String(user.user_metadata.name).split(" ")[0] : undefined);
+    const lastName = user.user_metadata?.last_name || (user.user_metadata?.name ? String(user.user_metadata.name).split(" ").slice(1).join(" ") || undefined : undefined);
+    const legacyName = user.user_metadata?.name || (user.email?.split("@")[0] || "User");
+
     const profileData = {
       id: user.id,
-      name: user.user_metadata?.name || user.email?.split("@")[0] || "User",
+      first_name: firstName,
+      last_name: lastName,
+      name: legacyName,
       email: user.email || "",
+      phone_number: user.user_metadata?.phone_number || undefined,
       status: "active",
-      is_admin: isAdmin, // Set admin flag during creation
-    };
+      is_admin: isAdmin,
+    } as any;
 
     // Use retry logic for profile creation as well
     const result = await retryWithExponentialBackoff(async () => {
