@@ -240,35 +240,41 @@ const Register = () => {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="first_name">First Name</Label>
-                  <div className="relative mb-3">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <User className="h-5 w-5 text-gray-400" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="first_name">First Name</Label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                          <User className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <Input
+                          id="first_name"
+                          type="text"
+                          placeholder="John"
+                          className="pl-10"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          required
+                        />
+                      </div>
                     </div>
-                    <Input
-                      id="first_name"
-                      type="text"
-                      placeholder="John"
-                      className="pl-10"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <Label htmlFor="last_name">Last Name</Label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <User className="h-5 w-5 text-gray-400" />
+                    <div>
+                      <Label htmlFor="last_name">Last Name</Label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                          <User className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <Input
+                          id="last_name"
+                          type="text"
+                          placeholder="Doe"
+                          className="pl-10"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          required
+                        />
+                      </div>
                     </div>
-                    <Input
-                      id="last_name"
-                      type="text"
-                      placeholder="Doe"
-                      className="pl-10"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      required
-                    />
                   </div>
                 </div>
 
