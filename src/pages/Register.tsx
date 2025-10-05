@@ -217,11 +217,11 @@ const Register = () => {
 
   return (
     <Layout>
-      <div className="min-h-[80vh] flex items-center justify-center px-4">
-        <div className="w-full max-w-md">
+      <div className="min-h-[80vh] flex items-center justify-center px-4 py-10 sm:py-16">
+        <div className="w-full max-w-sm md:max-w-md">
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div className="p-6 sm:p-8">
-              <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+            <div className="p-5 sm:p-6">
+              <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">
                 Create an Account
               </h1>
 
