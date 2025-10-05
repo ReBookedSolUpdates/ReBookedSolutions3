@@ -60,8 +60,8 @@ serve(async (req) => {
       throw new Error("Only the seller can commit to this order");
     }
 
-    // Allow a few valid pre-commit states
-    const validStatuses = new Set(["paid", "pending_commit", "payment_verified", "authorized"]);
+    // Allow valid pre-commit states (including legacy 'pending')
+    const validStatuses = new Set(["paid", "pending_commit", "payment_verified", "authorized", "pending"]);
     if (!validStatuses.has(order.status)) {
       throw new Error(`Order cannot be committed in status: ${order.status}`);
     }
