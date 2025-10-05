@@ -248,12 +248,14 @@ export const getAllCommitments = async (
       const seller = profiles?.find((p) => p.id === commitment.seller_id);
       const buyer = profiles?.find((p) => p.id === commitment.buyer_id);
 
+      const sellerName = seller ? [seller.first_name, seller.last_name].filter(Boolean).join(" ") || (seller as any).name || "Unknown Seller" : "Unknown Seller";
+      const buyerName = buyer ? [buyer.first_name, buyer.last_name].filter(Boolean).join(" ") || (buyer as any).name || "Unknown Buyer" : "Unknown Buyer";
       return {
         ...commitment,
         book_title: book?.title || "Unknown Book",
         book_image_url: book?.image_url || "",
-        seller_name: seller?.name || "Unknown Seller",
-        buyer_name: buyer?.name || "Unknown Buyer",
+        seller_name: sellerName,
+        buyer_name: buyerName,
         time_remaining:
           commitment.status === "pending"
             ? calculateTimeRemaining(commitment.expires_at)
