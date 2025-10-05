@@ -224,7 +224,7 @@ export const fetchUserProfileQuick = async (
     const { data: profile, error: profileError } = (await withTimeout(
       supabase
         .from("profiles")
-        .select("id, name, email, status, profile_picture_url, bio, is_admin")
+        .select("id, first_name, last_name, email, status, profile_picture_url, bio, is_admin")
         .eq("id", user.id)
         .single(),
       12000, // Increased to 12 seconds
@@ -264,7 +264,8 @@ export const fetchUserProfileQuick = async (
     const profileData = {
       id: profile.id,
       name:
-        profile.name ||
+        [profile.first_name, profile.last_name].filter(Boolean).join(" ") ||
+        (profile as any).name ||
         user.user_metadata?.name ||
         user.email?.split("@")[0] ||
         "User",
@@ -305,7 +306,7 @@ export const fetchUserProfile = async (user: User): Promise<Profile | null> => {
           supabase
             .from("profiles")
             .select(
-              "id, name, email, status, profile_picture_url, bio, is_admin",
+              "id, first_name, last_name, email, status, profile_picture_url, bio, is_admin",
             )
             .eq("id", user.id)
             .single(),
@@ -415,7 +416,7 @@ export const createUserProfile = async (user: User): Promise<Profile> => {
       return await supabase
         .from("profiles")
         .insert([profileData])
-        .select("id, name, email, status, profile_picture_url, bio, is_admin")
+        .select("id, first_name, last_name, email, status, profile_picture_url, bio, is_admin")
         .single();
     });
 

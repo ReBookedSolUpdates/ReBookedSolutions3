@@ -267,13 +267,17 @@ const Profile = () => {
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                 <Avatar className="w-20 h-20">
                   <AvatarFallback className="bg-book-100 text-book-600 text-xl font-semibold">
-                    {profile.name?.charAt(0)?.toUpperCase() || "U"}
+                    {(
+                      ([(profile as any)?.first_name, (profile as any)?.last_name].filter(Boolean).join(" ") || profile.name || "U")
+                      .charAt(0)
+                      ?.toUpperCase()
+                    )}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-3">
                   <div>
                     <h1 className="text-3xl font-bold text-gray-900">
-                      {profile.name || "Anonymous User"}
+                      {[(profile as any)?.first_name, (profile as any)?.last_name].filter(Boolean).join(" ") || profile.name || "Anonymous User"}
                     </h1>
                     <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
                       <div className="flex items-center gap-1">
@@ -717,7 +721,7 @@ const Profile = () => {
         isOpen={isShareDialogOpen}
         onClose={() => setIsShareDialogOpen(false)}
         userId={user?.id || ""}
-        userName={profile?.name || "Anonymous User"}
+        userName={[(profile as any)?.first_name, (profile as any)?.last_name].filter(Boolean).join(" ") || profile?.name || "Anonymous User"}
         isOwnProfile={true}
       />
 

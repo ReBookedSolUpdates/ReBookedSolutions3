@@ -53,18 +53,16 @@ const SellerProfile = () => {
     try {
       setLoading(true);
 
-      // Fetch seller profile (include possible alternate name field)
+      // Fetch seller profile
       const { data: sellerData, error: sellerError } = await supabase
         .from("profiles")
-        .select("id, name, email, bio, profile_picture_url, created_at, pickup_address")
+        .select("id, first_name, last_name, email, bio, profile_picture_url, created_at")
         .eq("id", sellerId)
         .maybeSingle();
 
-      const hasProfileName = Boolean(sellerData?.name && String(sellerData.name).trim());
-      const displayName = sellerData?.name || (sellerData as any)?.full_name || sellerData?.email?.split("@")[0] || "";
-      const derivedProvince = (sellerData as any)?.pickup_address?.province || undefined;
+      const displayName = [sellerData?.first_name, sellerData?.last_name].filter(Boolean).join(" ") || (sellerData as any)?.name || (sellerData as any)?.full_name || sellerData?.email?.split("@")[0] || "";
       if (sellerData) {
-        setSeller({ ...(sellerData as any), name: displayName, province: derivedProvince, hasName: hasProfileName });
+        setSeller({ ...(sellerData as any), name: displayName, province: undefined, hasName: Boolean(displayName) });
       } else {
         setSeller({ id: sellerId!, name: displayName, email: "", created_at: new Date().toISOString(), province: undefined, hasName: false });
       }
@@ -116,7 +114,7 @@ const SellerProfile = () => {
 
       // Fallback province from books if profile missing it
       const fallbackProvince = transformedBooks.find((b) => !!b.province)?.province;
-      if (!derivedProvince && fallbackProvince) {
+      if (fallbackProvince) {
         setSeller((prev) => (prev ? { ...prev, province: fallbackProvince } : prev));
       }
 

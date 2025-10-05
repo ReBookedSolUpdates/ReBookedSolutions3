@@ -12,7 +12,8 @@ import { BackupEmailService } from "@/utils/backupEmailService";
 
 
 const Register = () => {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
@@ -38,12 +39,13 @@ const Register = () => {
 
     console.log("🚀 Starting registration process...");
     console.log("📧 Email:", email);
-    console.log("👤 Name:", name);
+    console.log("👤 First Name:", firstName);
+    console.log("👤 Last Name:", lastName);
     console.log("🔐 Password length:", password.length);
     console.log("✅ Terms accepted:", termsAccepted);
 
     try {
-      if (!name.trim() || !email.trim() || !password.trim()) {
+      if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim()) {
         throw new Error("All fields are required");
       }
 
@@ -63,12 +65,12 @@ const Register = () => {
 
       // Basic ZA phone validation (e.g., 0XXXXXXXXX or +27XXXXXXXXX)
       const phoneTrim = phone.trim();
-      if (phoneTrim && !/^(\+27|0)[1-9]\d{8}$/.test(phoneTrim)) {
+      if (!/^(\+27|0)[1-9]\d{8}$/.test(phoneTrim)) {
         throw new Error("Enter a valid South African phone number (e.g., 0821234567 or +27821234567)");
       }
 
       console.log("🔄 Calling register function...");
-      const result = await register(email, password, name, phoneTrim || undefined);
+      const result = await register(email, password, firstName, lastName, phoneTrim);
       console.log("✅ Register function returned:", result);
 
       // Handle different registration outcomes
@@ -150,7 +152,8 @@ const Register = () => {
       console.error("Error:", error);
       console.error("Message:", error instanceof Error ? error.message : String(error));
       console.error("Email:", email);
-      console.error("Name:", name);
+      console.error("First Name:", firstName);
+      console.error("Last Name:", lastName);
       console.groupEnd();
 
       const errorMessage =
@@ -237,18 +240,33 @@ const Register = () => {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
+                  <Label htmlFor="first_name">First Name</Label>
+                  <div className="relative mb-3">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <User className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <Input
+                      id="first_name"
+                      type="text"
+                      placeholder="John"
+                      className="pl-10"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <Label htmlFor="last_name">Last Name</Label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                       <User className="h-5 w-5 text-gray-400" />
                     </div>
                     <Input
-                      id="name"
+                      id="last_name"
                       type="text"
-                      placeholder="John Doe"
+                      placeholder="Doe"
                       className="pl-10"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
                       required
                     />
                   </div>

@@ -224,7 +224,7 @@ const Checkout: React.FC = () => {
       if (bookData.seller_id) {
         const { data: seller, error: sellerError } = await supabase
           .from("profiles")
-          .select("id, name, email")
+          .select("id, first_name, last_name, email")
           .eq("id", bookData.seller_id)
           .maybeSingle();
 
