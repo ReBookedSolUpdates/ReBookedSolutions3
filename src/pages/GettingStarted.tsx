@@ -19,6 +19,9 @@ import {
   ArrowRight,
   ShieldCheck,
   Info,
+  BookOpen,
+  MessageCircle,
+  ChevronRight,
 } from "lucide-react";
 
 const TimelineStep = ({
@@ -327,10 +330,22 @@ const GettingStarted = () => {
                 <CardTitle className="text-lg">On this page</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <nav className="flex flex-col gap-2 text-sm">
-                  <a href="#seller" className="text-gray-700 hover:text-book-700 underline-offset-4 hover:underline">Becoming a Seller</a>
-                  <a href="#packaging-guidelines" className="text-gray-700 hover:text-book-700 underline-offset-4 hover:underline">Packaging Guidelines</a>
-                  <a href="#buyer" className="text-gray-700 hover:text-book-700 underline-offset-4 hover:underline">Becoming a Buyer</a>
+                <nav className="flex flex-col text-sm">
+                  <a href="#seller" className="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-book-50 hover:text-book-800">
+                    <Package className="w-4 h-4 text-book-600" />
+                    <span>Becoming a Seller</span>
+                    <ChevronRight className="ml-auto w-4 h-4 text-gray-400" />
+                  </a>
+                  <a href="#packaging-guidelines" className="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-book-50 hover:text-book-800">
+                    <Info className="w-4 h-4 text-book-600" />
+                    <span>Packaging Guidelines</span>
+                    <ChevronRight className="ml-auto w-4 h-4 text-gray-400" />
+                  </a>
+                  <a href="#buyer" className="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-book-50 hover:text-book-800">
+                    <ShoppingCart className="w-4 h-4 text-book-600" />
+                    <span>Becoming a Buyer</span>
+                    <ChevronRight className="ml-auto w-4 h-4 text-gray-400" />
+                  </a>
                 </nav>
               </CardContent>
             </Card>
@@ -339,10 +354,25 @@ const GettingStarted = () => {
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg">Quick actions</CardTitle>
               </CardHeader>
-              <CardContent className="pt-0 flex flex-col gap-2">
-                <Link to="/create-listing"><Button className="w-full">Create a listing</Button></Link>
-                <Link to="/books"><Button variant="outline" className="w-full">Browse books</Button></Link>
-                <Link to="/shipping"><Button variant="ghost" className="w-full">Check shipping</Button></Link>
+              <CardContent className="pt-0 space-y-2">
+                <Link to="/create-listing">
+                  <Button className="w-full bg-book-600 hover:bg-book-700 text-white shadow-sm" aria-label="Create a listing">
+                    <Package className="w-4 h-4" />
+                    Create a listing
+                  </Button>
+                </Link>
+                <Link to="/books">
+                  <Button variant="outline" className="w-full justify-between" aria-label="Browse books">
+                    <span className="flex items-center gap-2"><BookOpen className="w-4 h-4" />Browse books</span>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                  </Button>
+                </Link>
+                <Link to="/shipping">
+                  <Button variant="outline" className="w-full justify-between" aria-label="Check shipping">
+                    <span className="flex items-center gap-2"><Truck className="w-4 h-4" />Check shipping</span>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -350,11 +380,14 @@ const GettingStarted = () => {
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">Need help?</CardTitle>
               </CardHeader>
-              <CardContent className="pt-0 text-sm text-gray-700 space-y-2">
-                <p>Check our FAQ or contact support if you’re stuck.</p>
+              <CardContent className="pt-0 text-sm text-gray-700 space-y-3">
+                <div className="flex items-start gap-2">
+                  <MessageCircle className="w-4 h-4 mt-0.5 text-book-600" />
+                  <p>Check our FAQ or contact support if you’re stuck.</p>
+                </div>
                 <div className="flex gap-2">
                   <Link to="/faq"><Button size="sm" variant="outline">FAQ</Button></Link>
-                  <Link to="/contact"><Button size="sm" variant="ghost">Contact Us</Button></Link>
+                  <Link to="/contact"><Button size="sm" className="bg-book-600 hover:bg-book-700 text-white">Contact Us</Button></Link>
                 </div>
               </CardContent>
             </Card>
