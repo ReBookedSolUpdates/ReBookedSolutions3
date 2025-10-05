@@ -163,7 +163,7 @@ const BookGrid = ({
                       loading="lazy"
                       decoding="async"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      fetchPriority={fetchPriority}
+                      ref={(el) => { if (el && fetchPriority) el.setAttribute("fetchpriority", fetchPriority); }}
                       onError={(e) => {
                         e.currentTarget.src =
                           "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=300&fit=crop&auto=format&q=80";
@@ -267,7 +267,7 @@ const BookGrid = ({
                       loading="lazy"
                       decoding="async"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      fetchPriority={fetchPriority}
+                      ref={(el) => { if (el && fetchPriority) el.setAttribute("fetchpriority", fetchPriority); }}
                       onError={(e) => {
                         e.currentTarget.src =
                           "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=300&fit=crop&auto=format&q=80";
