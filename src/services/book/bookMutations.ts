@@ -131,7 +131,7 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
     // Fetch seller profile
     const { data: seller } = await supabase
       .from("profiles")
-      .select("id, name, email")
+      .select("id, first_name, last_name, email")
       .eq("id", user.id)
       .single();
 
@@ -140,7 +140,7 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
       profiles: seller
         ? {
             id: seller.id,
-            name: seller.name,
+            name: [seller.first_name, seller.last_name].filter(Boolean).join(" ") || (seller as any).name || (seller.email ? seller.email.split("@")[0] : ""),
             email: seller.email,
           }
         : null,
