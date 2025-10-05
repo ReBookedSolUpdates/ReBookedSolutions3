@@ -239,7 +239,7 @@ export const getBooks = async (filters?: BookFilters): Promise<Book[]> => {
           try {
             const { data: profilesData, error: profilesError } = await supabase
               .from("profiles")
-              .select("id, name, email")
+              .select("id, first_name, last_name, email")
               .in("id", sellerIds);
 
             if (profilesError) {
@@ -290,8 +290,9 @@ export const getBooks = async (filters?: BookFilters): Promise<Book[]> => {
 
               console.warn(`Continuing without profile data due to error: ${profilesError.message || 'Unknown error'}`);
             } else if (profilesData) {
-              profilesData.forEach((profile) => {
-                profilesMap.set(profile.id, profile);
+              profilesData.forEach((profile: any) => {
+                const displayName = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || profile.name || (profile.email ? profile.email.split("@")[0] : "Anonymous");
+                profilesMap.set(profile.id, { id: profile.id, name: displayName, email: profile.email || "" });
               });
               console.log(`Successfully fetched ${profilesData.length} profiles`);
             }
@@ -431,7 +432,7 @@ export const getBookById = async (id: string): Promise<Book | null> => {
       try {
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
-          .select("id, name, email")
+          .select("id, first_name, last_name, email")
           .eq("id", bookData.seller_id)
           .maybeSingle();
 
@@ -466,7 +467,7 @@ export const getBookById = async (id: string): Promise<Book | null> => {
         profiles: profileData
           ? {
               id: profileData.id,
-              name: profileData.name,
+              name: [profileData.first_name, profileData.last_name].filter(Boolean).join(" ") || (profileData as any).name || (profileData.email ? profileData.email.split("@")[0] : ""),
               email: profileData.email,
             }
           : null,
@@ -587,7 +588,7 @@ const getUserBooksWithFallback = async (userId: string): Promise<Book[]> => {
     try {
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
-        .select("id, name, email")
+        .select("id, first_name, last_name, email")
         .eq("id", userId)
         .maybeSingle();
 
@@ -595,18 +596,20 @@ const getUserBooksWithFallback = async (userId: string): Promise<Book[]> => {
         logDetailedError("getUserBooksWithFallback - profile query failed", profileError);
       } else {
         profileData = profile;
+        const displayName = profile ? [profile.first_name, profile.last_name].filter(Boolean).join(" ") || (profile as any).name || (profile.email ? profile.email.split("@")[0] : "Anonymous") : "Anonymous";
         console.log(
-          `[BookQueries] Found profile for user ${userId}: ${profile?.name || "Anonymous"}`,
+          `[BookQueries] Found profile for user ${userId}: ${displayName}`,
         );
       }
     } catch (profileFetchError) {
       logDetailedError("Exception fetching user profile", profileFetchError);
     }
 
+    const displayName = profileData ? [profileData.first_name, profileData.last_name].filter(Boolean).join(" ") || (profileData as any).name || (profileData.email ? profileData.email.split("@")[0] : "Anonymous") : "Anonymous";
     const mappedBooks = booksData.map((book: any) => {
       const bookData: BookQueryResult = {
         ...book,
-        profiles: profileData || {
+        profiles: profileData ? { id: userId, name: displayName, email: profileData.email || "" } : {
           id: userId,
           name: "Anonymous",
           email: "",

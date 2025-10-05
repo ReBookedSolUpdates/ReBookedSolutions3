@@ -45,7 +45,7 @@ export const getUserProfile = async (userId: string): Promise<AdminUser> => {
   try {
     const { data: user, error: userError } = await supabase
       .from("profiles")
-      .select("id, name, email, status, created_at")
+      .select("id, first_name, last_name, email, status, created_at")
       .eq("id", userId)
       .single();
 
@@ -64,9 +64,10 @@ export const getUserProfile = async (userId: string): Promise<AdminUser> => {
       .select("*", { count: "exact", head: true })
       .eq("seller_id", userId);
 
+    const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || (user as any).name || (user.email ? user.email.split("@")[0] : "Anonymous");
     return {
       id: user.id,
-      name: user.name || "Anonymous",
+      name: displayName,
       email: user.email || "",
       status: user.status || "active",
       listingsCount: count || 0,
@@ -179,7 +180,7 @@ export const getAllUsers = async (): Promise<AdminUser[]> => {
 
     const { data: users, error: usersError } = await supabase
       .from("profiles")
-      .select("id, name, email, status, created_at")
+      .select("id, first_name, last_name, email, status, created_at")
       .neq("status", "deleted")
       .order("created_at", { ascending: false });
 
@@ -205,9 +206,10 @@ export const getAllUsers = async (): Promise<AdminUser[]> => {
             .select("*", { count: "exact", head: true })
             .eq("seller_id", user.id);
 
+          const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || (user as any).name || (user.email ? user.email.split("@")[0] : "Anonymous");
           return {
             id: user.id,
-            name: user.name || "Anonymous",
+            name: displayName,
             email: user.email || "",
             status: user.status || "active",
             listingsCount: count || 0,
@@ -218,9 +220,10 @@ export const getAllUsers = async (): Promise<AdminUser[]> => {
             `Error fetching book count for user ${user.id}:`,
             error,
           );
+          const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || (user as any).name || (user.email ? user.email.split("@")[0] : "Anonymous");
           return {
             id: user.id,
-            name: user.name || "Anonymous",
+            name: displayName,
             email: user.email || "",
             status: user.status || "active",
             listingsCount: 0,
@@ -308,7 +311,7 @@ const getAllListingsFallback = async (): Promise<AdminListing[]> => {
     // Fetch seller profiles
     const { data: profiles, error: profilesError } = await supabase
       .from("profiles")
-      .select("id, name")
+      .select("id, first_name, last_name, email")
       .in("id", sellerIds);
 
     if (profilesError) {
@@ -323,8 +326,9 @@ const getAllListingsFallback = async (): Promise<AdminListing[]> => {
     // Create a map for quick profile lookup
     const profileMap = new Map();
     if (profiles) {
-      profiles.forEach((profile) => {
-        profileMap.set(profile.id, profile.name || "Anonymous");
+      profiles.forEach((profile: any) => {
+        const displayName = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || profile.name || (profile.email ? profile.email.split("@")[0] : "Anonymous");
+        profileMap.set(profile.id, displayName);
       });
     }
 
@@ -368,11 +372,11 @@ export const getUserBookListings = async (userId: string): Promise<AdminListing[
     // Get seller profile for the user name
     const { data: profile } = await supabase
       .from("profiles")
-      .select("name")
+      .select("first_name, last_name, email")
       .eq("id", userId)
       .single();
 
-    const userName = profile?.name || "Anonymous";
+    const userName = profile ? [profile.first_name, profile.last_name].filter(Boolean).join(" ") || (profile as any).name || (profile.email ? profile.email.split("@")[0] : "Anonymous") : "Anonymous";
 
     return books.map((book) => ({
       id: book.id,

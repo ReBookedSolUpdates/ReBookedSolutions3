@@ -45,7 +45,7 @@ const Register = () => {
     console.log("✅ Terms accepted:", termsAccepted);
 
     try {
-      if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim()) {
+      if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim() || !phone.trim()) {
         throw new Error("All fields are required");
       }
 
@@ -291,7 +291,7 @@ const Register = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number (optional)</Label>
+                  <Label htmlFor="phone">Phone Number</Label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                       <span className="text-gray-400 text-xs">+27</span>
@@ -304,6 +304,7 @@ const Register = () => {
                       className="pl-10"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
+                      required
                     />
                   </div>
                 </div>
