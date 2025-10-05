@@ -406,7 +406,7 @@ export const createUserProfile = async (user: User): Promise<Profile> => {
       id: user.id,
       first_name: user.user_metadata?.first_name || null,
       last_name: user.user_metadata?.last_name || null,
-      phone_number: (user as any)?.user_metadata?.phone_number || null,
+      phone_number: (user as any)?.user_metadata?.phone_number || (user as any)?.user_metadata?.phone || null,
       name: derivedName,
       email: user.email || "",
       status: "active",
