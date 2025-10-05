@@ -64,9 +64,10 @@ export const getUserProfile = async (userId: string): Promise<AdminUser> => {
       .select("*", { count: "exact", head: true })
       .eq("seller_id", userId);
 
+    const displayName = [user.first_name, user.last_name].filter(Boolean).join(" ") || (user as any).name || (user.email ? user.email.split("@")[0] : "Anonymous");
     return {
       id: user.id,
-      name: user.name || "Anonymous",
+      name: displayName,
       email: user.email || "",
       status: user.status || "active",
       listingsCount: count || 0,
