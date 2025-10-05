@@ -263,8 +263,8 @@ const SellerProfile = () => {
                 </div>
 
                 {/* Stats + Actions */}
-                <div className="flex flex-col sm:flex-row md:flex-col items-stretch sm:items-center md:items-end gap-3 md:gap-4 md:ml-auto">
-                  <div className="flex sm:block justify-between sm:text-right">
+                <div className="flex flex-col sm:flex-row md:flex-col items-stretch sm:items-start md:items-start gap-3 md:gap-4">
+                  <div className="flex sm:block justify-between text-left sm:text-left">
                     <div>
                       <div className="text-xs sm:text-sm text-gray-500">Books Available</div>
                       <div className="text-xl sm:text-2xl font-bold text-book-700">{books.length}</div>
