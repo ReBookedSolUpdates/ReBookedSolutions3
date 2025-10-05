@@ -59,6 +59,7 @@ import Policies from "./pages/Policies";
 import Shipping from "./pages/Shipping";
 import Report from "./pages/Report";
 import SellerProfile from "./pages/SellerProfile";
+import GettingStarted from "./pages/GettingStarted";
 
 // Other Pages
 import NotificationsNew from "./pages/NotificationsNew";
@@ -317,6 +318,7 @@ function App() {
                       <Route path="/terms" element={<Terms />} />
                       <Route path="/policies" element={<Policies />} />
                       <Route path="/shipping" element={<Shipping />} />
+                      <Route path="/getting-started" element={<GettingStarted />} />
                                             <Route path="/report" element={<Report />} />
 
 
