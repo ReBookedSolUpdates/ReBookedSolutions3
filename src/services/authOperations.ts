@@ -225,7 +225,7 @@ export const fetchUserProfileQuick = async (
     const { data: profile, error: profileError } = (await withTimeout(
       supabase
         .from("profiles")
-        .select("id, name, email, status, profile_picture_url, bio, is_admin")
+        .select("id, first_name, last_name, name, email, status, profile_picture_url, bio, is_admin")
         .eq("id", user.id)
         .single(),
       12000, // Increased to 12 seconds
