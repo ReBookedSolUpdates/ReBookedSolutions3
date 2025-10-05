@@ -264,7 +264,8 @@ export const fetchUserProfileQuick = async (
     const profileData = {
       id: profile.id,
       name:
-        profile.name ||
+        [profile.first_name, profile.last_name].filter(Boolean).join(" ") ||
+        (profile as any).name ||
         user.user_metadata?.name ||
         user.email?.split("@")[0] ||
         "User",
