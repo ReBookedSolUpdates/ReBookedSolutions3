@@ -224,7 +224,7 @@ export const fetchUserProfileQuick = async (
     const { data: profile, error: profileError } = (await withTimeout(
       supabase
         .from("profiles")
-        .select("id, name, email, status, profile_picture_url, bio, is_admin")
+        .select("id, first_name, last_name, email, status, profile_picture_url, bio, is_admin")
         .eq("id", user.id)
         .single(),
       12000, // Increased to 12 seconds
@@ -235,7 +235,7 @@ export const fetchUserProfileQuick = async (
       // Profile not found is normal for new users
       if (profileError.code === "PGRST116") {
         console.log(
-          "ℹ️ Profile not found in quick fetch, will create in background",
+          "���️ Profile not found in quick fetch, will create in background",
         );
         return null; // Return null so fallback is used
       }
