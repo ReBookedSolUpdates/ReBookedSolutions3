@@ -52,6 +52,7 @@ interface AuthContextType {
     email: string,
     password: string,
     name: string,
+    phone?: string,
   ) => Promise<{ needsVerification?: boolean; isExistingUnverified?: boolean }>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -142,7 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const register = useCallback(
-    async (email: string, password: string, name: string) => {
+    async (email: string, password: string, name: string, phone?: string) => {
       try {
         setIsLoading(true);
         console.log("🔄 AuthContext register called with:", { email, name });
@@ -196,8 +197,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           email,
           password,
           options: {
-            data: { name },
-            emailRedirectTo: `${window.location.origin}/auth/callback` // Supabase uses this in the email link
+            data: { name, phone },
+            emailRedirectTo: `${window.location.origin}/auth/callback`
           },
         });
 
@@ -476,7 +477,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                                 <li>💰 List your own textbooks for sale</li>
                                 <li>🚚 Enjoy hassle-free courier delivery</li>
                                 <li>💳 Secure payment processing</li>
-                                <li>📱 Track your orders in real-time</li>
+                                <li>�� Track your orders in real-time</li>
                               </ul>
 
                               <div style="text-align: center; margin: 30px 0;">
