@@ -12,7 +12,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { clearAllBrowseBooks } from "@/utils/clearBrowseBooks";
 import { Button } from "@/components/ui/button";
 import { debugBookFetching, fixBooksWithMissingAddresses } from "@/utils/debugBooks";
-import { emergencyBookTest } from "@/utils/emergencyBookTest";
 
 
 const BookListing = () => {
@@ -275,15 +274,6 @@ const BookListing = () => {
     }
   };
 
-  const handleEmergencyTest = async () => {
-    console.log("🆘 Running emergency book database test...");
-    const result = await emergencyBookTest();
-    if (result.success) {
-      toast.success(`Emergency test complete! Found ${result.totalBooks} total books, ${result.availableBooks} available`);
-    } else {
-      toast.error(`Emergency test failed: ${result.error}`);
-    }
-  };
 
   return (
     <Layout>
@@ -301,14 +291,6 @@ const BookListing = () => {
           </h1>
           {user?.email === "admin@rebookedsolutions.co.za" && (
             <div className="flex gap-2 flex-wrap">
-              <Button
-                onClick={handleEmergencyTest}
-                variant="default"
-                size="sm"
-                className="bg-red-600 hover:bg-red-700"
-              >
-                ��� Emergency Test
-              </Button>
               <Button
                 onClick={handleDebugBooks}
                 variant="outline"
