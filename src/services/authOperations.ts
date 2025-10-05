@@ -235,7 +235,7 @@ export const fetchUserProfileQuick = async (
       // Profile not found is normal for new users
       if (profileError.code === "PGRST116") {
         console.log(
-          "���️ Profile not found in quick fetch, will create in background",
+          "ℹ️ Profile not found in quick fetch, will create in background",
         );
         return null; // Return null so fallback is used
       }
@@ -415,7 +415,7 @@ export const createUserProfile = async (user: User): Promise<Profile> => {
       return await supabase
         .from("profiles")
         .insert([profileData])
-        .select("id, name, email, status, profile_picture_url, bio, is_admin")
+        .select("id, first_name, last_name, email, status, profile_picture_url, bio, is_admin")
         .single();
     });
 
