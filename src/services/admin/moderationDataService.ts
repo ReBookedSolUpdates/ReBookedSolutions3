@@ -38,7 +38,7 @@ export const loadModerationData = async (limit: number = 100): Promise<Moderatio
       .limit(limit),
     supabase
       .from("profiles")
-      .select("id, name, email, status, suspended_at, suspension_reason")
+      .select("id, first_name, last_name, email, status, suspended_at, suspension_reason")
       .in("status", ["suspended", "banned"])
       .order("created_at", { ascending: false }),
   ]);
