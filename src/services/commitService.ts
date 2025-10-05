@@ -223,11 +223,12 @@ export const getCommitPendingBooks = async (): Promise<any[]> => {
             amount,
             created_at,
             status,
+            payment_status,
             buyer_email,
             items
           `)
           .eq("seller_id", user.id)
-          .eq("status", "pending_commit")
+          .in("status", ["pending_commit", "pending"]) // include pending for visibility
           .order("created_at", { ascending: true });
 
         if (result.error) {

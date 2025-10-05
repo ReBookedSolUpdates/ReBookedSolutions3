@@ -56,9 +56,9 @@ function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
 function base64ToBytes(b64: string): Uint8Array {
   try {
     const bin = atob(b64)
-    const bytes = new Uint8Array(bin.length)
-    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
-    return bytes
+    const arr = new Uint8Array(bin.length)
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i)
+    return arr
   } catch (_e) {
     throw new Error('INVALID_BASE64')
   }
@@ -84,12 +84,12 @@ async function importAesKey(rawKeyString: string): Promise<CryptoKey> {
       if (b64Bytes.byteLength !== 32) {
         throw new Error('INVALID_KEY_LENGTH')
       }
-      return crypto.subtle.importKey('raw', b64Bytes, 'AES-GCM', false, ['decrypt'])
+      return crypto.subtle.importKey('raw', b64Bytes.buffer as ArrayBuffer, 'AES-GCM', false, ['decrypt'])
     } catch (_e) {
       throw new Error('INVALID_KEY_LENGTH')
     }
   }
-  return crypto.subtle.importKey('raw', keyBytes, 'AES-GCM', false, ['decrypt'])
+  return crypto.subtle.importKey('raw', keyBytes.buffer as ArrayBuffer, 'AES-GCM', false, ['decrypt'])
 }
 
 async function decryptGCM(params: DecryptionParams): Promise<Uint8Array> {
@@ -118,12 +118,12 @@ async function decryptGCM(params: DecryptionParams): Promise<Uint8Array> {
     const decrypted = await crypto.subtle.decrypt(
       {
         name: 'AES-GCM',
-        iv: ivBytes,
-        additionalData: aadBytes,
+        iv: ivBytes.buffer as ArrayBuffer,
+        additionalData: aadBytes ? (aadBytes.buffer as ArrayBuffer) : undefined,
         tagLength: 128,
       },
       cryptoKey,
-      combined,
+      combined.buffer as ArrayBuffer,
     )
     return new Uint8Array(decrypted)
   } catch (e) {
@@ -241,15 +241,12 @@ Deno.serve(async (req: Request) => {
       switch (address_type) {
         case 'pickup':
           encryptedColumn = 'pickup_address_encrypted'
-          plaintextColumn = 'pickup_address'
           break
         case 'shipping':
           encryptedColumn = 'shipping_address_encrypted'
-          plaintextColumn = 'shipping_address'
           break
         case 'delivery':
           encryptedColumn = 'delivery_address_encrypted'
-          plaintextColumn = 'delivery_address'
           break
         default:
           throw new Error('Invalid address_type')
@@ -266,7 +263,7 @@ Deno.serve(async (req: Request) => {
           .eq('id', user.id)
           .single()
 
-        const isAdmin = profile?.is_admin || false
+        const isAdmin = (profile as any)?.is_admin || false
 
         // Allow access if:
         // 1. User is admin
@@ -317,7 +314,7 @@ Deno.serve(async (req: Request) => {
         }, { status: 404 })
       }
 
-      const encryptedData = data[encryptedColumn]
+      const encryptedData = (data as any)[encryptedColumn]
 
       // If we have encrypted data, try to decrypt it
       if (encryptedData) {
@@ -334,7 +331,7 @@ Deno.serve(async (req: Request) => {
             }, { status: 422 })
           }
 
-          const version = typeof bundle.version === 'number' ? bundle.version : (typeof data.address_encryption_version === 'number' ? data.address_encryption_version : 1)
+          const version = typeof bundle.version === 'number' ? bundle.version : (typeof (data as any).address_encryption_version === 'number' ? (data as any).address_encryption_version : 1)
 
           const decryptParams: DecryptionParams = {
             encryptedData: String(bundle.ciphertext),
@@ -374,7 +371,7 @@ Deno.serve(async (req: Request) => {
     if (body && body.fetch && body.fetch.table) {
       const table = String(body.fetch.table) as 'profiles' | 'books' | 'orders'
       const id = body.fetch.target_id ? String(body.fetch.target_id) : undefined
-      const addressType = body.fetch.address_type ? String(body.fetch.address_type) as 'pickup' | 'shipping' : undefined
+      const addressType = body.fetch.address_type ? (String(body.fetch.address_type) as 'pickup' | 'shipping') : undefined
 
       if (!id) {
         return jsonResponse({ 
@@ -402,7 +399,7 @@ Deno.serve(async (req: Request) => {
           .eq('id', user.id)
           .single()
 
-        const isAdmin = profile?.is_admin || false
+        const isAdmin = (profile as any)?.is_admin || false
 
         if (!isAdmin && user.id !== id) {
           // For pickup addresses, allow access if the target is a seller with available books
@@ -446,7 +443,7 @@ Deno.serve(async (req: Request) => {
         row = data
       }
 
-      if (!row || !row[column]) {
+      if (!row || !(row as any)[column]) {
         return jsonResponse({ 
           success: false, 
           error: { code: 'NOT_FOUND', message: 'No encrypted data found for the given record/column.' } 
@@ -455,7 +452,7 @@ Deno.serve(async (req: Request) => {
 
       let bundle: EncryptedBundle
       try {
-        bundle = typeof row[column] === 'string' ? JSON.parse(row[column]) : row[column]
+        bundle = typeof (row as any)[column] === 'string' ? JSON.parse((row as any)[column]) : (row as any)[column]
       } catch (_e) {
         return jsonResponse({ 
           success: false, 
@@ -463,7 +460,7 @@ Deno.serve(async (req: Request) => {
         }, { status: 422 })
       }
 
-      const version = typeof bundle.version === 'number' ? bundle.version : (typeof row.address_encryption_version === 'number' ? row.address_encryption_version : 1)
+      const version = typeof bundle.version === 'number' ? bundle.version : (typeof (row as any)?.address_encryption_version === 'number' ? (row as any).address_encryption_version : 1)
 
       const fetchParams: DecryptionParams = {
         encryptedData: String(bundle.ciphertext),
