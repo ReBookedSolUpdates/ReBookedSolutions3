@@ -180,7 +180,7 @@ export const getAllUsers = async (): Promise<AdminUser[]> => {
 
     const { data: users, error: usersError } = await supabase
       .from("profiles")
-      .select("id, name, email, status, created_at")
+      .select("id, first_name, last_name, email, status, created_at")
       .neq("status", "deleted")
       .order("created_at", { ascending: false });
 
