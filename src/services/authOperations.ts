@@ -415,8 +415,8 @@ export const createUserProfile = async (user: User): Promise<Profile> => {
     const result = await retryWithExponentialBackoff(async () => {
       return await supabase
         .from("profiles")
-        .insert([profileData])
-        .select("id, name, email, status, profile_picture_url, bio, is_admin")
+        .upsert([profileData], { onConflict: "id" })
+        .select("id, first_name, last_name, name, email, status, profile_picture_url, bio, is_admin")
         .single();
     });
 
