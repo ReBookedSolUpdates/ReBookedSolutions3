@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { compressImage } from "@/utils/imageCompression";
 
 interface BookImages {
   frontCover: string;
@@ -85,21 +86,22 @@ const MultiImageUpload = ({
   ];
 
   const uploadImage = async (file: File): Promise<string> => {
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `book-images/${fileName}`;
-
-    console.log("Starting image upload:", {
-      fileName,
-      fileSize: file.size,
-      fileType: file.type,
+    const compressed = await compressImage(file, {
+      maxWidth: 1600,
+      maxHeight: 1600,
+      quality: 0.8,
+      format: "image/webp",
     });
+
+    const fileName = `${Math.random()}.${compressed.extension}`;
+    const filePath = `book-images/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from("book-images")
-      .upload(filePath, file, {
+      .upload(filePath, compressed.blob, {
         upsert: false,
         cacheControl: "31536000", // 1 year cache
+        contentType: compressed.mimeType,
       });
 
     if (uploadError) {
@@ -111,7 +113,6 @@ const MultiImageUpload = ({
       data: { publicUrl },
     } = supabase.storage.from("book-images").getPublicUrl(filePath);
 
-    console.log("Image uploaded successfully:", publicUrl);
     return publicUrl;
   };
 
@@ -135,11 +136,18 @@ const MultiImageUpload = ({
       "image/png",
       "image/heic",
       "image/heif",
+      "image/webp",
     ];
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Please select a valid image file (JPG, PNG, HEIC)");
+      toast.error("Please select a valid image file (JPG, PNG, HEIC, WebP)");
       return;
     }
+
+    // Instant local preview while uploading
+    const objectUrl = URL.createObjectURL(file);
+    const tempImages = [...imageArray];
+    tempImages[index] = objectUrl;
+    updateImages(tempImages);
 
     setIsUploading((prev) => ({ ...prev, [index]: true }));
 
@@ -152,9 +160,13 @@ const MultiImageUpload = ({
     } catch (error) {
       console.error("Upload failed:", error);
       toast.error(`Failed to upload ${slots[index].label}. Please try again.`);
+      const newImages = [...imageArray];
+      newImages[index] = "";
+      updateImages(newImages);
     } finally {
       setIsUploading((prev) => ({ ...prev, [index]: false }));
-      // Reset the input
+      // Reset the input and cleanup preview URL
+      try { URL.revokeObjectURL(objectUrl); } catch {}
       event.target.value = "";
     }
   };
@@ -264,7 +276,7 @@ const MultiImageUpload = ({
                       <input
                         ref={(el) => (fileInputRefs.current[index] = el)}
                         type="file"
-                        accept="image/*,image/heic,image/heif"
+                        accept="image/*,image/heic,image/heif,image/webp"
                         onChange={(e) => handleFileUpload(e, index)}
                         className="hidden"
                         disabled={isCurrentlyUploading || disabled}
@@ -274,7 +286,7 @@ const MultiImageUpload = ({
                       <input
                         ref={(el) => (cameraInputRefs.current[index] = el)}
                         type="file"
-                        accept="image/*,image/heic,image/heif"
+                        accept="image/*,image/heic,image/heif,image/webp"
                         onChange={(e) => handleFileUpload(e, index)}
                         className="hidden"
                         disabled={isCurrentlyUploading || disabled}

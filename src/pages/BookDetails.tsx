@@ -129,22 +129,21 @@ const BookDetails = () => {
       url: bookUrl,
     };
 
-    console.log("Sharing book with URL:", bookUrl);
+    try { await navigator.clipboard.writeText(bookUrl); } catch {}
 
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-        toast.success("Book shared successfully!");
+        toast.success("Link copied • Share sheet opened");
+        return;
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
-          // User cancelled sharing, don't show error
           return;
         }
-        fallbackShare(bookUrl);
       }
-    } else {
-      fallbackShare(bookUrl);
     }
+
+    toast.success("Book link copied to clipboard!");
   };
 
   const fallbackShare = (url?: string) => {

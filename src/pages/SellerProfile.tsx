@@ -147,7 +147,7 @@ const SellerProfile = () => {
     if (!seller) return;
 
     const profileUrl = `${window.location.origin}/seller/${seller.id}`;
-    const titleText = seller.name && seller.name.trim().length > 0 ? `${seller.name}'s ReBooked Mini` : "ReBooked Mini";
+    const titleText = seller.name && seller.name.trim().length > 0 ? `${seller.name} ReBooked Mini` : "ReBooked Mini";
     const shareData = {
       title: titleText,
       text: seller.hasName && seller.name
@@ -156,25 +156,21 @@ const SellerProfile = () => {
       url: profileUrl,
     };
 
-    console.log("Sharing seller profile with URL:", profileUrl);
+    try { await navigator.clipboard.writeText(profileUrl); } catch {}
 
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-        toast.success("Profile shared successfully!");
+        toast.success("Link copied • Share sheet opened");
+        return;
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
-          // User cancelled sharing, don't show error
           return;
         }
-        // Fallback to clipboard
-        navigator.clipboard.writeText(profileUrl);
-        toast.success("Profile link copied to clipboard!");
       }
-    } else {
-      navigator.clipboard.writeText(profileUrl);
-      toast.success("Profile link copied to clipboard!");
     }
+
+    toast.success("Profile link copied to clipboard!");
   };
 
   if (loading) {
@@ -245,7 +241,7 @@ const SellerProfile = () => {
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <h1 className="text-2xl font-bold text-gray-900 truncate">
-                    {seller.name && seller.name.trim().length > 0 ? `${seller.name}'s ReBooked Mini` : "ReBooked Mini"}
+                    {seller.name && seller.name.trim().length > 0 ? `${seller.name} ReBooked Mini` : "ReBooked Mini"}
                   </h1>
                   <p className="text-gray-600 flex items-center gap-2 mt-1">
                     <Calendar className="h-4 w-4" />

@@ -6,6 +6,7 @@ import { Book } from "@/types/book";
 import { toast } from "sonner";
 import { getSafeErrorMessage } from "@/utils/errorMessageUtils";
 import Pagination from "@/components/ui/pagination";
+import { getOptimizedImageUrl } from "@/utils/imageOptimization";
 
 interface BookGridProps {
   books: Book[];
@@ -57,21 +58,21 @@ const BookGrid = ({
       url: bookUrl,
     };
 
+    try { await navigator.clipboard.writeText(bookUrl); } catch {}
+
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-        toast.success("Book shared successfully!");
+        toast.success("Link copied • Share sheet opened");
+        return;
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
           return;
         }
-        navigator.clipboard.writeText(bookUrl);
-        toast.success("Book link copied to clipboard!");
       }
-    } else {
-      navigator.clipboard.writeText(bookUrl);
-      toast.success("Book link copied to clipboard!");
     }
+
+    toast.success("Book link copied to clipboard!");
   };
   if (isLoading) {
     return (
@@ -107,12 +108,21 @@ const BookGrid = ({
   return (
     <div className="lg:w-3/4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {books.map((book) => {
+        {books.map((book, index) => {
           const isUnavailable =
             (book as Book & { status?: string }).status === "unavailable";
           const isPendingCommit =
             (book as Book & { status?: string }).status === "pending_commit";
           const isOwner = currentUserId && book.seller?.id === currentUserId;
+
+          const optimizedSrc = getOptimizedImageUrl(book.imageUrl, {
+            width: 400,
+            height: 300,
+            quality: 80,
+            format: "auto",
+          });
+
+          const fetchPriority: any = index < 3 ? "high" : undefined;
 
           return (
             <div
@@ -145,15 +155,16 @@ const BookGrid = ({
                 <div className="block flex-1">
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={book.imageUrl}
+                      src={optimizedSrc}
                       alt={book.title}
-                      width="400"
-                      height="300"
+                      width={400}
+                      height={300}
                       className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                       loading="lazy"
                       decoding="async"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      ref={(el) => { if (el && fetchPriority) el.setAttribute("fetchpriority", fetchPriority); }}
                       onError={(e) => {
-
                         e.currentTarget.src =
                           "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=300&fit=crop&auto=format&q=80";
                       }}
@@ -181,44 +192,44 @@ const BookGrid = ({
                       </div>
                     )}
                   </div>
-              <div className="p-4 flex-grow flex flex-col">
-                <h3 className="font-bold text-lg mb-1 text-book-800 line-clamp-1">
-                  {book.title}
-                </h3>
-                <p className="text-gray-600 mb-2">{book.author}</p>
-                <p className="text-gray-500 text-sm mb-3 line-clamp-2 flex-grow">
-                  {book.description}
-                </p>
+                  <div className="p-4 flex-grow flex flex-col">
+                    <h3 className="font-bold text-lg mb-1 text-book-800 line-clamp-1">
+                      {book.title}
+                    </h3>
+                    <p className="text-gray-600 mb-2">{book.author}</p>
+                    <p className="text-gray-500 text-sm mb-3 line-clamp-2 flex-grow">
+                      {book.description}
+                    </p>
 
-                {/* Province/Location display */}
-                {book.province && (
-                  <div className="flex items-center text-xs text-gray-500 mb-3">
-                    <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-                    <span className="truncate">{book.province}</span>
-                  </div>
-                )}
+                    {/* Province/Location display */}
+                    {book.province && (
+                      <div className="flex items-center text-xs text-gray-500 mb-3">
+                        <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+                        <span className="truncate">{book.province}</span>
+                      </div>
+                    )}
 
-                {/* Tags and badges */}
-                <div className="flex flex-wrap items-center gap-2 mt-auto">
-                  <span className="bg-book-100 text-book-800 px-2 py-1 rounded text-xs font-medium">
-                    {book.condition}
-                  </span>
-                  {book.grade && (
-                    <span className="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-xs font-medium flex items-center">
-                      <School className="h-3 w-3 mr-1" />
-                      {book.grade}
-                    </span>
-                  )}
-                  {book.universityYear && (
-                    <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium flex items-center">
-                      <GraduationCap className="h-3 w-3 mr-1" />
-                      {book.universityYear}
-                    </span>
-                  )}
-                  <span className="text-gray-500 text-xs ml-auto">
-                    {book.category}
-                  </span>
-                </div>
+                    {/* Tags and badges */}
+                    <div className="flex flex-wrap items-center gap-2 mt-auto">
+                      <span className="bg-book-100 text-book-800 px-2 py-1 rounded text-xs font-medium">
+                        {book.condition}
+                      </span>
+                      {book.grade && (
+                        <span className="bg-indigo-100 text-indigo-800 px-2 py-1 rounded text-xs font-medium flex items-center">
+                          <School className="h-3 w-3 mr-1" />
+                          {book.grade}
+                        </span>
+                      )}
+                      {book.universityYear && (
+                        <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium flex items-center">
+                          <GraduationCap className="h-3 w-3 mr-1" />
+                          {book.universityYear}
+                        </span>
+                      )}
+                      <span className="text-gray-500 text-xs ml-auto">
+                        {book.category}
+                      </span>
+                    </div>
 
                     {/* Commit Button for Seller - even for unavailable books */}
                     {isPendingCommit && isOwner && onCommitBook && (
@@ -248,15 +259,16 @@ const BookGrid = ({
                 >
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={book.imageUrl}
+                      src={optimizedSrc}
                       alt={book.title}
-                      width="400"
-                      height="300"
+                      width={400}
+                      height={300}
                       className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                       loading="lazy"
                       decoding="async"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      ref={(el) => { if (el && fetchPriority) el.setAttribute("fetchpriority", fetchPriority); }}
                       onError={(e) => {
-
                         e.currentTarget.src =
                           "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=300&fit=crop&auto=format&q=80";
                       }}

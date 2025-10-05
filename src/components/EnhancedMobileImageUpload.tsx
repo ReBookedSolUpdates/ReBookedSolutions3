@@ -29,6 +29,7 @@ import {
   Alert,
   AlertDescription,
 } from "@/components/ui/alert";
+import { compressImage } from "@/utils/imageCompression";
 
 interface BookImages {
   frontCover: string;
@@ -139,21 +140,23 @@ const EnhancedMobileImageUpload = ({
   const slots = [...baseSlots, ...optionalSlots].slice(0, Math.max(3, maxImages));
 
   const uploadImage = async (file: File): Promise<string> => {
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `book-images/${fileName}`;
-
-    console.log("Starting image upload:", {
-      fileName,
-      fileSize: file.size,
-      fileType: file.type,
+    // Compress to WebP before upload for faster transfers
+    const compressed = await compressImage(file, {
+      maxWidth: 1600,
+      maxHeight: 1600,
+      quality: 0.8,
+      format: "image/webp",
     });
+
+    const fileName = `${Math.random()}.${compressed.extension}`;
+    const filePath = `book-images/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from("book-images")
-      .upload(filePath, file, {
+      .upload(filePath, compressed.blob, {
         upsert: false,
         cacheControl: "31536000",
+        contentType: compressed.mimeType,
       });
 
     if (uploadError) {
@@ -165,7 +168,6 @@ const EnhancedMobileImageUpload = ({
       data: { publicUrl },
     } = supabase.storage.from("book-images").getPublicUrl(filePath);
 
-    console.log("Image uploaded successfully:", publicUrl);
     return publicUrl;
   };
 
@@ -199,6 +201,12 @@ const EnhancedMobileImageUpload = ({
       return;
     }
 
+    // Instantly show local preview
+    const objectUrl = URL.createObjectURL(file);
+    const tempImages = [...imageArray];
+    tempImages[index] = objectUrl;
+    updateImages(tempImages);
+
     setIsUploading((prev) => ({ ...prev, [index]: true }));
 
     try {
@@ -210,9 +218,14 @@ const EnhancedMobileImageUpload = ({
     } catch (error) {
       console.error("Upload failed:", error);
       toast.error(`Failed to upload ${slots[index].label}. Please try again.`);
+      // Remove temporary preview on failure
+      const newImages = [...imageArray];
+      newImages[index] = "";
+      updateImages(newImages);
     } finally {
       setIsUploading((prev) => ({ ...prev, [index]: false }));
-      // Reset the inputs
+      // Reset the inputs and cleanup preview URL
+      try { URL.revokeObjectURL(objectUrl); } catch {}
       event.target.value = "";
     }
   };
