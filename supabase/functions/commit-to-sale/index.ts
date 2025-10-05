@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 
@@ -60,8 +60,8 @@ serve(async (req) => {
       throw new Error("Only the seller can commit to this order");
     }
 
-    // Allow valid pre-commit states (including legacy 'pending')
-    const validStatuses = new Set(["paid", "pending_commit", "payment_verified", "authorized", "pending"]);
+    // Only allow paid or pending (per current requirement)
+    const validStatuses = new Set(["paid", "pending"]);
     if (!validStatuses.has(order.status)) {
       throw new Error(`Order cannot be committed in status: ${order.status}`);
     }
