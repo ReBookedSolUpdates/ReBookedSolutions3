@@ -67,7 +67,7 @@ export const loadModerationData = async (limit: number = 100): Promise<Moderatio
   if (reporterUserIds.length > 0) {
     reporterProfilesResponse = await supabase
       .from("profiles")
-      .select("id, name, email")
+      .select("id, first_name, last_name, email")
       .in("id", reporterUserIds);
   }
 
