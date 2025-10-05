@@ -520,7 +520,8 @@ const Cart = () => {
 
                     <FeatureUpdateDialog
                       label="Proceed to Checkout"
-                      className="w-full bg-book-600 hover:bg-book-700 text-sm md:text-base py-2 md:py-3"
+                      muted
+                      className="w-full text-sm md:text-base py-2 md:py-3"
                     />
                   </>
                 )}
