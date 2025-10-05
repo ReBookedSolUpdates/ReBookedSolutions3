@@ -17,6 +17,7 @@ interface FeatureUpdateDialogProps {
   className?: string;
   size?: "default" | "sm" | "lg" | "icon";
   icon?: React.ReactNode;
+  muted?: boolean;
 }
 
 const FeatureUpdateDialog: React.FC<FeatureUpdateDialogProps> = ({
@@ -24,7 +25,11 @@ const FeatureUpdateDialog: React.FC<FeatureUpdateDialogProps> = ({
   className,
   size = "default",
   icon,
+  muted = false,
 }) => {
+  const triggerClass = muted
+    ? `w-full ${className || ""} bg-gray-200 text-gray-600 hover:bg-gray-200 border-gray-200 cursor-pointer`
+    : className || "";
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
