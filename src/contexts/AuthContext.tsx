@@ -203,6 +203,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           },
         });
 
+        // Stash phone to ensure we can sync it on first login even if metadata is missing
+        try {
+          localStorage.setItem('pending_phone_number', phone);
+        } catch (_) {}
+
         if (error) {
           console.error("❌ Supabase signup failed:", error);
 
@@ -399,8 +404,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                   // Background sync: ensure phone_number is stored in profiles table
                   (async () => {
                     try {
-                      const phoneVal = ((session.user?.user_metadata as any)?.phone_number || (session.user?.user_metadata as any)?.phone || "").toString().trim();
+                      let phoneVal = ((session.user?.user_metadata as any)?.phone_number || (session.user?.user_metadata as any)?.phone || "").toString().trim();
+                      if (!phoneVal && typeof window !== 'undefined') {
+                        try {
+                          const cached = localStorage.getItem('pending_phone_number');
+                          if (cached) {
+                            phoneVal = cached.trim();
+                            localStorage.removeItem('pending_phone_number');
+                          }
+                        } catch (_) {}
+                      }
+
                       if (phoneVal) {
+                        // Ensure auth metadata has both keys
+                        try {
+                          await supabase.auth.updateUser({ data: { phone_number: phoneVal, phone: phoneVal } });
+                        } catch (e) {
+                          console.warn('Auth metadata phone sync failed:', e);
+                        }
+
                         await supabase
                           .from('profiles')
                           .update({ phone_number: phoneVal })
@@ -530,7 +552,7 @@ What you can do now:
 - 💰 List your own textbooks for sale
 - 🚚 Enjoy hassle-free courier delivery
 - 💳 Secure payment processing
-- 📱 Track your orders in real-time
+- ���� Track your orders in real-time
 
 Visit your profile: ${window.location.origin}/profile
 
