@@ -372,11 +372,11 @@ export const getUserBookListings = async (userId: string): Promise<AdminListing[
     // Get seller profile for the user name
     const { data: profile } = await supabase
       .from("profiles")
-      .select("name")
+      .select("first_name, last_name, email")
       .eq("id", userId)
       .single();
 
-    const userName = profile?.name || "Anonymous";
+    const userName = profile ? [profile.first_name, profile.last_name].filter(Boolean).join(" ") || (profile as any).name || (profile.email ? profile.email.split("@")[0] : "Anonymous") : "Anonymous";
 
     return books.map((book) => ({
       id: book.id,
