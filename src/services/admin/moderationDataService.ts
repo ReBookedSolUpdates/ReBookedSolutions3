@@ -100,7 +100,10 @@ export const loadModerationData = async (limit: number = 100): Promise<Moderatio
     },
   );
 
-  const typedUsers: SuspendedUser[] = usersResponse.data || [];
+  const typedUsers: SuspendedUser[] = (usersResponse.data || []).map((u: any) => ({
+    ...u,
+    name: [u.first_name, u.last_name].filter(Boolean).join(" ") || u.name || (u.email ? u.email.split("@")[0] : "Anonymous"),
+  }));
 
   return {
     reports: typedReports,
