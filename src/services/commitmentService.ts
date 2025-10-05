@@ -171,7 +171,7 @@ export const getPendingCommitments = async (
     ];
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, name")
+      .select("id, first_name, last_name, email")
       .in("id", userIds);
 
     // Combine the data
@@ -237,7 +237,7 @@ export const getAllCommitments = async (
     ];
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, name")
+      .select("id, first_name, last_name, email")
       .in("id", userIds);
 
     // Combine the data
