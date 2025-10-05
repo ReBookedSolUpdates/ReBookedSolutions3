@@ -98,6 +98,64 @@ serve(async (req) => {
       console.warn("[commit-to-sale] pickup address resolution failed, attempting fallback:", e);
     }
 
+    // Fallback to book-level pickup address if available on the order
+    if (!pickupAddress && order.book_id) {
+      try {
+        console.log(`[commit-to-sale] Falling back to book (${order.book_id}) pickup address`);
+        const { data: bookRow } = await supabase
+          .from("books")
+          .select("pickup_address_encrypted, pickup_address")
+          .eq("id", order.book_id)
+          .maybeSingle();
+
+        if (bookRow?.pickup_address_encrypted) {
+          const bookPickupResp = await supabase.functions.invoke("decrypt-address", {
+            body: { table: "books", target_id: order.book_id, address_type: "pickup" },
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (bookPickupResp.data?.success) {
+            pickupAddress = bookPickupResp.data.data;
+          } else if (bookRow?.pickup_address) {
+            pickupAddress = bookRow.pickup_address;
+          }
+        } else if (bookRow?.pickup_address) {
+          pickupAddress = bookRow.pickup_address;
+        }
+      } catch (e) {
+        console.warn("[commit-to-sale] book-level pickup address fallback failed:", e);
+      }
+    }
+
+    // Fallback to most recent seller book with pickup address
+    if (!pickupAddress) {
+      try {
+        console.log("[commit-to-sale] Searching seller's books for pickup address fallback");
+        const { data: fallbackBook } = await supabase
+          .from("books")
+          .select("id, pickup_address_encrypted, pickup_address")
+          .eq("seller_id", order.seller_id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (fallbackBook?.pickup_address_encrypted) {
+          const fbResp = await supabase.functions.invoke("decrypt-address", {
+            body: { table: "books", target_id: fallbackBook.id, address_type: "pickup" },
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (fbResp.data?.success) {
+            pickupAddress = fbResp.data.data;
+          } else if (fallbackBook?.pickup_address) {
+            pickupAddress = fallbackBook.pickup_address;
+          }
+        } else if (fallbackBook?.pickup_address) {
+          pickupAddress = fallbackBook.pickup_address;
+        }
+      } catch (e) {
+        console.warn("[commit-to-sale] seller books pickup fallback failed:", e);
+      }
+    }
+
     if (!pickupAddress) throw new Error("Seller pickup address not found");
 
     // Get buyer shipping address (try encrypted first, fall back to plaintext)
