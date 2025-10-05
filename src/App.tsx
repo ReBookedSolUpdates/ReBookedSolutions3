@@ -318,6 +318,7 @@ function App() {
                       <Route path="/terms" element={<Terms />} />
                       <Route path="/policies" element={<Policies />} />
                       <Route path="/shipping" element={<Shipping />} />
+                      <Route path="/getting-started" element={<GettingStarted />} />
                                             <Route path="/report" element={<Report />} />
 
 
