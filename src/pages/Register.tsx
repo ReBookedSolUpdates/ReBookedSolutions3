@@ -15,6 +15,7 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -60,8 +61,14 @@ const Register = () => {
         throw new Error("Password must be at least 6 characters long");
       }
 
+      // Basic ZA phone validation (e.g., 0XXXXXXXXX or +27XXXXXXXXX)
+      const phoneTrim = phone.trim();
+      if (phoneTrim && !/^(\+27|0)[1-9]\d{8}$/.test(phoneTrim)) {
+        throw new Error("Enter a valid South African phone number (e.g., 0821234567 or +27821234567)");
+      }
+
       console.log("🔄 Calling register function...");
-      const result = await register(email, password, name);
+      const result = await register(email, password, name, phoneTrim || undefined);
       console.log("✅ Register function returned:", result);
 
       // Handle different registration outcomes
@@ -261,6 +268,24 @@ const Register = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number (optional)</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <span className="text-gray-400 text-xs">+27</span>
+                    </div>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="0821234567 or +27821234567"
+                      className="pl-10"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                     />
                   </div>
                 </div>
