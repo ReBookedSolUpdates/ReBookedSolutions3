@@ -109,6 +109,15 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link
+                  to="/getting-started"
+                  className="text-gray-600 hover:text-book-600 text-sm font-medium"
+                  onClick={handleLinkClick}
+                >
+                  Getting Started
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/contact"
                   className="text-gray-600 hover:text-book-600 text-sm"
                   onClick={handleLinkClick}
