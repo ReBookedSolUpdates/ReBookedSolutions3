@@ -1,5 +1,19 @@
 import { supabase } from "@/integrations/supabase/client";
 
+/** Display name builder with fallbacks.
+ * Order: [first_name, last_name] -> legacy name -> email prefix -> "Anonymous"
+ */
+export const buildDisplayName = (input: any): string => {
+  if (!input) return "Anonymous";
+  const fn = input.first_name ?? input.firstName ?? undefined;
+  const ln = input.last_name ?? input.lastName ?? undefined;
+  const fromSplit = fn || ln ? [fn, ln].filter(Boolean).join(" ") : undefined;
+  const legacy = input.name ?? input.full_name ?? undefined;
+  const email = input.email ?? input.user?.email ?? undefined;
+  const emailPrefix = typeof email === "string" ? email.split("@")[0] : undefined;
+  return fromSplit || legacy || emailPrefix || "Anonymous";
+};
+
 /**
  * Safely fetch a user profile, handling cases where the profile might not exist
  * Use this instead of .single() when you're not certain the profile exists
