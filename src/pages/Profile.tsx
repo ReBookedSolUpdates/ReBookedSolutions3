@@ -56,10 +56,12 @@ const Profile = () => {
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isTransparencyModalOpen, setIsTransparencyModalOpen] = useState(false);
-  const [phone, setPhone] = useState<string>(user?.user_metadata?.phone || "");
+  const [phone, setPhone] = useState<string>(
+    (user?.user_metadata as any)?.phone_number || (user?.user_metadata as any)?.phone || ""
+  );
 
   useEffect(() => {
-    setPhone(user?.user_metadata?.phone || "");
+    setPhone(((user?.user_metadata as any)?.phone_number || (user?.user_metadata as any)?.phone) || "");
   }, [user]);
 
   const loadActiveListings = useCallback(async () => {
@@ -675,8 +677,19 @@ const Profile = () => {
                             toast.error("Enter a valid South African phone number");
                             return;
                           }
-                          const { error } = await supabase.auth.updateUser({ data: { phone: phoneTrim || null } });
+                          // Update Supabase auth user metadata (both phone_number and phone for backward compatibility)
+                          const { error } = await supabase.auth.updateUser({ data: { phone_number: phoneTrim || null, phone: phoneTrim || null } });
                           if (error) throw error;
+
+                          // Also persist to profiles table for server-side usage
+                          if (user?.id) {
+                            const { error: profileErr } = await supabase
+                              .from('profiles')
+                              .update({ phone_number: phoneTrim || null })
+                              .eq('id', user.id);
+                            if (profileErr) throw profileErr;
+                          }
+
                           toast.success("Phone number updated");
                         } catch (err) {
                           toast.error("Failed to update phone");
