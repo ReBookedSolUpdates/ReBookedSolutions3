@@ -145,8 +145,8 @@ const PaystackSplitManagement = () => {
   const loadAvailableSubaccounts = async () => {
     try {
       const { data, error } = await supabase
-        .from("profiles")
-        .select("id, name, subaccount_code")
+        .from("banking_subaccounts")
+        .select("user_id, subaccount_code")
         .not("subaccount_code", "is", null);
 
       if (error) {
@@ -155,7 +155,8 @@ const PaystackSplitManagement = () => {
         return;
       }
 
-      setAvailableSubaccounts(data || []);
+      const mapped = (data || []).map((row: any) => ({ id: row.user_id, name: row.user_id, subaccount_code: row.subaccount_code }));
+      setAvailableSubaccounts(mapped);
     } catch (error) {
       console.error("Error loading subaccounts:", error);
       toast.error("Error loading available subaccounts");
