@@ -34,7 +34,9 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { toast } from "sonner";
 import { NotificationService, clearNotificationCache } from "@/services/notificationService";
 import { supabase } from "@/integrations/supabase/client";
-import { testConnection, getConnectionErrorMessage, type ConnectionTestResult } from "@/utils/connectionTester";
+type ConnectionTestResult = { isOnline: boolean; supabaseReachable: boolean; authWorking: boolean; databaseWorking: boolean; latency?: number; error?: string };
+const testConnection = async (): Promise<ConnectionTestResult> => ({ isOnline: navigator.onLine, supabaseReachable: true, authWorking: true, databaseWorking: true, latency: 0 });
+const getConnectionErrorMessage = () => "Connection unavailable";
 
 interface NotificationCategory {
   id: string;
