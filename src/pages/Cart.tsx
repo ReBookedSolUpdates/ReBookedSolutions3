@@ -347,8 +347,8 @@ const Cart = () => {
                       </Button>
                       <FeatureUpdateDialog
                         label="Checkout This Cart"
+                        muted
                         size="sm"
-                        className="bg-book-600 hover:bg-book-700"
                       />
                     </div>
                   </div>
