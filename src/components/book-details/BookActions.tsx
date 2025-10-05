@@ -93,7 +93,7 @@ const BookActions = ({
             <div className="space-y-3">
               <FeatureUpdateDialog
                 label="Buy Now"
-                className="w-full bg-book-600 hover:bg-book-700"
+                muted
                 size="lg"
                 icon={<CreditCard className="h-4 w-4" />}
               />
