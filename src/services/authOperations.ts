@@ -8,6 +8,7 @@ import {
   withTimeout,
   isNetworkError,
 } from "@/utils/errorUtils";
+import { buildDisplayName } from "@/utils/profileUtils";
 
 export interface Profile {
   id: string;
@@ -263,12 +264,7 @@ export const fetchUserProfileQuick = async (
 
     const profileData = {
       id: profile.id,
-      name:
-        [profile.first_name, profile.last_name].filter(Boolean).join(" ") ||
-        (profile as any).name ||
-        user.user_metadata?.name ||
-        user.email?.split("@")[0] ||
-        "User",
+      name: buildDisplayName({ ...profile, email: profile.email || user.email }),
       email: profile.email || user.email || "",
       isAdmin,
       status: profile.status || "active",
@@ -368,7 +364,7 @@ export const fetchUserProfile = async (user: User): Promise<Profile | null> => {
       }
     }
 
-    const displayName = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || (profile as any).name || user.user_metadata?.name || (user.email?.split("@")[0] || "User");
+    const displayName = buildDisplayName({ ...profile, email: profile.email || user.email });
     console.log(
       "Profile loaded successfully:",
       displayName,
@@ -433,9 +429,10 @@ export const createUserProfile = async (user: User): Promise<Profile> => {
       );
     }
 
+    const createdDisplayName = buildDisplayName(newProfile);
     console.log(
       "Profile created successfully:",
-      newProfile.name,
+      createdDisplayName,
       "Admin:",
       isAdmin,
     );
@@ -444,9 +441,9 @@ export const createUserProfile = async (user: User): Promise<Profile> => {
 
     return {
       id: newProfile.id,
-      name: newProfile.name,
+      name: createdDisplayName,
       email: newProfile.email,
-      isAdmin: newProfile.is_admin || false, // Use the admin status from database
+      isAdmin: newProfile.is_admin || false,
       status: newProfile.status,
       profile_picture_url: newProfile.profile_picture_url,
       bio: newProfile.bio,
