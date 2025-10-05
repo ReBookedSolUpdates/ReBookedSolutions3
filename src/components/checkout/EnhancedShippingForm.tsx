@@ -138,10 +138,13 @@ const EnhancedShippingForm: React.FC<EnhancedShippingFormProps> = ({
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (user && user.user_metadata?.full_name) {
-        setValue("recipient_name", user.user_metadata.full_name, {
-          shouldValidate: true,
-        });
+      if (user) {
+        const fn = user.user_metadata?.first_name;
+        const ln = user.user_metadata?.last_name;
+        const display = [fn, ln].filter(Boolean).join(" ") || user.user_metadata?.name || (user.email?.split("@")[0] || "");
+        if (display) {
+          setValue("recipient_name", display, { shouldValidate: true });
+        }
       }
       setHasAutofilled(true);
     } catch (error) {
