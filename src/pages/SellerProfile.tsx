@@ -240,10 +240,11 @@ const SellerProfile = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 break-words line-clamp-2">
-                      {seller.name && seller.name.trim().length > 0 ? `${seller.name} ReBooked Mini` : "ReBooked Mini"}
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 break-words">
+                      {seller.name && seller.name.trim().length > 0 ? seller.name : "ReBooked"}
                     </h1>
-                    <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-600">
+                    <div className="text-sm sm:text-base font-semibold text-book-800 mt-0.5">ReBooked Mini</div>
+                    <div className="mt-2 flex flex-col gap-1.5 text-sm text-gray-600">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 flex-shrink-0" />
                         <span className="break-words">Member since {memberSince}</span>
