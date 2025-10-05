@@ -51,8 +51,9 @@ interface AuthContextType {
   register: (
     email: string,
     password: string,
-    name: string,
-    phone?: string,
+    firstName: string,
+    lastName: string,
+    phone: string,
   ) => Promise<{ needsVerification?: boolean; isExistingUnverified?: boolean }>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -143,10 +144,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const register = useCallback(
-    async (email: string, password: string, name: string, phone?: string) => {
+    async (email: string, password: string, firstName: string, lastName: string, phone: string) => {
       try {
         setIsLoading(true);
-        console.log("🔄 AuthContext register called with:", { email, name });
+        console.log("🔄 AuthContext register called with:", { email, firstName, lastName });
 
         // Check if user already exists in our profiles table
         console.log('🔍 Checking if user already exists in profiles table...');
@@ -197,7 +198,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           email,
           password,
           options: {
-            data: { name, phone },
+            data: { first_name: firstName, last_name: lastName, phone_number: phone },
             emailRedirectTo: `${window.location.origin}/auth/callback`
           },
         });

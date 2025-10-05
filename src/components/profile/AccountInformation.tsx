@@ -58,11 +58,16 @@ const AccountInformation = ({
                 <div className="flex items-center gap-2 mb-2">
                   <User className="h-4 w-4 text-gray-600" />
                   <span className="text-sm font-medium text-gray-700">
-                    Full Name
+                    Name
                   </span>
                 </div>
                 <p className="text-lg font-semibold text-gray-900">
-                  {profile?.name || "Not provided"}
+                  {(() => {
+                    const fn = (profile as any)?.first_name;
+                    const ln = (profile as any)?.last_name;
+                    const combined = [fn, ln].filter(Boolean).join(" ");
+                    return combined || profile?.name || profile?.email?.split("@")[0] || "Not provided";
+                  })()}
                 </p>
               </div>
 

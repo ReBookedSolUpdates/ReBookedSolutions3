@@ -101,7 +101,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ book }) => {
       // Get seller profile separately
       const { data: sellerProfile, error: sellerError } = await supabase
         .from("profiles")
-        .select("id, name, email")
+        .select("id, first_name, last_name, email")
         .eq("id", bookData.seller_id)
         .maybeSingle();
 
@@ -116,27 +116,26 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ book }) => {
         console.log("⚠️ Book has no seller_subaccount_code, fetching from seller profile...");
 
         // Fallback: check seller's profile for subaccount
-        const { data: sellerProfile, error: sellerProfileError } = await supabase
-          .from("profiles")
+        const { data: subaccount, error: subError } = await supabase
+          .from("banking_subaccounts")
           .select("subaccount_code")
-          .eq("id", bookData.seller_id)
+          .eq("user_id", bookData.seller_id)
           .maybeSingle();
 
-        if (sellerProfileError) {
-          console.error("Error fetching seller profile:", sellerProfileError);
+        if (subError) {
+          console.error("Error fetching seller subaccount:", subError);
           throw new Error(
             "Unable to verify seller information. Please try again or contact support if the issue persists.",
           );
         }
 
-        if (!sellerProfile?.subaccount_code) {
-          // More user-friendly error message
+        if (!subaccount?.subaccount_code) {
           throw new Error(
             "This seller hasn't completed their payment setup yet. Please try again later or choose a different book.",
           );
         }
 
-        sellerSubaccountCode = sellerProfile.subaccount_code;
+        sellerSubaccountCode = subaccount.subaccount_code;
 
         // Update the book with the subaccount code for future purchases (non-blocking)
         try {
@@ -185,7 +184,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ book }) => {
         // Check if seller has encrypted address setup
         const { data: profiles, error: profileError } = await supabase
           .from("profiles")
-          .select("id, name, email, encryption_status")
+          .select("id, first_name, last_name, email, encryption_status")
           .eq("id", bookData.seller_id);
 
         const profile = profiles && profiles.length > 0 ? profiles[0] : null;

@@ -273,7 +273,7 @@ const Profile = () => {
                 <div className="flex-1 space-y-3">
                   <div>
                     <h1 className="text-3xl font-bold text-gray-900">
-                      {profile.name || "Anonymous User"}
+                      {[(profile as any)?.first_name, (profile as any)?.last_name].filter(Boolean).join(" ") || profile.name || "Anonymous User"}
                     </h1>
                     <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
                       <div className="flex items-center gap-1">
@@ -717,7 +717,7 @@ const Profile = () => {
         isOpen={isShareDialogOpen}
         onClose={() => setIsShareDialogOpen(false)}
         userId={user?.id || ""}
-        userName={profile?.name || "Anonymous User"}
+        userName={[(profile as any)?.first_name, (profile as any)?.last_name].filter(Boolean).join(" ") || profile?.name || "Anonymous User"}
         isOwnProfile={true}
       />
 

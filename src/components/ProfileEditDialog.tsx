@@ -22,13 +22,15 @@ interface ProfileEditDialogProps {
 
 const ProfileEditDialog = ({ isOpen, onClose }: ProfileEditDialogProps) => {
   const { user, profile } = useAuth();
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen && profile) {
-      setName(profile.name || "");
+      setFirstName((profile as any)?.first_name || "");
+      setLastName((profile as any)?.last_name || "");
       setEmail(profile.email || user?.email || "");
     }
   }, [isOpen, profile, user]);
@@ -36,8 +38,8 @@ const ProfileEditDialog = ({ isOpen, onClose }: ProfileEditDialogProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name.trim()) {
-      toast.error("Please enter your name");
+    if (!firstName.trim() || !lastName.trim()) {
+      toast.error("Please enter your first and last name");
       return;
     }
 
@@ -53,7 +55,8 @@ const ProfileEditDialog = ({ isOpen, onClose }: ProfileEditDialogProps) => {
       const { error } = await supabase
         .from("profiles")
         .update({
-          name: name.trim(),
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
           updated_at: new Date().toISOString(),
         })
         .eq("id", user.id);
@@ -101,7 +104,8 @@ const ProfileEditDialog = ({ isOpen, onClose }: ProfileEditDialogProps) => {
   const handleClose = () => {
     if (!isLoading) {
       onClose();
-      setName(profile?.name || "");
+      setFirstName((profile as any)?.first_name || "");
+      setLastName((profile as any)?.last_name || "");
       // Email is read-only, no need to reset it
     }
   };
@@ -118,18 +122,37 @@ const ProfileEditDialog = ({ isOpen, onClose }: ProfileEditDialogProps) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-medium">
-              Name
+            <Label htmlFor="first_name" className="text-sm font-medium">
+              First Name
             </Label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                id="name"
+                id="first_name"
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 className="pl-10"
-                placeholder="Enter your full name"
+                placeholder="Enter your first name"
+                required
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="last_name" className="text-sm font-medium">
+              Last Name
+            </Label>
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                id="last_name"
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="pl-10"
+                placeholder="Enter your last name"
                 required
                 disabled={isLoading}
               />
