@@ -147,7 +147,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     async (email: string, password: string, firstName: string, lastName: string, phone: string) => {
       try {
         setIsLoading(true);
-        console.log("🔄 AuthContext register called with:", { email, firstName, lastName });
+        console.log("🔄 AuthContext register called with:", { email, firstName, lastName, phone });
 
         // Check if user already exists in our profiles table
         console.log('🔍 Checking if user already exists in profiles table...');
@@ -198,10 +198,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           email,
           password,
           options: {
-            data: { first_name: firstName, last_name: lastName, phone_number: phone },
+            data: { first_name: firstName, last_name: lastName, phone_number: phone, phone },
             emailRedirectTo: `${window.location.origin}/auth/callback`
           },
         });
+
+        // Stash phone to ensure we can sync it on first login even if metadata is missing
+        try {
+          localStorage.setItem('pending_phone_number', phone);
+        } catch (_) {}
 
         if (error) {
           console.error("❌ Supabase signup failed:", error);
@@ -396,6 +401,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 if (finalProfile && finalProfile.id === session.user?.id) {
                   setProfile(finalProfile);
 
+                  // Background sync: ensure phone_number is stored in profiles table
+                  (async () => {
+                    try {
+                      let phoneVal = ((session.user?.user_metadata as any)?.phone_number || (session.user?.user_metadata as any)?.phone || "").toString().trim();
+                      if (!phoneVal && typeof window !== 'undefined') {
+                        try {
+                          const cached = localStorage.getItem('pending_phone_number');
+                          if (cached) {
+                            phoneVal = cached.trim();
+                            localStorage.removeItem('pending_phone_number');
+                          }
+                        } catch (_) {}
+                      }
+
+                      if (phoneVal) {
+                        // Ensure auth metadata has both keys
+                        try {
+                          await supabase.auth.updateUser({ data: { phone_number: phoneVal, phone: phoneVal } });
+                        } catch (e) {
+                          console.warn('Auth metadata phone sync failed:', e);
+                        }
+
+                        await supabase
+                          .from('profiles')
+                          .update({ phone_number: phoneVal })
+                          .eq('id', session.user!.id);
+                        console.log('✅ Synced phone_number to profiles');
+                      }
+                    } catch (e) {
+                      console.warn('⚠️ Phone sync to profiles failed (non-fatal):', e);
+                    }
+                  })();
+
                   // Prefetch addresses and banking requirements in background for snappy UI
                   (async () => {
                     try {
@@ -514,7 +552,7 @@ What you can do now:
 - 💰 List your own textbooks for sale
 - 🚚 Enjoy hassle-free courier delivery
 - 💳 Secure payment processing
-- 📱 Track your orders in real-time
+- ���� Track your orders in real-time
 
 Visit your profile: ${window.location.origin}/profile
 
