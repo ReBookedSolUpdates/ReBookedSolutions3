@@ -5,8 +5,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import UnifiedTrackingComponent from "@/components/delivery/UnifiedTrackingComponent";
-import { Truck, Clock, ShieldCheck, Wallet, ArrowRight, PackageSearch } from "lucide-react";
+import { Truck, Clock, ShieldCheck, Wallet, ArrowRight, PackageSearch, Sparkles } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
+
+const Pill = ({ children }: { children: React.ReactNode }) => (
+  <span className="inline-flex items-center gap-2 rounded-full bg-white/70 backdrop-blur px-3 py-1 text-xs font-medium text-gray-700 shadow-sm ring-1 ring-black/5">
+    {children}
+  </span>
+);
+
+const SectionTitle = ({ children, subtitle }: { children: React.ReactNode; subtitle?: React.ReactNode }) => (
+  <div className="flex flex-col items-start gap-1">
+    <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-gray-900">{children}</h2>
+    {subtitle && <p className="text-sm text-gray-600">{subtitle}</p>}
+  </div>
+);
 
 const Shipping = () => {
   const [searchParams] = useSearchParams();
@@ -21,79 +34,99 @@ const Shipping = () => {
         url="https://www.rebookedsolutions.co.za/shipping"
       />
 
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-2 sm:px-4 py-6 sm:py-10 space-y-8">
-          {/* Hero / Intro */}
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3">
+      <div className="relative min-h-screen bg-gradient-to-b from-book-100/60 via-white to-white">
+        {/* Decorative background */}
+        <div className="pointer-events-none absolute inset-0 select-none [mask-image:radial-gradient(60%_50%_at_50%_0%,black,transparent)]">
+          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-book-300/40 to-transparent" />
+          <div className="absolute -top-10 right-1/2 h-56 w-56 rounded-full bg-book-400/20 blur-3xl" />
+          <div className="absolute -top-8 left-1/2 h-56 w-56 rounded-full bg-blue-300/20 blur-3xl" />
+        </div>
+
+        <div className="container mx-auto px-3 sm:px-6 py-8 sm:py-12 space-y-10">
+          {/* Hero */}
+          <div className="relative mx-auto max-w-3xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-gray-700 shadow ring-1 ring-black/5">
+              <Sparkles className="h-3.5 w-3.5 text-amber-600" />
+              Seamless nationwide delivery
+            </div>
+            <h1 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-book-700">
               Shipping Powered by BobGo
             </h1>
-            <p className="text-gray-700 text-sm sm:text-base">
-              We partner with BobGo to streamline nationwide deliveries. BobGo connects us to leading couriers so you get reliable, trackable shipping at great rates.
+            <p className="mt-3 text-gray-700 text-sm sm:text-base">
+              BobGo connects us to leading couriers so you get reliable, trackable shipping at great rates.
             </p>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+              <Pill><Truck className="h-3.5 w-3.5 text-blue-600" /> Door‑to‑door</Pill>
+              <Pill><Clock className="h-3.5 w-3.5 text-emerald-600" /> Fast pickups</Pill>
+              <Pill><ShieldCheck className="h-3.5 w-3.5 text-green-600" /> Reliable tracking</Pill>
+              <Pill><Wallet className="h-3.5 w-3.5 text-amber-600" /> Competitive rates</Pill>
+            </div>
           </div>
 
           {/* Why BobGo */}
-          <Card>
+          <Card className="border-0 shadow-sm ring-1 ring-black/5">
             <CardHeader>
-              <CardTitle className="text-xl sm:text-2xl">Why we use BobGo</CardTitle>
+              <SectionTitle subtitle="Built for speed, savings, and reliability">Why we use BobGo</SectionTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="flex items-start gap-3">
-                <Truck className="h-5 w-5 text-blue-600 mt-1" />
-                <div>
-                  <p className="font-medium text-gray-900">Reliable nationwide delivery</p>
-                  <p className="text-gray-600 text-sm">Door-to-door service with real-time tracking and delivery updates.</p>
+            <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              <div className="group rounded-xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 p-4 shadow-sm transition hover:shadow-md">
+                <div className="flex items-start gap-3">
+                  <Truck className="h-5 w-5 text-blue-600" />
+                  <div>
+                    <p className="font-medium text-gray-900">Reliable nationwide delivery</p>
+                    <p className="text-gray-600 text-sm">Door‑to‑door service with tracking and delivery updates.</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Clock className="h-5 w-5 text-emerald-600 mt-1" />
-                <div>
-                  <p className="font-medium text-gray-900">Faster pickups</p>
-                  <p className="text-gray-600 text-sm">Automatic courier booking helps sellers ship sooner.</p>
+              <div className="group rounded-xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 p-4 shadow-sm transition hover:shadow-md">
+                <div className="flex items-start gap-3">
+                  <Clock className="h-5 w-5 text-emerald-600" />
+                  <div>
+                    <p className="font-medium text-gray-900">Faster pickups</p>
+                    <p className="text-gray-600 text-sm">Automatic courier booking helps sellers ship sooner.</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Wallet className="h-5 w-5 text-amber-600 mt-1" />
-                <div>
-                  <p className="font-medium text-gray-900">Competitive rates</p>
-                  <p className="text-gray-600 text-sm">Aggregated options ensure cost‑effective delivery for buyers.</p>
+              <div className="group rounded-xl border border-gray-200 bg-gradient-to-b from-white to-gray-50 p-4 shadow-sm transition hover:shadow-md">
+                <div className="flex items-start gap-3">
+                  <Wallet className="h-5 w-5 text-amber-600" />
+                  <div>
+                    <p className="font-medium text-gray-900">Competitive rates</p>
+                    <p className="text-gray-600 text-sm">Aggregated options keep delivery affordable for buyers.</p>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Couriers */}
-          <Card>
+          <Card className="border-0 shadow-sm ring-1 ring-black/5">
             <CardHeader>
-              <CardTitle className="text-xl sm:text-2xl">Couriers we connect through BobGo</CardTitle>
+              <SectionTitle subtitle="Integrated via BobGo’s network">Couriers we connect through BobGo</SectionTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 mb-4 text-sm sm:text-base">
-                BobGo integrates with multiple leading couriers. On ReBooked, we currently use:
-              </p>
               <div className="flex flex-wrap gap-3">
-                <Badge variant="secondary" className="text-sm py-2 px-3 flex items-center gap-2">
-                  <Truck className="h-4 w-4" /> The Courier Guy
+                <Badge variant="secondary" className="text-sm py-2 px-3 flex items-center gap-2 border border-gray-200 bg-white">
+                  <Truck className="h-4 w-4 text-blue-600" /> The Courier Guy
                 </Badge>
-                <Badge variant="secondary" className="text-sm py-2 px-3 flex items-center gap-2">
-                  <Truck className="h-4 w-4" /> Fastway
+                <Badge variant="secondary" className="text-sm py-2 px-3 flex items-center gap-2 border border-gray-200 bg-white">
+                  <Truck className="h-4 w-4 text-indigo-600" /> Fastway
                 </Badge>
               </div>
               <p className="text-gray-500 text-xs mt-3">
-                Additional providers may be added over time as we expand coverage.
+                More providers may be added as we expand coverage.
               </p>
             </CardContent>
           </Card>
 
-          {/* Benefits for Buyers and Sellers */}
-          <Card>
+          {/* Benefits */}
+          <Card className="border-0 shadow-sm ring-1 ring-black/5">
             <CardHeader>
-              <CardTitle className="text-xl sm:text-2xl">How this helps buyers and sellers</CardTitle>
+              <SectionTitle>How this helps buyers and sellers</SectionTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">For Buyers</h3>
+              <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                <h3 className="font-semibold text-gray-900 mb-3">For Buyers</h3>
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
                     <PackageSearch className="h-4 w-4 text-blue-600 mt-0.5" />
@@ -105,12 +138,12 @@ const Shipping = () => {
                   </div>
                   <div className="flex items-start gap-2">
                     <Wallet className="h-4 w-4 text-amber-600 mt-0.5" />
-                    <p className="text-gray-700 text-sm">Fair pricing selected during checkout.</p>
+                    <p className="text-gray-700 text-sm">Fair pricing chosen at checkout.</p>
                   </div>
                 </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">For Sellers</h3>
+              <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                <h3 className="font-semibold text-gray-900 mb-3">For Sellers</h3>
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
                     <Clock className="h-4 w-4 text-emerald-600 mt-0.5" />
@@ -129,24 +162,26 @@ const Shipping = () => {
             </CardContent>
           </Card>
 
-          {/* Tracking Section */}
-          <Card>
-            <CardHeader className="flex flex-col items-center text-center">
-              <CardTitle className="text-xl sm:text-2xl">Track your shipment</CardTitle>
-              <p className="text-gray-600 text-sm sm:text-base mt-1">
-                Enter your tracking number below. If you have a link, you can paste the code at the end of the URL using ?tracking=YOUR_CODE
-              </p>
-            </CardHeader>
-            <CardContent>
-              <UnifiedTrackingComponent provider="bobgo" initialTrackingNumber={initialTracking} />
-            </CardContent>
+          {/* Tracking */}
+          <Card className="border-0 shadow-md ring-1 ring-black/5 overflow-hidden">
+            <div className="bg-gradient-to-r from-blue-50 to-book-100/60 p-6 sm:p-8">
+              <CardHeader className="items-center text-center p-0">
+                <CardTitle className="text-xl sm:text-2xl">Track your shipment</CardTitle>
+                <p className="text-gray-600 text-sm sm:text-base mt-1">
+                  Enter your tracking number below. You can also use ?tracking=YOUR_CODE in the URL.
+                </p>
+              </CardHeader>
+              <CardContent className="mt-4">
+                <UnifiedTrackingComponent provider="bobgo" initialTrackingNumber={initialTracking} />
+              </CardContent>
+            </div>
           </Card>
 
           <Separator />
 
           {/* Help */}
           <div className="text-center text-sm text-gray-600">
-            Need help with shipping? Contact us via the Help menu, or check your Order details for tracking updates.
+            Need help with shipping? Use the Help menu, or check your Order details for tracking updates.
           </div>
         </div>
       </div>
