@@ -4,6 +4,7 @@ import Layout from "@/components/Layout";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import FeatureUpdateDialog from "@/components/FeatureUpdateDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -243,13 +244,11 @@ const Cart = () => {
                           Visit Store
                         </Button>
                         {hasMultipleCarts && (
-                          <Button
+                          <FeatureUpdateDialog
+                            label="Checkout This Cart"
                             size="sm"
-                            onClick={() => handleCheckout()}
                             className="bg-book-600 hover:bg-book-700"
-                          >
-                            Checkout This Cart
-                          </Button>
+                          />
                         )}
                       </div>
                     </div>
@@ -346,13 +345,11 @@ const Cart = () => {
                       >
                         Visit Store
                       </Button>
-                      <Button
+                      <FeatureUpdateDialog
+                        label="Checkout This Cart"
                         size="sm"
-                        onClick={() => handleCheckout(cart.sellerId)}
                         className="bg-book-600 hover:bg-book-700"
-                      >
-                        Checkout This Cart
-                      </Button>
+                      />
                     </div>
                   </div>
                 </CardHeader>
@@ -521,15 +518,10 @@ const Cart = () => {
                       </p>
                     </div>
 
-                    <Button
-                      onClick={() => handleCheckout()}
-                      disabled={isProcessing}
+                    <FeatureUpdateDialog
+                      label="Proceed to Checkout"
                       className="w-full bg-book-600 hover:bg-book-700 text-sm md:text-base py-2 md:py-3"
-                    >
-                      {isProcessing
-                        ? "Processing..."
-                        : "Proceed to Checkout"}
-                    </Button>
+                    />
                   </>
                 )}
 
