@@ -17,6 +17,7 @@ import {
   DollarSign,
   ArrowUpRight,
   ArrowRight,
+  ShieldCheck,
 } from "lucide-react";
 
 const Step = ({ n, title, children }: { n: number; title: string; children: React.ReactNode }) => (
@@ -34,8 +35,8 @@ const GettingStarted = () => {
     <Layout>
       <SEO
         title="Getting Started | ReBooked Solutions"
-        description="Learn how to become a seller or buyer on ReBooked Solutions. Step-by-step guides, packaging guidelines, and important disclaimers."
-        keywords="getting started, how to sell, how to buy, packaging guidelines, seller guide, buyer guide, rebooked solutions"
+        description="Learn how to become a seller or buyer on ReBooked Solutions. Step-by-step guides, packaging guidelines, buyer protection, and important disclaimers."
+        keywords="getting started, how to sell, how to buy, packaging guidelines, seller guide, buyer guide, buyer protection, rebooked solutions"
         url="https://www.rebookedsolutions.co.za/getting-started"
       />
 
@@ -116,8 +117,8 @@ const GettingStarted = () => {
                   <Step n={4} title="Confirm the order within 48 hours when notified.">
                     Orders auto‑cancel if not confirmed in time.
                   </Step>
-                  <Step n={5} title="Package securely and hand over to the courier.">
-                    Use the guidelines below to prevent damage in transit.
+                  <Step n={5} title="Receive your waybill (shipping label), print and affix to the package.">
+                    We email the waybill and add it to your dashboard right after you confirm. Paste it on the padded envelope so the courier can collect and route it correctly.
                   </Step>
                 </ol>
                 <div className="mt-4 flex flex-wrap gap-3">
@@ -137,6 +138,7 @@ const GettingStarted = () => {
                   <li>Seal edges securely with strong packing tape.</li>
                   <li>Include a slip with your order number and return details.</li>
                 </ul>
+
                 <div className="mt-4 space-y-2">
                   <p className="text-sm text-gray-700">Example padded envelopes (external links):</p>
                   <ul className="list-disc pl-6 space-y-1 text-sm">
@@ -181,6 +183,13 @@ const GettingStarted = () => {
                       </a>
                     </li>
                   </ul>
+                </div>
+
+                <div className="mt-4 flex items-start gap-2 text-sm text-blue-800 bg-blue-50 border border-blue-200 rounded-md p-3">
+                  <ShieldCheck className="w-4 h-4 mt-0.5" />
+                  <p>
+                    Waybill tip: place the printed label flat on the outside of the padded envelope (not on a seam) and cover with clear tape so it stays readable during handling.
+                  </p>
                 </div>
 
                 <Alert variant="destructive" className="mt-5">
@@ -258,9 +267,15 @@ const GettingStarted = () => {
                 </div>
               </div>
 
-              <div className="flex items-center text-green-700 bg-green-50 border border-green-200 rounded-md p-4">
-                <CheckCircle className="w-5 h-5 mr-2" />
-                <p className="text-sm">Tip: You can track deliveries on the Shipping page and in your notifications.</p>
+              <div className="flex items-start gap-2 text-sm text-blue-800 bg-blue-50 border border-blue-200 rounded-md p-4">
+                <ShieldCheck className="w-4 h-4 mt-0.5" />
+                <p>
+                  Buyer protection: after delivery, if there are no complaints within 24 hours, payment is released to the seller. This helps prevent scams while keeping transactions fair.
+                </p>
+              </div>
+
+              <div className="text-sm text-gray-700">
+                Please also read our <Link to="/policies" className="text-book-700 underline">Seller’s Policy</Link> and <Link to="/policies" className="text-book-700 underline">Buyer’s Policy</Link> for full details.
               </div>
 
               <div className="pt-2">
