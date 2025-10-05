@@ -14,7 +14,7 @@ const Footer = () => {
   return (
     <footer className="bg-white border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           <div className="space-y-4">
             <Link
               to="/"
@@ -104,7 +104,7 @@ const Footer = () => {
 
           <div>
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
-              Support
+              Guides
             </h3>
             <ul className="space-y-2">
               <li>
@@ -118,11 +118,11 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/contact"
+                  to="/shipping"
                   className="text-gray-600 hover:text-book-600 text-sm"
                   onClick={handleLinkClick}
                 >
-                  Contact Us
+                  Shipping
                 </Link>
               </li>
               <li>
@@ -132,6 +132,32 @@ const Footer = () => {
                   onClick={handleLinkClick}
                 >
                   FAQ
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/policies"
+                  className="text-gray-600 hover:text-book-600 text-sm"
+                  onClick={handleLinkClick}
+                >
+                  Policies & Terms
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
+              Support
+            </h3>
+            <ul className="space-y-2">
+              <li>
+                <Link
+                  to="/contact"
+                  className="text-gray-600 hover:text-book-600 text-sm"
+                  onClick={handleLinkClick}
+                >
+                  Contact Us
                 </Link>
               </li>
               <li>
@@ -152,16 +178,6 @@ const Footer = () => {
                 >
                   ReBooked News
                 </a>
-              </li>
-
-              <li>
-                <Link
-                  to="/policies"
-                  className="text-gray-600 hover:text-book-600 text-sm font-medium"
-                  onClick={handleLinkClick}
-                >
-                  All Policies & Terms
-                </Link>
               </li>
             </ul>
           </div>
