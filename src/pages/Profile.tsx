@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
 import {
   User,
   BookOpen,
@@ -25,6 +26,7 @@ import {
   TrendingUp,
   Share2,
   Eye,
+  Phone,
 } from "lucide-react";
 import { getUserBooks } from "@/services/book/bookQueries";
 import { deleteBook } from "@/services/book/bookMutations";
@@ -54,6 +56,11 @@ const Profile = () => {
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isTransparencyModalOpen, setIsTransparencyModalOpen] = useState(false);
+  const [phone, setPhone] = useState<string>(user?.user_metadata?.phone || "");
+
+  useEffect(() => {
+    setPhone(user?.user_metadata?.phone || "");
+  }, [user]);
 
   const loadActiveListings = useCallback(async () => {
     if (!user?.id) return;
@@ -637,6 +644,45 @@ const Profile = () => {
                     readOnly
                     className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex-1">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="0821234567 or +27821234567"
+                        className="w-full pl-10 px-3 py-2 border border-gray-300 rounded-md"
+                      />
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        try {
+                          const phoneTrim = phone.trim();
+                          if (phoneTrim && !/^(\+27|0)[1-9]\d{8}$/.test(phoneTrim)) {
+                            toast.error("Enter a valid South African phone number");
+                            return;
+                          }
+                          const { error } = await supabase.auth.updateUser({ data: { phone: phoneTrim || null } });
+                          if (error) throw error;
+                          toast.success("Phone number updated");
+                        } catch (err) {
+                          toast.error("Failed to update phone");
+                        }
+                      }}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Used for delivery updates and account security.</p>
                 </div>
 
                 <Separator />

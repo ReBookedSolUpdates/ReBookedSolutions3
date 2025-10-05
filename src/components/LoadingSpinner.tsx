@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Loader2 } from "lucide-react";
 
@@ -9,9 +8,9 @@ interface LoadingSpinnerProps {
   variant?: "default" | "primary" | "secondary";
 }
 
-const LoadingSpinner = ({ 
-  text = "Loading...", 
-  size = "md", 
+export const LoadingSpinner = ({
+  text = "Loading...",
+  size = "md",
   className = "",
   variant = "default"
 }: LoadingSpinnerProps) => {
