@@ -311,7 +311,7 @@ const getAllListingsFallback = async (): Promise<AdminListing[]> => {
     // Fetch seller profiles
     const { data: profiles, error: profilesError } = await supabase
       .from("profiles")
-      .select("id, name")
+      .select("id, first_name, last_name, email")
       .in("id", sellerIds);
 
     if (profilesError) {
