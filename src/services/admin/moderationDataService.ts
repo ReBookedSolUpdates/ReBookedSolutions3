@@ -82,8 +82,9 @@ export const loadModerationData = async (limit: number = 100): Promise<Moderatio
   // Create a map of profiles for quick lookup
   const profilesMap = new Map();
   if (reporterProfilesResponse.data) {
-    reporterProfilesResponse.data.forEach((profile) => {
-      profilesMap.set(profile.id, profile);
+    reporterProfilesResponse.data.forEach((profile: any) => {
+      const displayName = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || profile.name || (profile.email ? profile.email.split("@")[0] : undefined);
+      profilesMap.set(profile.id, { ...profile, name: displayName });
     });
   }
 
