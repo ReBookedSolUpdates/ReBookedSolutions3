@@ -267,7 +267,11 @@ const Profile = () => {
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                 <Avatar className="w-20 h-20">
                   <AvatarFallback className="bg-book-100 text-book-600 text-xl font-semibold">
-                    {profile.name?.charAt(0)?.toUpperCase() || "U"}
+                    {(
+                      ([(profile as any)?.first_name, (profile as any)?.last_name].filter(Boolean).join(" ") || profile.name || "U")
+                      .charAt(0)
+                      ?.toUpperCase()
+                    )}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-3">
