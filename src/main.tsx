@@ -13,7 +13,6 @@ console.error = (...args) => {
 };
 
 // Environment debugging (development only)
-import { debugEnvironmentVariables } from "./utils/debugEnvironment";
 
 
 // Proper network error handling (not suppression)
@@ -31,12 +30,6 @@ import "./utils/suppressResizeObserverError";
 // Database cleanup disabled to prevent refresh loops
 // import "./utils/runCleanupNow";
 
-// Debug edge function utility
-import "./debug-edge-function";
-import "./utils/debugEdgeFunction";
-import "./utils/environmentDiagnostic";
-import "./test-edge-function.js";
-import "./utils/simpleEdgeFunctionTest";
 
 // Enhanced environment validation with deployment safety
 const validateEnvironment = () => {
@@ -81,7 +74,6 @@ const validateEnvironment = () => {
 // Initialize application
 if (import.meta.env.DEV) {
   console.log("🚀 ReBooked Solutions - Starting application...");
-  debugEnvironmentVariables();
 }
 
 // Validate environment with graceful handling
