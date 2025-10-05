@@ -198,7 +198,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           email,
           password,
           options: {
-            data: { first_name: firstName, last_name: lastName, phone_number: phone },
+            data: { first_name: firstName, last_name: lastName, phone_number: phone, phone },
             emailRedirectTo: `${window.location.origin}/auth/callback`
           },
         });
