@@ -225,7 +225,7 @@ export const fetchUserProfileQuick = async (
     const { data: profile, error: profileError } = (await withTimeout(
       supabase
         .from("profiles")
-        .select("id, first_name, last_name, email, status, profile_picture_url, bio, is_admin")
+        .select("id, first_name, last_name, name, email, status, profile_picture_url, bio, is_admin")
         .eq("id", user.id)
         .single(),
       12000, // Increased to 12 seconds
@@ -302,7 +302,7 @@ export const fetchUserProfile = async (user: User): Promise<Profile | null> => {
           supabase
             .from("profiles")
             .select(
-              "id, first_name, last_name, email, status, profile_picture_url, bio, is_admin",
+              "id, first_name, last_name, name, email, status, profile_picture_url, bio, is_admin",
             )
             .eq("id", user.id)
             .single(),
@@ -396,27 +396,30 @@ export const createUserProfile = async (user: User): Promise<Profile> => {
     const userEmail = user.email || "";
     const isAdmin = adminEmails.includes(userEmail.toLowerCase());
 
-    const firstName = user.user_metadata?.first_name || (user.user_metadata?.name ? String(user.user_metadata.name).split(" ")[0] : undefined);
-    const lastName = user.user_metadata?.last_name || (user.user_metadata?.name ? String(user.user_metadata.name).split(" ").slice(1).join(" ") || undefined : undefined);
-    const legacyName = user.user_metadata?.name || (user.email?.split("@")[0] || "User");
+    const derivedName =
+      user.user_metadata?.name ||
+      [user.user_metadata?.first_name, user.user_metadata?.last_name].filter(Boolean).join(" ") ||
+      user.email?.split("@")[0] ||
+      "User";
 
     const profileData = {
       id: user.id,
-      first_name: firstName,
-      last_name: lastName,
-      name: legacyName,
+      first_name: user.user_metadata?.first_name || null,
+      last_name: user.user_metadata?.last_name || null,
+      phone_number: (user as any)?.user_metadata?.phone_number || null,
+      name: derivedName,
       email: user.email || "",
-      phone_number: user.user_metadata?.phone_number || undefined,
       status: "active",
       is_admin: isAdmin,
+      profile_picture_url: user.user_metadata?.avatar_url || null,
     } as any;
 
     // Use retry logic for profile creation as well
     const result = await retryWithExponentialBackoff(async () => {
       return await supabase
         .from("profiles")
-        .insert([profileData])
-        .select("id, first_name, last_name, email, status, profile_picture_url, bio, is_admin")
+        .upsert([profileData], { onConflict: "id" })
+        .select("id, first_name, last_name, name, email, status, profile_picture_url, bio, is_admin")
         .single();
     });
 

@@ -55,19 +55,19 @@ const GettingStarted = () => {
       {/* Hero */}
       <section id="top" className="px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         <div className="max-w-6xl mx-auto">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-book-600 to-book-800 text-white shadow-lg">
-            <div className="p-6 sm:p-10">
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-tr from-book-700 via-book-600 to-book-700 text-white shadow-xl ring-1 ring-white/10 border border-white/10">
+            <div className="px-6 sm:px-12 py-10 sm:py-14">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">Getting Started</h1>
-              <p className="mt-3 text-white/90 max-w-2xl">
+              <p className="mt-4 text-white/85 max-w-2xl leading-relaxed">
                 A quick, visual guide to buying and selling books safely on ReBooked Solutions.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Button asChild size="lg" className="bg-white text-book-700 hover:bg-white/90">
+                <Button asChild size="lg" className="bg-white text-book-700 hover:bg-white/90 shadow-sm">
                   <a href="#seller" aria-label="Jump to Becoming a Seller">
                     <Package className="mr-2" /> I'm selling
                   </a>
                 </Button>
-                <Button asChild size="lg" variant="secondary" className="bg-white/10 hover:bg-white/20">
+                <Button asChild size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10">
                   <a href="#buyer" aria-label="Jump to Becoming a Buyer">
                     <ShoppingCart className="mr-2" /> I'm buying
                   </a>
@@ -77,6 +77,7 @@ const GettingStarted = () => {
             <div className="absolute inset-0 pointer-events-none" aria-hidden>
               <div className="absolute -right-24 -bottom-24 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
               <div className="absolute -left-20 -top-16 h-40 w-40 rounded-full bg-white/10 blur-xl" />
+              <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.45)_1px,transparent_1px)] [background-size:20px_20px]" />
             </div>
           </div>
         </div>

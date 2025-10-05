@@ -367,7 +367,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!user) return;
 
     try {
-      const updatedProfile = await fetchUserProfile(user.id);
+      const updatedProfile = await fetchUserProfile(user);
       if (updatedProfile) {
         setProfile(updatedProfile);
       }
@@ -392,8 +392,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           if (!profile || profile.id !== session.user.id) {
             fetchUserProfileQuick(session.user)
               .then(async (userProfile) => {
-                if (userProfile && userProfile.id === session.user?.id) {
-                  setProfile(userProfile);
+                const finalProfile = userProfile ?? await fetchUserProfile(session.user!);
+                if (finalProfile && finalProfile.id === session.user?.id) {
+                  setProfile(finalProfile);
 
                   // Prefetch addresses and banking requirements in background for snappy UI
                   (async () => {
@@ -440,7 +441,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                   // We'll use a simple heuristic: if profile was created recently (within 24 hours)
                   // and user is logging in, send welcome email
                   try {
-                    const profileCreatedAt = new Date(userProfile.id); // UUID v4 has timestamp embedded
+                    const profileCreatedAt = new Date(finalProfile.id); // Approximation; create time not stored here
                     const now = new Date();
                     const hoursSinceCreation = (now.getTime() - profileCreatedAt.getTime()) / (1000 * 60 * 60);
 
@@ -468,7 +469,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                             </div>
 
                             <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #ddd;">
-                              <h2 style="color: #333; margin-top: 0;">Hello ${userProfile.name}!</h2>
+                              <h2 style="color: #333; margin-top: 0;">Hello ${finalProfile.name}!</h2>
 
                               <p>🎉 Congratulations! Your email has been verified and your ReBooked Solutions account is now fully active.</p>
 
@@ -504,7 +505,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                         `,
                         text: `Welcome to ReBooked Solutions!
 
-Hello ${userProfile.name}!
+Hello ${finalProfile.name}!
 
 🎉 Congratulations! Your email has been verified and your ReBooked Solutions account is now fully active.
 
