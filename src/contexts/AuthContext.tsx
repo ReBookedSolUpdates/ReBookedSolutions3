@@ -396,6 +396,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 if (finalProfile && finalProfile.id === session.user?.id) {
                   setProfile(finalProfile);
 
+                  // Background sync: ensure phone_number is stored in profiles table
+                  (async () => {
+                    try {
+                      const phoneVal = ((session.user?.user_metadata as any)?.phone_number || (session.user?.user_metadata as any)?.phone || "").toString().trim();
+                      if (phoneVal) {
+                        await supabase
+                          .from('profiles')
+                          .update({ phone_number: phoneVal })
+                          .eq('id', session.user!.id);
+                        console.log('✅ Synced phone_number to profiles');
+                      }
+                    } catch (e) {
+                      console.warn('⚠️ Phone sync to profiles failed (non-fatal):', e);
+                    }
+                  })();
+
                   // Prefetch addresses and banking requirements in background for snappy UI
                   (async () => {
                     try {
