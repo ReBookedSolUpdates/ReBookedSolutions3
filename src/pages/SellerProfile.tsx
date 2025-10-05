@@ -227,48 +227,58 @@ const SellerProfile = () => {
         </div>
 
         {/* Header */}
-        <div className="bg-white shadow-sm border-b">
+        <div className="bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16 sm:h-20 sm:w-20">
-                  <AvatarImage src={seller.profile_picture_url} />
-                  <AvatarFallback className="bg-book-100 text-book-700 text-lg">
-                    {(seller.name || "?").charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <h1 className="text-2xl font-bold text-gray-900 truncate">
-                    {seller.name && seller.name.trim().length > 0 ? `${seller.name} ReBooked Mini` : "ReBooked Mini"}
-                  </h1>
-                  <p className="text-gray-600 flex items-center gap-2 mt-1">
-                    <Calendar className="h-4 w-4" />
-                    Member since {memberSince}
-                  </p>
-                  <p className="text-gray-600 flex items-center gap-2 mt-1">
-                    <MapPin className="h-4 w-4" />
-                    {seller.province || "Province not set"}
-                  </p>
-                  {seller.bio && (
-                    <p className="text-gray-700 mt-2 max-w-2xl">{seller.bio}</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-4 sm:ml-auto">
-                <div className="text-right">
-                  <div className="text-sm text-gray-500">Books Available</div>
-                  <div className="text-2xl font-bold text-book-600">
-                    {books.length}
+            <div className="rounded-xl border shadow-sm p-4 sm:p-6 bg-gradient-to-br from-book-50 to-white">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
+                {/* Avatar + Info */}
+                <div className="flex items-start gap-4 md:col-span-2 min-w-0">
+                  <Avatar className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
+                    <AvatarImage src={seller.profile_picture_url} />
+                    <AvatarFallback className="bg-book-100 text-book-700 text-lg">
+                      {(seller.name || "?").charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 break-words line-clamp-2">
+                      {seller.name && seller.name.trim().length > 0 ? `${seller.name} ReBooked Mini` : "ReBooked Mini"}
+                    </h1>
+                    <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 flex-shrink-0" />
+                        <span className="break-words">Member since {memberSince}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 flex-shrink-0" />
+                        <span className="break-words">{seller.province || "Province not set"}</span>
+                      </div>
+                    </div>
+                    {seller.bio && (
+                      <p className="text-gray-700 mt-2 max-w-none whitespace-pre-line break-words">
+                        {seller.bio}
+                      </p>
+                    )}
                   </div>
                 </div>
-                <Button
-                  onClick={handleShareProfile}
-                  variant="outline"
-                  className="flex items-center gap-2 hover:bg-book-50 hover:border-book-300 transition-colors"
-                >
-                  <Share2 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Share Profile</span>
-                </Button>
+
+                {/* Stats + Actions */}
+                <div className="flex flex-col sm:flex-row md:flex-col items-stretch sm:items-center md:items-end gap-3 md:gap-4 md:ml-auto">
+                  <div className="flex sm:block justify-between sm:text-right">
+                    <div>
+                      <div className="text-xs sm:text-sm text-gray-500">Books Available</div>
+                      <div className="text-xl sm:text-2xl font-bold text-book-700">{books.length}</div>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={handleShareProfile}
+                    variant="outline"
+                    className="justify-center sm:justify-start flex items-center gap-2 hover:bg-book-50 hover:border-book-300 transition-colors"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    <span className="hidden sm:inline">Share Profile</span>
+                    <span className="sm:hidden">Share</span>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
