@@ -147,7 +147,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     async (email: string, password: string, firstName: string, lastName: string, phone: string) => {
       try {
         setIsLoading(true);
-        console.log("🔄 AuthContext register called with:", { email, firstName, lastName });
+        console.log("🔄 AuthContext register called with:", { email, firstName, lastName, phone });
 
         // Check if user already exists in our profiles table
         console.log('🔍 Checking if user already exists in profiles table...');
