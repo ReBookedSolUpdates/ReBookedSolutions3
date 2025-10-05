@@ -368,20 +368,17 @@ export const fetchUserProfile = async (user: User): Promise<Profile | null> => {
       }
     }
 
+    const displayName = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || (profile as any).name || user.user_metadata?.name || (user.email?.split("@")[0] || "User");
     console.log(
       "Profile loaded successfully:",
-      profile.name,
+      displayName,
       "isAdmin:",
       isAdmin,
     );
 
     return {
       id: profile.id,
-      name:
-        profile.name ||
-        user.user_metadata?.name ||
-        user.email?.split("@")[0] ||
-        "User",
+      name: displayName,
       email: profile.email || user.email || "",
       isAdmin,
       status: profile.status || "active",
