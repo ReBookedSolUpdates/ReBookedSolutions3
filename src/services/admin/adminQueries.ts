@@ -326,8 +326,9 @@ const getAllListingsFallback = async (): Promise<AdminListing[]> => {
     // Create a map for quick profile lookup
     const profileMap = new Map();
     if (profiles) {
-      profiles.forEach((profile) => {
-        profileMap.set(profile.id, profile.name || "Anonymous");
+      profiles.forEach((profile: any) => {
+        const displayName = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || profile.name || (profile.email ? profile.email.split("@")[0] : "Anonymous");
+        profileMap.set(profile.id, displayName);
       });
     }
 
