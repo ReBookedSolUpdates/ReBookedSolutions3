@@ -33,9 +33,9 @@ const FeatureUpdateDialog: React.FC<FeatureUpdateDialogProps> = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button className={className} size={size}>
+        <Button className={triggerClass} size={size}>
           {icon}
-          {icon ? <span className="ml-2" /> : null}
+          {icon ? <span className="ml-2 -mt-0.5" /> : null}
           {label}
         </Button>
       </AlertDialogTrigger>
