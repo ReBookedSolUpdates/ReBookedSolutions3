@@ -71,34 +71,24 @@ serve(async (req) => {
       items = [];
     }
 
-    // Get seller pickup address (try encrypted first, fall back to plaintext)
-    console.log(`[commit-to-sale] Getting seller pickup address`);
+    // Get seller pickup address from order (try encrypted first, fall back to plaintext)
+    console.log(`[commit-to-sale] Getting seller pickup address from order`);
     let pickupAddress: any = null;
     try {
-      // Fetch profile to check plaintext fields
-      const { data: sellerData } = await supabase
-        .from("profiles")
-        .select("pickup_address_encrypted, pickup_address")
-        .eq("id", order.seller_id)
-        .single();
-
-      if (sellerData?.pickup_address_encrypted) {
+      if (order.pickup_address_encrypted) {
         const pickupResp = await supabase.functions.invoke("decrypt-address", {
-          body: { table: "profiles", target_id: order.seller_id, address_type: "pickup" },
+          body: { table: "orders", target_id: order_id, address_type: "pickup" },
           headers: { Authorization: `Bearer ${token}` },
         });
         if (pickupResp.data?.success) {
           pickupAddress = pickupResp.data.data;
         }
       }
-      if (!pickupAddress && sellerData?.pickup_address) {
-        pickupAddress = sellerData.pickup_address;
-      }
     } catch (e) {
-      console.warn("[commit-to-sale] pickup address resolution failed, attempting fallback:", e);
+      console.warn("[commit-to-sale] pickup address decryption failed:", e);
     }
 
-    // Fallback to book-level pickup address if available on the order
+    // Fallback to book-level pickup address if not on order
     if (!pickupAddress && order.book_id) {
       try {
         console.log(`[commit-to-sale] Falling back to book (${order.book_id}) pickup address`);
@@ -126,40 +116,10 @@ serve(async (req) => {
       }
     }
 
-    // Fallback to most recent seller book with pickup address
-    if (!pickupAddress) {
-      try {
-        console.log("[commit-to-sale] Searching seller's books for pickup address fallback");
-        const { data: fallbackBook } = await supabase
-          .from("books")
-          .select("id, pickup_address_encrypted, pickup_address")
-          .eq("seller_id", order.seller_id)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (fallbackBook?.pickup_address_encrypted) {
-          const fbResp = await supabase.functions.invoke("decrypt-address", {
-            body: { table: "books", target_id: fallbackBook.id, address_type: "pickup" },
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (fbResp.data?.success) {
-            pickupAddress = fbResp.data.data;
-          } else if (fallbackBook?.pickup_address) {
-            pickupAddress = fallbackBook.pickup_address;
-          }
-        } else if (fallbackBook?.pickup_address) {
-          pickupAddress = fallbackBook.pickup_address;
-        }
-      } catch (e) {
-        console.warn("[commit-to-sale] seller books pickup fallback failed:", e);
-      }
-    }
-
     if (!pickupAddress) throw new Error("Seller pickup address not found");
 
-    // Get buyer shipping address (try encrypted first, fall back to plaintext)
-    console.log(`[commit-to-sale] Getting buyer shipping address`);
+    // Get buyer shipping address from order (try encrypted first, fall back to plaintext)
+    console.log(`[commit-to-sale] Getting buyer shipping address from order`);
     let shippingAddress: any = null;
     try {
       if (order.shipping_address_encrypted) {
@@ -175,26 +135,18 @@ serve(async (req) => {
         shippingAddress = order.shipping_address;
       }
     } catch (e) {
-      console.warn("[commit-to-sale] shipping address resolution failed, attempting fallback:", e);
+      console.warn("[commit-to-sale] shipping address resolution failed:", e);
     }
 
     if (!shippingAddress) throw new Error("Buyer shipping address not found");
 
-    // Get seller and buyer profiles (for names and contact)
-    const { data: sellerProfile } = await supabase
-      .from("profiles")
-      .select("id, full_name, name, email, phone_number")
-      .eq("id", order.seller_id)
-      .single();
-
-    const { data: buyerProfile } = await supabase
-      .from("profiles")
-      .select("id, full_name, name, email, phone_number")
-      .eq("id", order.buyer_id)
-      .single();
-
-    const sellerName = (sellerProfile as any)?.full_name || (sellerProfile as any)?.name || "Seller";
-    const buyerName = (buyerProfile as any)?.full_name || (buyerProfile as any)?.name || "Customer";
+    // Get contact information from order (stored at order creation time)
+    const sellerName = order.seller_full_name || "Seller";
+    const buyerName = order.buyer_full_name || "Customer";
+    const sellerEmail = order.seller_email || "seller@example.com";
+    const buyerEmail = order.buyer_email || "buyer@example.com";
+    const sellerPhone = order.seller_phone_number || "0000000000";
+    const buyerPhone = order.buyer_phone_number || "0000000000";
 
     // Prepare Bob Go rates request (match current bobgo-get-rates API shape)
     const fromAddress = {
@@ -266,8 +218,8 @@ serve(async (req) => {
         province: fromAddress.province,
         postalCode: fromAddress.postalCode,
         contact_name: sellerName,
-        contact_phone: (sellerProfile as any)?.phone_number || "0000000000",
-        contact_email: (sellerProfile as any)?.email || "seller@example.com",
+        contact_phone: sellerPhone,
+        contact_email: sellerEmail,
       },
       delivery_address: {
         company: "",
@@ -277,8 +229,8 @@ serve(async (req) => {
         province: toAddress.province,
         postalCode: toAddress.postalCode,
         contact_name: buyerName,
-        contact_phone: (buyerProfile as any)?.phone_number || "0000000000",
-        contact_email: order.buyer_email || (buyerProfile as any)?.email || "buyer@example.com",
+        contact_phone: buyerPhone,
+        contact_email: buyerEmail,
       },
       parcels,
       reference: `ORDER-${order_id}`,
@@ -411,22 +363,20 @@ serve(async (req) => {
     console.log(`[commit-to-sale] Sending buyer notification email`);
     await supabase.functions.invoke("send-email", {
       body: {
-        to: order.buyer_email || (buyerProfile as any)?.email,
+        to: buyerEmail,
         subject: "Order Confirmed - Pickup Scheduled",
         html: buyerHtml,
       },
     });
 
     console.log(`[commit-to-sale] Sending seller notification email`);
-    if ((sellerProfile as any)?.email) {
-      await supabase.functions.invoke("send-email", {
-        body: {
-          to: (sellerProfile as any).email,
-          subject: "Order Commitment Confirmed - Prepare for Pickup",
-          html: sellerHtml,
-        },
-      });
-    }
+    await supabase.functions.invoke("send-email", {
+      body: {
+        to: sellerEmail,
+        subject: "Order Commitment Confirmed - Prepare for Pickup",
+        html: sellerHtml,
+      },
+    });
 
     // Create notifications for both parties (use existing notifications table)
     const notifications: any[] = [];
