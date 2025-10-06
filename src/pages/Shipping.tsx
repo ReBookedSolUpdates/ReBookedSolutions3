@@ -110,7 +110,25 @@ const Shipping = () => {
                   <Truck className="h-4 w-4 text-blue-600" /> The Courier Guy
                 </Badge>
                 <Badge variant="secondary" className="text-sm py-2 px-3 flex items-center gap-2 border border-gray-200 bg-white">
-                  <Truck className="h-4 w-4 text-indigo-600" /> Fastway
+                  <Truck className="h-4 w-4 text-emerald-600" /> RAM
+                </Badge>
+                <Badge variant="secondary" className="text-sm py-2 px-3 flex items-center gap-2 border border-gray-200 bg-white">
+                  <Truck className="h-4 w-4 text-violet-600" /> Internet Express
+                </Badge>
+                <Badge variant="secondary" className="text-sm py-2 px-3 flex items-center gap-2 border border-gray-200 bg-white">
+                  <Truck className="h-4 w-4 text-indigo-600" /> Citi-Sprint
+                </Badge>
+                <Badge variant="secondary" className="text-sm py-2 px-3 flex items-center gap-2 border border-gray-200 bg-white">
+                  <Truck className="h-4 w-4 text-cyan-600" /> SkyNet
+                </Badge>
+                <Badge variant="secondary" className="text-sm py-2 px-3 flex items-center gap-2 border border-gray-200 bg-white">
+                  <Truck className="h-4 w-4 text-purple-600" /> Fastway
+                </Badge>
+                <Badge variant="secondary" className="text-sm py-2 px-3 flex items-center gap-2 border border-gray-200 bg-white">
+                  <Truck className="h-4 w-4 text-rose-600" /> City Logistics
+                </Badge>
+                <Badge variant="secondary" className="text-sm py-2 px-3 flex items-center gap-2 border border-gray-200 bg-white">
+                  <Truck className="h-4 w-4 text-amber-600" /> MTE Xpress
                 </Badge>
               </div>
               <p className="text-gray-500 text-xs mt-3">
