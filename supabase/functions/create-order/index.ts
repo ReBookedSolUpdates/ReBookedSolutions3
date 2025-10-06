@@ -9,8 +9,10 @@ interface CreateOrderRequest {
   buyer_id: string;
   seller_id: string;
   book_id: string;
+  
   delivery_option: string;
   shipping_address_encrypted: string;
+  payment_reference?: string;
 }
 
 serve(async (req) => {
@@ -109,15 +111,21 @@ serve(async (req) => {
       buyer_id: requestData.buyer_id,
       seller_id: requestData.seller_id,
       book_id: requestData.book_id,
-      buyer_full_name: (buyer as any).full_name || (buyer as any).name,
-      seller_full_name: (seller as any).full_name || (seller as any).name,
-      buyer_email: (buyer as any).email,
-      seller_email: (seller as any).email,
-      buyer_phone_number: (buyer as any).phone_number,
-      seller_phone_number: (seller as any).phone_number,
-      pickup_address_encrypted: (seller as any).pickup_address_encrypted,
+      buyer_full_name: buyer.full_name || buyer.name,
+      seller_full_name: seller.full_name || seller.name,
+      buyer_email: buyer.email,
+      seller_email: seller.email,
+      buyer_phone_number: buyer.phone_number,
+      seller_phone_number: seller.phone_number,
+      pickup_address_encrypted: seller.pickup_address_encrypted,
       shipping_address_encrypted: requestData.shipping_address_encrypted,
       delivery_option: requestData.delivery_option,
+      delivery_data: {
+        delivery_option: requestData.delivery_option,
+        requested_at: new Date().toISOString()
+      },
+      payment_reference: requestData.payment_reference,
+      paystack_reference: requestData.payment_reference,
       status: "pending",
       payment_status: "pending",
       amount: Math.round(book.price * 100),
@@ -129,7 +137,7 @@ serve(async (req) => {
         price: book.price,
         condition: book.condition
       }]
-    } as const;
+    };
 
     const { data: order, error: orderError } = await supabase
       .from("orders")
@@ -155,17 +163,17 @@ serve(async (req) => {
       );
     }
 
-    console.log("✅ Order created successfully:", (order as any).id);
+    console.log("✅ Order created successfully:", order.id);
 
     return new Response(
       JSON.stringify({
         success: true,
         message: "Order created successfully",
         order: {
-          id: (order as any).id,
-          status: (order as any).status,
-          payment_status: (order as any).payment_status,
-          total_amount: (order as any).total_amount
+          id: order.id,
+          status: order.status,
+          payment_status: order.payment_status,
+          total_amount: order.total_amount
         }
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
