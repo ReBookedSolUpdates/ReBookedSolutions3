@@ -43,74 +43,19 @@ const Step3Payment: React.FC<Step3PaymentProps> = ({
   const [error, setError] = useState<PaymentError | null>(null);
   const [userEmail, setUserEmail] = useState<string>("");
   const [retryCount, setRetryCount] = useState(0);
-  const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
-  const [creatingOrder, setCreatingOrder] = useState<boolean>(false);
   const isMobile = useIsMobile();
 
-  // Fetch user email and pre-create order on component mount
+  // Fetch user email only
   React.useEffect(() => {
-    const init = async () => {
+    const fetchUserEmail = async () => {
       try {
         const email = await getUserEmail();
         setUserEmail(email);
       } catch (err) {
         console.error("Failed to fetch user email:", err);
       }
-
-      // Pre-create order using new create-order contract
-      try {
-        if (!createdOrderId) {
-          setCreatingOrder(true);
-          // Encrypt buyer shipping address
-          const buyer = orderSummary.buyer_address;
-          const shippingObject = {
-            streetAddress: buyer.street,
-            city: buyer.city,
-            province: buyer.province,
-            postalCode: buyer.postal_code,
-            country: buyer.country,
-            phone: buyer.phone,
-            additional_info: buyer.additional_info,
-          } as any;
-
-          const { data: encResult, error: encError } = await supabase.functions.invoke('encrypt-address', {
-            body: { object: shippingObject },
-          });
-
-          if (encError || !encResult?.success || !encResult?.data) {
-            throw new Error(encError?.message || 'Failed to encrypt shipping address');
-          }
-
-          const shipping_address_encrypted = JSON.stringify(encResult.data);
-
-          const createOrderPayload = {
-            buyer_id: userId,
-            seller_id: orderSummary.book.seller_id,
-            book_id: orderSummary.book.id,
-            delivery_option: orderSummary.delivery.service_name,
-            shipping_address_encrypted,
-          };
-
-          const { data: createData, error: createErr } = await supabase.functions.invoke('create-order', {
-            body: createOrderPayload,
-          });
-
-          if (createErr || !createData?.success || !createData?.order?.id) {
-            throw new Error(createErr?.message || 'Failed to create order');
-          }
-
-          setCreatedOrderId(createData.order.id);
-          console.log('✅ Order pre-created:', createData.order.id);
-        }
-      } catch (orderErr) {
-        console.error('❌ Pre-create order failed:', orderErr);
-        toast.error('Could not start your order. Please try again.');
-      } finally {
-        setCreatingOrder(false);
-      }
     };
-    init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchUserEmail();
   }, []);
 
   const handlePaystackSuccess = async (paystackResponse: {
@@ -125,15 +70,45 @@ const Step3Payment: React.FC<Step3PaymentProps> = ({
     try {
       console.log("Paystack payment successful:", paystackResponse);
 
-      if (!createdOrderId) {
-        throw new Error('Order was not created before payment');
+      // Encrypt buyer shipping address AFTER payment
+      const buyer = orderSummary.buyer_address;
+      const shippingObject = {
+        streetAddress: buyer.street,
+        city: buyer.city,
+        province: buyer.province,
+        postalCode: buyer.postal_code,
+        country: buyer.country,
+        phone: buyer.phone,
+        additional_info: buyer.additional_info,
+      } as any;
+
+      const { data: encResult, error: encError } = await supabase.functions.invoke('encrypt-address', {
+        body: { object: shippingObject },
+      });
+      if (encError || !encResult?.success || !encResult?.data) {
+        throw new Error(encError?.message || 'Failed to encrypt shipping address');
       }
 
-      // At this point, webhook/verify-paystack-payment will mark order as paid and unlist the book.
-      // We just proceed to confirmation; realtime will sync the final status.
+      const shipping_address_encrypted = JSON.stringify(encResult.data);
+
+      // Create order only after payment
+      const createOrderPayload = {
+        buyer_id: userId,
+        seller_id: orderSummary.book.seller_id,
+        book_id: orderSummary.book.id,
+        delivery_option: orderSummary.delivery.service_name,
+        shipping_address_encrypted,
+      };
+
+      const { data: createData, error: createErr } = await supabase.functions.invoke('create-order', {
+        body: createOrderPayload,
+      });
+      if (createErr || !createData?.success || !createData?.order?.id) {
+        throw new Error(createErr?.message || 'Failed to create order');
+      }
 
       onPaymentSuccess({
-        order_id: createdOrderId,
+        order_id: createData.order.id,
         payment_reference: paystackResponse.reference,
         book_id: orderSummary.book.id,
         seller_id: orderSummary.book.seller_id,
@@ -146,9 +121,9 @@ const Step3Payment: React.FC<Step3PaymentProps> = ({
         created_at: new Date().toISOString(),
         status: 'paid',
       });
-      toast.success('Payment successful. Order pending confirmation.');
+      toast.success('Payment successful. Order created.');
 
-      // No further server calls here; rely on backend webhooks to finalize state.
+      // Order created; backend will handle any further status transitions.
 
                                     if (error) {
         // Direct error logging for debugging
@@ -1184,18 +1159,12 @@ Time: ${new Date().toISOString()}
             subaccountCode={orderSummary.book.seller_subaccount_code}
             orderReference={`ORDER-${Date.now()}-${userId}`}
             metadata={{
-              order_id: createdOrderId || 'pending',
               book_id: orderSummary.book.id,
               book_title: orderSummary.book.title,
               seller_id: orderSummary.book.seller_id,
               buyer_id: userId,
               delivery_method: orderSummary.delivery.service_name,
               custom_fields: [
-                {
-                  display_name: "Order ID",
-                  variable_name: "order_id",
-                  value: createdOrderId || 'pending',
-                },
                 {
                   display_name: "Book Title",
                   variable_name: "book_title",
@@ -1211,7 +1180,7 @@ Time: ${new Date().toISOString()}
             onSuccess={handlePaystackSuccess}
             onError={handlePaystackError}
             onClose={handlePaystackClose}
-            disabled={processing || creatingOrder || !createdOrderId}
+            disabled={processing}
             className="w-full px-4 py-4 text-lg font-medium"
             buttonText={`Pay Now - ${formatAmountMobile(orderSummary.total_price)}`}
           />
@@ -1222,18 +1191,12 @@ Time: ${new Date().toISOString()}
             subaccountCode={orderSummary.book.seller_subaccount_code}
             orderReference={`ORDER-${Date.now()}-${userId}`}
             metadata={{
-              order_id: createdOrderId || 'pending',
               book_id: orderSummary.book.id,
               book_title: orderSummary.book.title,
               seller_id: orderSummary.book.seller_id,
               buyer_id: userId,
               delivery_method: orderSummary.delivery.service_name,
               custom_fields: [
-                {
-                  display_name: "Order ID",
-                  variable_name: "order_id",
-                  value: createdOrderId || 'pending',
-                },
                 {
                   display_name: "Book Title",
                   variable_name: "book_title",
@@ -1249,7 +1212,7 @@ Time: ${new Date().toISOString()}
             onSuccess={handlePaystackSuccess}
             onError={handlePaystackError}
             onClose={handlePaystackClose}
-            disabled={processing || creatingOrder || !createdOrderId}
+            disabled={processing}
             className="px-8 py-3 text-lg"
             buttonText={`Pay Now - ${formatAmount(orderSummary.total_price)}`}
           />
