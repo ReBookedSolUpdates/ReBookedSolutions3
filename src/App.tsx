@@ -1,5 +1,5 @@
 import React, { lazy } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -34,7 +34,6 @@ import Checkout from "./pages/Checkout";
 import UniversityInfo from "./pages/UniversityInfo";
 import UniversityProfile from "./pages/UniversityProfile";
 import PrivateInstitutionProfile from "./pages/PrivateInstitutionProfile";
-import StudyResources from "./pages/StudyResources";
 
 // Auth Pages
 import Login from "./pages/Login";
@@ -144,14 +143,6 @@ function App() {
                       <Route
                         path="/private-institution/:id"
                         element={<PrivateInstitutionProfile />}
-                      />
-                      <Route
-                        path="/study-resources"
-                        element={<StudyResources />}
-                      />
-                                            <Route
-                        path="/study-tips"
-                        element={<Navigate to="/study-resources" replace />}
                       />
                       <Route
                         path="/seller/:sellerId"

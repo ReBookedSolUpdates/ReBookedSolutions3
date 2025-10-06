@@ -5,64 +5,61 @@ import { corsHeaders } from "../_shared/cors.ts";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
+type Json = Record<string, any> | any[] | string | number | boolean | null;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ success: false, error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
       throw new Error("Unauthorized");
     }
 
-    let body: any;
+    let body: any = null;
     try {
       body = await req.json();
     } catch {
-      return new Response(
-        JSON.stringify({ success: false, error: "Invalid JSON body" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ success: false, error: "Invalid JSON body" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const { order_id } = body || {};
-    if (!order_id) {
-      throw new Error("Order ID is required");
-    }
+    if (!order_id) throw new Error("Order ID is required");
 
     console.log(`[commit-to-sale] Processing commitment for order ${order_id} by user ${user.id}`);
 
     // Fetch the order
-    const { data: order, error: orderError } = await supabaseClient
+    const { data: order, error: orderError } = await supabase
       .from("orders")
       .select("*")
       .eq("id", order_id)
       .single();
 
-    if (orderError || !order) {
-      throw new Error("Order not found");
-    }
+    if (orderError || !order) throw new Error("Order not found");
 
     // Verify seller is committing to their own order
     if (order.seller_id !== user.id) {
       throw new Error("Only the seller can commit to this order");
     }
 
-    // Only allow paid or pending (per current requirement)
-    const validStatuses = new Set(["paid", "pending"]);
-    if (!validStatuses.has(order.status)) {
+    // Allow both 'paid' and 'pending' status
+    if (!["paid", "pending"].includes(order.status)) {
       throw new Error(`Order cannot be committed in status: ${order.status}`);
     }
 
@@ -74,47 +71,123 @@ serve(async (req) => {
       items = [];
     }
 
-    // Decrypt seller pickup address (pass through user auth header)
-    console.log(`[commit-to-sale] Decrypting seller pickup address`);
-    const pickupResponse = await supabaseClient.functions.invoke("decrypt-address", {
-      body: {
-        table: "profiles",
-        target_id: order.seller_id,
-        address_type: "pickup",
-      },
-      headers: { Authorization: authHeader },
-    });
+    // Get seller pickup address (try encrypted first, fall back to plaintext)
+    console.log(`[commit-to-sale] Getting seller pickup address`);
+    let pickupAddress: any = null;
+    try {
+      // Fetch profile to check plaintext fields
+      const { data: sellerData } = await supabase
+        .from("profiles")
+        .select("pickup_address_encrypted, pickup_address")
+        .eq("id", order.seller_id)
+        .single();
 
-    if (pickupResponse.error || !pickupResponse.data?.success) {
-      throw new Error("Failed to decrypt seller pickup address");
+      if (sellerData?.pickup_address_encrypted) {
+        const pickupResp = await supabase.functions.invoke("decrypt-address", {
+          body: { table: "profiles", target_id: order.seller_id, address_type: "pickup" },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (pickupResp.data?.success) {
+          pickupAddress = pickupResp.data.data;
+        }
+      }
+      if (!pickupAddress && sellerData?.pickup_address) {
+        pickupAddress = sellerData.pickup_address;
+      }
+    } catch (e) {
+      console.warn("[commit-to-sale] pickup address resolution failed, attempting fallback:", e);
     }
-    const pickupAddress = pickupResponse.data.data || {};
 
-    // Decrypt buyer shipping address
-    console.log(`[commit-to-sale] Decrypting buyer shipping address`);
-    const shippingResponse = await supabaseClient.functions.invoke("decrypt-address", {
-      body: {
-        table: "orders",
-        target_id: order_id,
-        address_type: "shipping",
-      },
-      headers: { Authorization: authHeader },
-    });
+    // Fallback to book-level pickup address if available on the order
+    if (!pickupAddress && order.book_id) {
+      try {
+        console.log(`[commit-to-sale] Falling back to book (${order.book_id}) pickup address`);
+        const { data: bookRow } = await supabase
+          .from("books")
+          .select("pickup_address_encrypted, pickup_address")
+          .eq("id", order.book_id)
+          .maybeSingle();
 
-    if (shippingResponse.error || !shippingResponse.data?.success) {
-      throw new Error("Failed to decrypt buyer shipping address");
+        if (bookRow?.pickup_address_encrypted) {
+          const bookPickupResp = await supabase.functions.invoke("decrypt-address", {
+            body: { table: "books", target_id: order.book_id, address_type: "pickup" },
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (bookPickupResp.data?.success) {
+            pickupAddress = bookPickupResp.data.data;
+          } else if (bookRow?.pickup_address) {
+            pickupAddress = bookRow.pickup_address;
+          }
+        } else if (bookRow?.pickup_address) {
+          pickupAddress = bookRow.pickup_address;
+        }
+      } catch (e) {
+        console.warn("[commit-to-sale] book-level pickup address fallback failed:", e);
+      }
     }
-    const shippingAddress = shippingResponse.data.data || {};
 
-    // Get seller profile for contact info
-    const { data: sellerProfile } = await supabaseClient
+    // Fallback to most recent seller book with pickup address
+    if (!pickupAddress) {
+      try {
+        console.log("[commit-to-sale] Searching seller's books for pickup address fallback");
+        const { data: fallbackBook } = await supabase
+          .from("books")
+          .select("id, pickup_address_encrypted, pickup_address")
+          .eq("seller_id", order.seller_id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (fallbackBook?.pickup_address_encrypted) {
+          const fbResp = await supabase.functions.invoke("decrypt-address", {
+            body: { table: "books", target_id: fallbackBook.id, address_type: "pickup" },
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (fbResp.data?.success) {
+            pickupAddress = fbResp.data.data;
+          } else if (fallbackBook?.pickup_address) {
+            pickupAddress = fallbackBook.pickup_address;
+          }
+        } else if (fallbackBook?.pickup_address) {
+          pickupAddress = fallbackBook.pickup_address;
+        }
+      } catch (e) {
+        console.warn("[commit-to-sale] seller books pickup fallback failed:", e);
+      }
+    }
+
+    if (!pickupAddress) throw new Error("Seller pickup address not found");
+
+    // Get buyer shipping address (try encrypted first, fall back to plaintext)
+    console.log(`[commit-to-sale] Getting buyer shipping address`);
+    let shippingAddress: any = null;
+    try {
+      if (order.shipping_address_encrypted) {
+        const shippingResp = await supabase.functions.invoke("decrypt-address", {
+          body: { table: "orders", target_id: order_id, address_type: "shipping" },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (shippingResp.data?.success) {
+          shippingAddress = shippingResp.data.data;
+        }
+      }
+      if (!shippingAddress && order.shipping_address) {
+        shippingAddress = order.shipping_address;
+      }
+    } catch (e) {
+      console.warn("[commit-to-sale] shipping address resolution failed, attempting fallback:", e);
+    }
+
+    if (!shippingAddress) throw new Error("Buyer shipping address not found");
+
+    // Get seller and buyer profiles (for names and contact)
+    const { data: sellerProfile } = await supabase
       .from("profiles")
       .select("id, full_name, name, email, phone_number")
       .eq("id", order.seller_id)
       .single();
 
-    // Get buyer profile for contact info
-    const { data: buyerProfile } = await supabaseClient
+    const { data: buyerProfile } = await supabase
       .from("profiles")
       .select("id, full_name, name, email, phone_number")
       .eq("id", order.buyer_id)
@@ -123,7 +196,7 @@ serve(async (req) => {
     const sellerName = (sellerProfile as any)?.full_name || (sellerProfile as any)?.name || "Seller";
     const buyerName = (buyerProfile as any)?.full_name || (buyerProfile as any)?.name || "Customer";
 
-    // Prepare Bob Go rates request (match our bobgo-get-rates API)
+    // Prepare Bob Go rates request (match current bobgo-get-rates API shape)
     const fromAddress = {
       streetAddress: pickupAddress.streetAddress || pickupAddress.street_address || "",
       suburb: pickupAddress.local_area || pickupAddress.suburb || pickupAddress.city || "",
@@ -152,7 +225,7 @@ serve(async (req) => {
     const declaredValue = parcels.reduce((sum, p) => sum + (p.value || 0), 0) || order.total_amount || order.amount || 0;
 
     console.log(`[commit-to-sale] Getting Bob Go rates`);
-    const ratesResponse = await supabaseClient.functions.invoke("bobgo-get-rates", {
+    const ratesResponse = await supabase.functions.invoke("bobgo-get-rates", {
       body: { fromAddress, toAddress, parcels, declaredValue },
     });
 
@@ -166,10 +239,10 @@ serve(async (req) => {
       throw new Error("No shipping quotes available");
     }
 
-    // Select the most economical quote (handle different shapes)
+    // Select the most economical quote
     const selectedQuote = quotes
       .slice()
-      .sort((a, b) => {
+      .sort((a: any, b: any) => {
         const costA = typeof a.cost === "number" ? a.cost : (typeof a.rate_amount === "number" ? a.rate_amount : Infinity);
         const costB = typeof b.cost === "number" ? b.cost : (typeof b.rate_amount === "number" ? b.rate_amount : Infinity);
         return costA - costB;
@@ -180,7 +253,7 @@ serve(async (req) => {
 
     console.log(`[commit-to-sale] Selected quote: ${providerName} - ${serviceName}`);
 
-    // Create shipment with Bob Go (match our create-shipment API)
+    // Create shipment with Bob Go (match current bobgo-create-shipment API shape)
     const shipmentPayload = {
       order_id,
       provider_slug: selectedQuote.provider_slug,
@@ -212,7 +285,7 @@ serve(async (req) => {
     };
 
     console.log(`[commit-to-sale] Creating Bob Go shipment`);
-    const shipmentResponse = await supabaseClient.functions.invoke("bobgo-create-shipment", {
+    const shipmentResponse = await supabase.functions.invoke("bobgo-create-shipment", {
       body: shipmentPayload,
     });
 
@@ -222,10 +295,10 @@ serve(async (req) => {
     }
 
     const shipmentData = shipmentResponse.data || {};
-    console.log(`[commit-to-sale] Shipment created:`, shipmentData);
+    console.log(`[commit-to-sale] Shipment created:`, shipmentData as Json);
 
-    // Update order with commitment and (minimal) shipment details
-    const { error: updateError } = await supabaseClient
+    // Update order with commitment and shipment details
+    const { error: updateError } = await supabase
       .from("orders")
       .update({
         status: "committed",
@@ -251,7 +324,7 @@ serve(async (req) => {
       throw new Error("Failed to update order");
     }
 
-    // Send emails
+    // Email templates
     const buyerHtml = `
 <!DOCTYPE html>
 <html>
@@ -334,24 +407,31 @@ serve(async (req) => {
 </body>
 </html>`;
 
-    // Send email to buyer
+    // Send emails
     console.log(`[commit-to-sale] Sending buyer notification email`);
-    await supabaseClient.functions.invoke("send-email", {
-      body: { to: order.buyer_email || (buyerProfile as any)?.email, subject: "Order Confirmed - Pickup Scheduled", html: buyerHtml },
+    await supabase.functions.invoke("send-email", {
+      body: {
+        to: order.buyer_email || (buyerProfile as any)?.email,
+        subject: "Order Confirmed - Pickup Scheduled",
+        html: buyerHtml,
+      },
     });
 
-    // Send email to seller
     console.log(`[commit-to-sale] Sending seller notification email`);
     if ((sellerProfile as any)?.email) {
-      await supabaseClient.functions.invoke("send-email", {
-        body: { to: (sellerProfile as any).email, subject: "Order Commitment Confirmed - Prepare for Pickup", html: sellerHtml },
+      await supabase.functions.invoke("send-email", {
+        body: {
+          to: (sellerProfile as any).email,
+          subject: "Order Commitment Confirmed - Prepare for Pickup",
+          html: sellerHtml,
+        },
       });
     }
 
     // Create notifications for both parties (use existing notifications table)
-    const notificationsToInsert: any[] = [];
+    const notifications: any[] = [];
     if (order.buyer_id) {
-      notificationsToInsert.push({
+      notifications.push({
         user_id: order.buyer_id,
         type: "success",
         title: "Order Confirmed",
@@ -361,7 +441,7 @@ serve(async (req) => {
       });
     }
     if (order.seller_id) {
-      notificationsToInsert.push({
+      notifications.push({
         user_id: order.seller_id,
         type: "success",
         title: "Order Committed",
@@ -370,11 +450,11 @@ serve(async (req) => {
         action_required: false,
       });
     }
-    if (notificationsToInsert.length > 0) {
+    if (notifications.length > 0) {
       try {
-        await supabaseClient.from("notifications").insert(notificationsToInsert);
-      } catch (notifErr) {
-        console.warn("[commit-to-sale] Failed to create notifications:", notifErr);
+        await supabase.from("notifications").insert(notifications);
+      } catch (e) {
+        console.warn("[commit-to-sale] Failed to create notifications:", e);
       }
     }
 

@@ -650,24 +650,24 @@ const UniversityInfo = () => {
             onValueChange={throttledTabChange}
             className="w-full"
           >
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 mb-8 h-auto bg-gray-200 p-1">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 gap-1 mb-8 h-auto rounded-xl bg-gray-100 p-1 shadow-inner">
               <TabsTrigger
                 value="overview"
-                className="flex flex-col items-center gap-1 py-2.5 px-2 text-center data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100 data-[state=active]:scale-105"
+                className="flex flex-col items-center gap-1 py-3 px-2 text-center rounded-lg border border-transparent data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow data-[state=active]:border-gray-200 transition-all duration-200 hover:bg-white/60"
               >
                 <University className="h-3 w-3 sm:h-4 sm:w-4 transition-colors" />
                 <span className="text-xs sm:text-sm font-medium">Overview</span>
               </TabsTrigger>
               <TabsTrigger
                 value="aps-calculator"
-                className="flex flex-col items-center gap-1 py-2.5 px-2 text-center data-[state=active]:bg-book-50 data-[state=active]:shadow-sm data-[state=active]:text-book-800 transition-all duration-200 hover:bg-gray-100 data-[state=active]:scale-105"
+                className="flex flex-col items-center gap-1 py-3 px-2 text-center rounded-lg border border-transparent data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow data-[state=active]:border-gray-200 transition-all duration-200 hover:bg-white/60"
               >
                 <Calculator className="h-3 w-3 sm:h-4 sm:w-4 transition-colors" />
                 <span className="text-xs sm:text-sm font-medium">APS</span>
               </TabsTrigger>
               <TabsTrigger
                 value="bursaries"
-                className="flex flex-col items-center gap-1 py-2.5 px-2 text-center data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100 data-[state=active]:scale-105"
+                className="flex flex-col items-center gap-1 py-3 px-2 text-center rounded-lg border border-transparent data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow data-[state=active]:border-gray-200 transition-all duration-200 hover:bg-white/60"
                 onMouseEnter={preloadBursarySection}
               >
                 <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 transition-colors" />
@@ -677,7 +677,7 @@ const UniversityInfo = () => {
               </TabsTrigger>
               <TabsTrigger
                 value="books"
-                className="flex flex-col items-center gap-1 py-2.5 px-2 text-center data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100 data-[state=active]:scale-105"
+                className="flex flex-col items-center gap-1 py-3 px-2 text-center rounded-lg border border-transparent data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow data-[state=active]:border-gray-200 transition-all duration-200 hover:bg-white/60"
                 onMouseEnter={preloadBooksSection}
               >
                 <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 transition-colors" />
@@ -685,7 +685,7 @@ const UniversityInfo = () => {
               </TabsTrigger>
               <TabsTrigger
                 value="private-institutions"
-                className="flex flex-col items-center gap-1 py-2.5 px-2 text-center data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all duration-200 hover:bg-gray-100 data-[state=active]:scale-105"
+                className="flex flex-col items-center gap-1 py-3 px-2 text-center rounded-lg border border-transparent data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow data-[state=active]:border-gray-200 transition-all duration-200 hover:bg-white/60"
               >
                 <Building className="h-3 w-3 sm:h-4 sm:w-4 transition-colors" />
                 <span className="text-xs sm:text-sm font-medium">

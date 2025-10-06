@@ -232,19 +232,19 @@ const SellerProfile = () => {
             <div className="rounded-xl border shadow-sm p-4 sm:p-6 bg-gradient-to-br from-book-50 to-white">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
                 {/* Avatar + Info */}
-                <div className="flex items-start gap-4 md:col-span-2 min-w-0">
+                <div className="flex items-start md:items-start gap-4 md:col-span-2 min-w-0 text-left">
                   <Avatar className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
                     <AvatarImage src={seller.profile_picture_url} />
                     <AvatarFallback className="bg-book-100 text-book-700 text-lg">
                       {(seller.name || "?").charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 break-words">
+                  <div className="flex-1 min-w-0 text-left">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 break-words md:text-left">
                       {seller.name && seller.name.trim().length > 0 ? seller.name : "ReBooked"}
                     </h1>
-                    <div className="text-sm sm:text-base font-semibold text-book-800 mt-0.5">ReBooked Mini</div>
-                    <div className="mt-2 flex flex-col gap-1.5 text-sm text-gray-600">
+                    <div className="text-sm sm:text-base font-semibold text-book-800 mt-0.5 md:text-left">ReBooked Mini</div>
+                    <div className="mt-2 flex flex-col gap-1.5 text-sm text-gray-600 md:text-left">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 flex-shrink-0" />
                         <span className="break-words">Member since {memberSince}</span>
