@@ -45,7 +45,7 @@ const Step3Payment: React.FC<Step3PaymentProps> = ({
   const [retryCount, setRetryCount] = useState(0);
   const isMobile = useIsMobile();
 
-  // Fetch user email on component mount
+  // Fetch user email only
   React.useEffect(() => {
     const fetchUserEmail = async () => {
       try {
@@ -70,87 +70,60 @@ const Step3Payment: React.FC<Step3PaymentProps> = ({
     try {
       console.log("Paystack payment successful:", paystackResponse);
 
-      // Get user email for order processing
-      const { data: userData, error: userError } =
-        await supabase.auth.getUser();
-      if (userError || !userData.user?.email) {
-        throw new Error("User authentication error");
+      // Encrypt buyer shipping address AFTER payment
+      const buyer = orderSummary.buyer_address;
+      const shippingObject = {
+        streetAddress: buyer.street,
+        city: buyer.city,
+        province: buyer.province,
+        postalCode: buyer.postal_code,
+        country: buyer.country,
+        phone: buyer.phone,
+        additional_info: buyer.additional_info,
+      } as any;
+
+      const { data: encResult, error: encError } = await supabase.functions.invoke('encrypt-address', {
+        body: { object: shippingObject },
+      });
+      if (encError || !encResult?.success || !encResult?.data) {
+        throw new Error(encError?.message || 'Failed to encrypt shipping address');
       }
 
-            // Call the process-book-purchase function to finalize the order
-      const requestBody = {
-        book_id: orderSummary.book.id,
+      const shipping_address_encrypted = JSON.stringify(encResult.data);
+
+      // Create order only after payment
+      const createOrderPayload = {
         buyer_id: userId,
         seller_id: orderSummary.book.seller_id,
-        amount: orderSummary.book.price, // Send only book price, not total
-        payment_reference: paystackResponse.reference,
-        buyer_email: userData.user.email,
-        shipping_address: orderSummary.buyer_address,
-        delivery_details: {
-          method: orderSummary.delivery.service_name,
-          courier: orderSummary.delivery.courier,
-          price: orderSummary.delivery_price,
-          estimated_days: orderSummary.delivery.estimated_days,
-        },
+        book_id: orderSummary.book.id,
+        delivery_option: orderSummary.delivery.service_name,
+        shipping_address_encrypted,
       };
 
-      console.log("🔍 Calling process-book-purchase with:", requestBody);
-
-      const { data, error } = await supabase.functions.invoke(
-        "process-book-purchase",
-        {
-          body: requestBody,
-        },
-      );
-
-      console.log("📦 Raw Edge Function Response:", { data, error });
-      console.log("📦 Request Body Sent:", JSON.stringify(requestBody, null, 2));
-
-      // IMMEDIATE ERROR ANALYSIS TO PREVENT [object Object]
-      if (error) {
-        console.log("🚨 IMMEDIATE ERROR ANALYSIS:");
-        console.log("  Raw error:", error);
-        console.log("  Type:", typeof error);
-        console.log("  Constructor:", error?.constructor?.name);
-        console.log("  Is Error:", error instanceof Error);
-        console.log("  String(error):", String(error));
-
-        // IMMEDIATE ERROR MESSAGE EXTRACTION
-        let immediateErrorMessage = "Unknown edge function error";
-
-        try {
-          if (typeof error === 'string') {
-            immediateErrorMessage = error;
-          } else if (error?.context?.message) {
-            immediateErrorMessage = error.context.message;
-          } else if (error?.message) {
-            immediateErrorMessage = error.message;
-          } else if (error?.details) {
-            immediateErrorMessage = error.details;
-          } else if (error?.hint) {
-            immediateErrorMessage = error.hint;
-          } else {
-            // Last resort - try to get something readable
-            const errorStr = String(error);
-            if (errorStr !== '[object Object]') {
-              immediateErrorMessage = errorStr;
-            } else {
-              immediateErrorMessage = `Edge function error (${error?.constructor?.name || 'Unknown type'})`;
-            }
-          }
-        } catch (extractError) {
-          immediateErrorMessage = `Error extraction failed: ${extractError.message}`;
-        }
-
-        console.log("🎯 IMMEDIATE READABLE ERROR:", immediateErrorMessage);
-
-        // SHOW USER-FRIENDLY ERROR IMMEDIATELY
-        toast.error(`Edge Function Failed: ${immediateErrorMessage}`, { duration: 10000 });
-
-        // Also store for debugging
-        (window as any).lastEdgeFunctionError = immediateErrorMessage;
-        (window as any).lastRawError = error;
+      const { data: createData, error: createErr } = await supabase.functions.invoke('create-order', {
+        body: createOrderPayload,
+      });
+      if (createErr || !createData?.success || !createData?.order?.id) {
+        throw new Error(createErr?.message || 'Failed to create order');
       }
+
+      onPaymentSuccess({
+        order_id: createData.order.id,
+        payment_reference: paystackResponse.reference,
+        book_id: orderSummary.book.id,
+        seller_id: orderSummary.book.seller_id,
+        buyer_id: userId,
+        book_title: orderSummary.book.title,
+        book_price: orderSummary.book_price,
+        delivery_method: orderSummary.delivery.service_name,
+        delivery_price: orderSummary.delivery_price,
+        total_paid: orderSummary.total_price,
+        created_at: new Date().toISOString(),
+        status: 'paid',
+      });
+      toast.success('Payment successful. Order created.');
+
+      // Order created; backend will handle any further status transitions.
 
                                     if (error) {
         // Direct error logging for debugging
@@ -388,54 +361,10 @@ const Step3Payment: React.FC<Step3PaymentProps> = ({
         console.error("🚨 Edge function error handled:", contextualMessage);
       }
 
-      console.log("✅ Edge Function Success Response:", data);
-
-      console.log("✅ Order processed successfully:", data);
-
-      // Success - proceed to confirmation with complete order data
-      onPaymentSuccess({
-        order_id: data.order_id || `ORDER_${Date.now()}`,
-        payment_reference: paystackResponse.reference,
-        book_id: orderSummary.book.id,
-        seller_id: orderSummary.book.seller_id,
-        buyer_id: userId,
-        book_title: orderSummary.book.title,
-        book_price: orderSummary.book_price,
-        delivery_method: orderSummary.delivery.service_name,
-        delivery_price: orderSummary.delivery_price,
-        total_paid: orderSummary.total_price,
-        created_at: new Date().toISOString(),
-        status: "completed",
-      });
+      // Already handled via onPaymentSuccess above.
     } catch (error) {
-      console.error("Order processing error after Paystack success:", error);
-
-            // Since Paystack already succeeded, this is an order processing issue
-            const extractedMessage = error?.message || (typeof error === 'string' ? error : String(error || 'Unknown error'));
-      const safeErrorMessage = extractedMessage === '[object Object]' ? 'Order processing failed' : extractedMessage;
-
-      const orderProcessingError = {
-        type: "server" as const,
-        message: `Payment was successful, but order creation failed: ${safeErrorMessage}`,
-        retryable: true,
-        details: error,
-      };
-
-      setError(orderProcessingError);
-
-      // Show more specific error message
-      toast.error("Payment Successful - Order Processing Issue", {
-        description:
-          "Your payment was processed, but we couldn't create your order. Our team will resolve this and contact you.",
-        duration: 8000,
-      });
-
-      // Don't call onPaymentError since payment actually succeeded
-      // Instead, show a different flow
-      console.log(
-        "🔄 Payment succeeded but order processing failed. Payment reference:",
-        paystackResponse.reference,
-      );
+      console.error("Post-payment handler error:", error);
+      toast.error('Payment captured but there was a client error. Check your orders.');
     } finally {
       setProcessing(false);
     }
