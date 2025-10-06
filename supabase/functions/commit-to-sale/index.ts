@@ -192,14 +192,35 @@ serve(async (req) => {
       throw new Error("No shipping quotes available");
     }
 
-    // Select the most economical quote
-    const selectedQuote = quotes
-      .slice()
-      .sort((a: any, b: any) => {
-        const costA = typeof a.cost === "number" ? a.cost : (typeof a.rate_amount === "number" ? a.rate_amount : Infinity);
-        const costB = typeof b.cost === "number" ? b.cost : (typeof b.rate_amount === "number" ? b.rate_amount : Infinity);
-        return costA - costB;
-      })[0];
+    // Try to use buyer's selected courier from order columns
+    let selectedQuote: any = null;
+    
+    if (order.selected_courier_slug && order.selected_service_code) {
+      console.log(`[commit-to-sale] Looking for buyer's selected courier: ${order.selected_courier_slug} / ${order.selected_service_code}`);
+      
+      selectedQuote = quotes.find(
+        (q: any) => q.provider_slug === order.selected_courier_slug &&
+                    q.service_level_code === order.selected_service_code
+      );
+      
+      if (selectedQuote) {
+        console.log(`[commit-to-sale] Using buyer's selected courier: ${selectedQuote.provider_name} - ${selectedQuote.service_level_name}`);
+      } else {
+        console.warn(`[commit-to-sale] Buyer's selected courier not available, falling back to cheapest`);
+      }
+    }
+    
+    // Fallback to cheapest quote if buyer selection not found
+    if (!selectedQuote) {
+      selectedQuote = quotes
+        .slice()
+        .sort((a: any, b: any) => {
+          const costA = typeof a.cost === "number" ? a.cost : (typeof a.rate_amount === "number" ? a.rate_amount : Infinity);
+          const costB = typeof b.cost === "number" ? b.cost : (typeof b.rate_amount === "number" ? b.rate_amount : Infinity);
+          return costA - costB;
+        })[0];
+      console.log(`[commit-to-sale] Using cheapest available quote: ${selectedQuote.provider_name} - ${selectedQuote.service_level_name}`);
+    }
 
     const providerName = selectedQuote.provider_name || selectedQuote.carrier || selectedQuote.provider || "bobgo";
     const serviceName = selectedQuote.service_level_name || selectedQuote.service_name || selectedQuote.service_level_code || "Standard";
