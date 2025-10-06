@@ -179,6 +179,7 @@ serve(async (req) => {
     console.log(`[commit-to-sale] Getting Bob Go rates`);
     const ratesResponse = await supabase.functions.invoke("bobgo-get-rates", {
       body: { fromAddress, toAddress, parcels, declaredValue },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (ratesResponse.error) {
