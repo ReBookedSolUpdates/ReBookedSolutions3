@@ -85,6 +85,9 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
         zone_type: buyerAddress.province === sellerAddress.province
           ? (buyerAddress.city === sellerAddress.city ? "local" : "provincial")
           : "national",
+        provider_name: q.provider_name,
+        provider_slug: q.provider_slug,
+        service_level_code: q.service_level_code,
       }));
 
       if (options.length === 0) {
@@ -250,6 +253,9 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
                           ? "local"
                           : "provincial"
                         : "national",
+                    provider_name: q.provider_name,
+                    provider_slug: q.provider_slug,
+                    service_level_code: q.service_level_code,
                   };
                   const isSelected = !!selectedDelivery &&
                     selectedDelivery.service_name === option.service_name &&

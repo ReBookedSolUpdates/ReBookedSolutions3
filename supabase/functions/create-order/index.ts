@@ -11,6 +11,12 @@ interface CreateOrderRequest {
   book_id: string;
   delivery_option: string;
   shipping_address_encrypted: string;
+  payment_reference?: string;
+  selected_courier_slug?: string;
+  selected_service_code?: string;
+  selected_courier_name?: string;
+  selected_service_name?: string;
+  selected_shipping_cost?: number;
 }
 
 serve(async (req) => {
@@ -109,15 +115,31 @@ serve(async (req) => {
       buyer_id: requestData.buyer_id,
       seller_id: requestData.seller_id,
       book_id: requestData.book_id,
-      buyer_full_name: (buyer as any).full_name || (buyer as any).name,
-      seller_full_name: (seller as any).full_name || (seller as any).name,
-      buyer_email: (buyer as any).email,
-      seller_email: (seller as any).email,
-      buyer_phone_number: (buyer as any).phone_number,
-      seller_phone_number: (seller as any).phone_number,
-      pickup_address_encrypted: (seller as any).pickup_address_encrypted,
+      buyer_full_name: buyer.full_name || buyer.name,
+      seller_full_name: seller.full_name || seller.name,
+      buyer_email: buyer.email,
+      seller_email: seller.email,
+      buyer_phone_number: buyer.phone_number,
+      seller_phone_number: seller.phone_number,
+      pickup_address_encrypted: seller.pickup_address_encrypted,
       shipping_address_encrypted: requestData.shipping_address_encrypted,
       delivery_option: requestData.delivery_option,
+      delivery_data: {
+        delivery_option: requestData.delivery_option,
+        requested_at: new Date().toISOString(),
+        selected_courier_slug: requestData.selected_courier_slug,
+        selected_service_code: requestData.selected_service_code,
+        selected_courier_name: requestData.selected_courier_name,
+        selected_service_name: requestData.selected_service_name,
+        selected_shipping_cost: requestData.selected_shipping_cost,
+      },
+      payment_reference: requestData.payment_reference,
+      paystack_reference: requestData.payment_reference,
+      selected_courier_slug: requestData.selected_courier_slug,
+      selected_service_code: requestData.selected_service_code,
+      selected_courier_name: requestData.selected_courier_name,
+      selected_service_name: requestData.selected_service_name,
+      selected_shipping_cost: requestData.selected_shipping_cost,
       status: "pending",
       payment_status: "pending",
       amount: Math.round(book.price * 100),

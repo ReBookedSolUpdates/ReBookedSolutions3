@@ -98,6 +98,12 @@ const Step3Payment: React.FC<Step3PaymentProps> = ({
         book_id: orderSummary.book.id,
         delivery_option: orderSummary.delivery.service_name,
         shipping_address_encrypted,
+        payment_reference: paystackResponse.reference,
+        selected_courier_slug: orderSummary.delivery.provider_slug,
+        selected_service_code: orderSummary.delivery.service_level_code,
+        selected_courier_name: orderSummary.delivery.provider_name || orderSummary.delivery.courier,
+        selected_service_name: orderSummary.delivery.service_name,
+        selected_shipping_cost: orderSummary.delivery.price,
       };
 
       const { data: createData, error: createErr } = await supabase.functions.invoke('create-order', {
