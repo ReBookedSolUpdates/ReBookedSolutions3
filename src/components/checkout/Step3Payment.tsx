@@ -43,6 +43,8 @@ const Step3Payment: React.FC<Step3PaymentProps> = ({
   const [error, setError] = useState<PaymentError | null>(null);
   const [userEmail, setUserEmail] = useState<string>("");
   const [retryCount, setRetryCount] = useState(0);
+  const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
+  const [creatingOrder, setCreatingOrder] = useState<boolean>(false);
   const isMobile = useIsMobile();
 
   // Fetch user email on component mount
