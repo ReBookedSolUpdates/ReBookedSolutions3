@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -28,12 +27,25 @@ import {
   Clock,
   TruckIcon,
   CheckCircle,
+  FileDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import OrderCancellationService, {
-  Order,
+  Order as BaseOrder,
   RescheduleQuote,
 } from "@/services/orderCancellationService";
+import { supabase } from "@/integrations/supabase/client";
+
+// Extend order with shipping-related optional fields
+type Order = BaseOrder & {
+  buyer_id: string;
+  delivery_status?: string | null;
+  tracking_number?: string | null;
+  selected_courier_name?: string | null;
+  selected_service_name?: string | null;
+  tracking_data?: any;
+  delivery_data?: any;
+};
 
 interface OrderActionsPanelProps {
   order: Order;
@@ -50,31 +62,20 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
-  const [rescheduleQuote, setRescheduleQuote] =
-    useState<RescheduleQuote | null>(null);
+  const [rescheduleQuote, setRescheduleQuote] = useState<RescheduleQuote | null>(null);
   const [selectedRescheduleTime, setSelectedRescheduleTime] = useState("");
   const [paymentProcessing, setPaymentProcessing] = useState(false);
 
-  const canBuyerCancel =
-    userRole === "buyer" &&
-    order.status === "confirmed" &&
-    order.delivery_status !== "picked_up" &&
-    order.delivery_status !== "in_transit" &&
-    order.delivery_status !== "delivered";
+  const canCancelShipment = !["picked_up", "collected", "in_transit", "delivered"].includes(
+    (order.delivery_status || "").toLowerCase(),
+  ) && !["cancelled", "completed", "delivered"].includes(order.status);
 
-  const canSellerDecline = userRole === "seller" && order.status === "pending";
-
-  const showMissedPickupActions =
-    userRole === "seller" && order.delivery_status === "pickup_failed";
+  const showMissedPickupActions = userRole === "seller" && order.delivery_status === "pickup_failed";
 
   const handleBuyerCancel = async () => {
     setIsLoading(true);
     try {
-      const result = await OrderCancellationService.cancelDeliveryByBuyer(
-        order.id,
-        cancelReason,
-      );
-
+      const result = await OrderCancellationService.cancelDeliveryByBuyer(order.id, cancelReason || "Cancelled by Buyer");
       if (result.success) {
         toast.success(result.message);
         setShowCancelDialog(false);
@@ -89,23 +90,25 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
     }
   };
 
-  const handleSellerDecline = async () => {
+  // Seller path calls the same edge function with buyer_id (allowed by backend)
+  const handleSellerCancel = async () => {
     setIsLoading(true);
     try {
-      const result = await OrderCancellationService.declineCommitBySeller(
-        order.id,
-        cancelReason,
-      );
-
-      if (result.success) {
-        toast.success(result.message);
-        setShowCancelDialog(false);
-        onOrderUpdate();
-      } else {
-        toast.error(result.message);
+      const { data, error } = await supabase.functions.invoke("cancel-order", {
+        body: {
+          order_id: order.id,
+          buyer_id: order.buyer_id,
+          cancellation_reason: cancelReason || "Cancelled by Seller",
+        },
+      });
+      if (error || !data?.success) {
+        throw new Error(error?.message || data?.error || "Cancellation failed");
       }
-    } catch (error) {
-      toast.error("Failed to decline order. Please try again.");
+      toast.success("Order cancelled successfully");
+      setShowCancelDialog(false);
+      onOrderUpdate();
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to cancel order");
     } finally {
       setIsLoading(false);
     }
@@ -136,14 +139,9 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
 
     setPaymentProcessing(true);
     try {
-      // Initialize Paystack payment for reschedule fee
-      // This would integrate with your existing payment system
       const paymentReference = `reschedule_${order.id}_${Date.now()}`;
-
-      // Placeholder for Paystack integration
       toast.info("Payment processing...");
 
-      // Simulate payment success for demo
       setTimeout(async () => {
         const result = await OrderCancellationService.reschedulePickup(
           order.id,
@@ -169,10 +167,7 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
   const handleCancelAfterMissedPickup = async () => {
     setIsLoading(true);
     try {
-      const result = await OrderCancellationService.cancelAfterMissedPickup(
-        order.id,
-        cancelReason,
-      );
+      const result = await OrderCancellationService.cancelAfterMissedPickup(order.id, cancelReason);
 
       if (result.success) {
         toast.success(result.message);
@@ -188,63 +183,69 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
     }
   };
 
+  const handleGetLabel = async () => {
+    setIsLoading(true);
+    try {
+      const tracking = order.tracking_number || order.tracking_data?.tracking_number || undefined;
+      const shipmentId = order.delivery_data?.shipment_id || undefined;
+      if (!tracking && !shipmentId) {
+        toast.error("No tracking details available yet");
+        setIsLoading(false);
+        return;
+      }
+      const { data, error } = await supabase.functions.invoke("bobgo-get-label", {
+        body: { tracking_number: tracking, shipment_id: shipmentId },
+      });
+      if (error || !data?.success) {
+        throw new Error(error?.message || data?.error || "Failed to get label");
+      }
+      if (data.waybill_url) {
+        window.open(data.waybill_url, "_blank");
+      } else if (data.waybill_base64 && data.content_type) {
+        const url = `data:${data.content_type};base64,${data.waybill_base64}`;
+        window.open(url, "_blank");
+      } else {
+        toast.success("Label generated successfully");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to retrieve label");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getOrderStatusBadge = () => {
-    const statusConfig = {
+    const statusConfig: Record<string, { label: string; color: string }> = {
       pending: { label: "Pending", color: "bg-yellow-500" },
       confirmed: { label: "Confirmed", color: "bg-blue-500" },
       cancelled_by_buyer: { label: "Cancelled by Buyer", color: "bg-red-500" },
       declined_by_seller: { label: "Declined by Seller", color: "bg-red-500" },
-      cancelled_by_seller_after_missed_pickup: {
-        label: "Cancelled by Seller",
-        color: "bg-red-500",
-      },
+      cancelled_by_seller_after_missed_pickup: { label: "Cancelled by Seller", color: "bg-red-500" },
       delivered: { label: "Delivered", color: "bg-green-500" },
+      cancelled: { label: "Cancelled", color: "bg-red-500" },
+      committed: { label: "Committed", color: "bg-emerald-600" },
     };
 
-    const config = statusConfig[order.status as keyof typeof statusConfig] || {
-      label: order.status,
-      color: "bg-gray-500",
-    };
-
-    return (
-      <Badge className={`${config.color} text-white`}>{config.label}</Badge>
-    );
+    const config = statusConfig[order.status] || { label: order.status, color: "bg-gray-500" };
+    return <Badge className={`${config.color} text-white`}>{config.label}</Badge>;
   };
 
   const getDeliveryStatusBadge = () => {
     if (!order.delivery_status) return null;
 
-    const statusConfig = {
+    const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
       pending: { label: "Pickup Pending", color: "bg-yellow-500", icon: Clock },
-      pickup_failed: {
-        label: "Pickup Failed",
-        color: "bg-red-500",
-        icon: AlertTriangle,
-      },
-      rescheduled_by_seller: {
-        label: "Rescheduled",
-        color: "bg-blue-500",
-        icon: Calendar,
-      },
+      pickup_scheduled: { label: "Pickup Scheduled", color: "bg-blue-500", icon: Calendar },
+      pickup_failed: { label: "Pickup Failed", color: "bg-red-500", icon: AlertTriangle },
+      rescheduled_by_seller: { label: "Rescheduled", color: "bg-blue-500", icon: Calendar },
       picked_up: { label: "Picked Up", color: "bg-green-500", icon: TruckIcon },
-      in_transit: {
-        label: "In Transit",
-        color: "bg-blue-500",
-        icon: TruckIcon,
-      },
-      delivered: {
-        label: "Delivered",
-        color: "bg-green-500",
-        icon: CheckCircle,
-      },
+      in_transit: { label: "In Transit", color: "bg-blue-500", icon: TruckIcon },
+      delivered: { label: "Delivered", color: "bg-green-500", icon: CheckCircle },
     };
 
-    const config =
-      statusConfig[order.delivery_status as keyof typeof statusConfig];
+    const config = statusConfig[(order.delivery_status || "").toLowerCase()];
     if (!config) return null;
-
     const IconComponent = config.icon;
-
     return (
       <Badge className={`${config.color} text-white flex items-center gap-1`}>
         <IconComponent className="w-3 h-3" />
@@ -265,99 +266,50 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Buyer Actions */}
-        {canBuyerCancel && (
+        {/* Seller: Get Label */}
+        {userRole === "seller" && (
+          <Button onClick={handleGetLabel} disabled={isLoading} variant="outline" className="w-full">
+            {isLoading ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <FileDown className="w-4 h-4 mr-2" />}
+            Get Label
+          </Button>
+        )}
+
+        {/* Unified Cancel for Buyer and Seller when not collected/in transit */}
+        {canCancelShipment && (
           <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
             <DialogTrigger asChild>
               <Button variant="destructive" className="w-full">
                 <X className="w-4 h-4 mr-2" />
-                Cancel Order
+                Cancel Shipment
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Cancel Order</DialogTitle>
+                <DialogTitle>Cancel Shipment</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to cancel this order? You will receive a
-                  full refund.
+                  Are you sure you want to cancel this shipment? {userRole === "buyer" ? "You will receive a full refund." : "The buyer will be refunded."}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium">
-                    Reason (optional)
-                  </label>
+                  <label className="text-sm font-medium">Reason (optional)</label>
                   <Textarea
-                    placeholder="Please let us know why you're cancelling..."
+                    placeholder={userRole === "buyer" ? "Please let us know why you're cancelling..." : "Please explain the cancellation..."}
                     value={cancelReason}
                     onChange={(e) => setCancelReason(e.target.value)}
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowCancelDialog(false)}
-                    className="flex-1"
-                  >
+                  <Button variant="outline" onClick={() => setShowCancelDialog(false)} className="flex-1">
                     Keep Order
                   </Button>
                   <Button
                     variant="destructive"
-                    onClick={handleBuyerCancel}
+                    onClick={userRole === "buyer" ? handleBuyerCancel : handleSellerCancel}
                     disabled={isLoading}
                     className="flex-1"
                   >
-                    {isLoading ? "Cancelling..." : "Cancel Order"}
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        )}
-
-        {/* Seller Decline */}
-        {canSellerDecline && (
-          <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-            <DialogTrigger asChild>
-              <Button variant="destructive" className="w-full">
-                <X className="w-4 h-4 mr-2" />
-                Decline Order
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Decline Order</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to decline this order? The buyer will
-                  receive a full refund.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium">
-                    Reason (optional)
-                  </label>
-                  <Textarea
-                    placeholder="Please let the buyer know why you're declining..."
-                    value={cancelReason}
-                    onChange={(e) => setCancelReason(e.target.value)}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowCancelDialog(false)}
-                    className="flex-1"
-                  >
-                    Accept Order
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={handleSellerDecline}
-                    disabled={isLoading}
-                    className="flex-1"
-                  >
-                    {isLoading ? "Declining..." : "Decline Order"}
+                    {isLoading ? "Cancelling..." : "Confirm Cancel"}
                   </Button>
                 </div>
               </div>
@@ -371,25 +323,17 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                The courier attempted pickup but you were unavailable. Please
-                choose an action below.
+                The courier attempted pickup but you were unavailable. Please choose an action below.
               </AlertDescription>
             </Alert>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Button
-                onClick={handleGetRescheduleQuote}
-                disabled={isLoading}
-                className="flex items-center justify-center"
-              >
+              <Button onClick={handleGetRescheduleQuote} disabled={isLoading} className="flex items-center justify-center">
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Reschedule Pickup
               </Button>
 
-              <Dialog
-                open={showCancelDialog}
-                onOpenChange={setShowCancelDialog}
-              >
+              <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
                 <DialogTrigger asChild>
                   <Button variant="destructive">
                     <X className="w-4 h-4 mr-2" />
@@ -400,15 +344,12 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
                   <DialogHeader>
                     <DialogTitle>Cancel Order</DialogTitle>
                     <DialogDescription>
-                      Cancel this order after missing pickup. The buyer will
-                      receive a full refund.
+                      Cancel this order after missing pickup. The buyer will receive a full refund.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-sm font-medium">
-                        Reason (optional)
-                      </label>
+                      <label className="text-sm font-medium">Reason (optional)</label>
                       <Textarea
                         placeholder="Please explain why you're cancelling..."
                         value={cancelReason}
@@ -416,19 +357,10 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
                       />
                     </div>
                     <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => setShowCancelDialog(false)}
-                        className="flex-1"
-                      >
+                      <Button variant="outline" onClick={() => setShowCancelDialog(false)} className="flex-1">
                         Keep Order
                       </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={handleCancelAfterMissedPickup}
-                        disabled={isLoading}
-                        className="flex-1"
-                      >
+                      <Button variant="destructive" onClick={handleCancelAfterMissedPickup} disabled={isLoading} className="flex-1">
                         {isLoading ? "Cancelling..." : "Cancel Order"}
                       </Button>
                     </div>
@@ -440,16 +372,11 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
         )}
 
         {/* Reschedule Dialog */}
-        <Dialog
-          open={showRescheduleDialog}
-          onOpenChange={setShowRescheduleDialog}
-        >
+        <Dialog open={showRescheduleDialog} onOpenChange={setShowRescheduleDialog}>
           <DialogContent className="w-[90vw] max-w-[90vw] sm:max-w-md mx-auto my-auto">
             <DialogHeader>
               <DialogTitle>Reschedule Pickup</DialogTitle>
-              <DialogDescription>
-                Choose a new pickup time. A reschedule fee will apply.
-              </DialogDescription>
+              <DialogDescription>Choose a new pickup time. A reschedule fee will apply.</DialogDescription>
             </DialogHeader>
 
             {rescheduleQuote && (
@@ -457,34 +384,21 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
                 <Alert>
                   <CreditCard className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>
-                      Reschedule Fee: R{rescheduleQuote.reschedule_fee}
-                    </strong>
-                    <br />
-                    This fee covers the additional courier coordination costs.
+                    <strong>Reschedule Fee: R{rescheduleQuote.reschedule_fee}</strong>
+                    <br />This fee covers the additional courier coordination costs.
                   </AlertDescription>
                 </Alert>
 
                 <div>
-                  <label className="text-sm font-medium">
-                    Select New Pickup Time
-                  </label>
-                  <Select
-                    value={selectedRescheduleTime}
-                    onValueChange={setSelectedRescheduleTime}
-                  >
+                  <label className="text-sm font-medium">Select New Pickup Time</label>
+                  <Select value={selectedRescheduleTime} onValueChange={setSelectedRescheduleTime}>
                     <SelectTrigger>
                       <SelectValue placeholder="Choose a time..." />
                     </SelectTrigger>
                     <SelectContent>
                       {rescheduleQuote.available_times.map((time) => (
                         <SelectItem key={time} value={time}>
-                          {new Date(time).toLocaleDateString("en-ZA", {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
+                          {new Date(time).toLocaleDateString("en-ZA", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -492,18 +406,10 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
                 </div>
 
                 <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowRescheduleDialog(false)}
-                    className="flex-1"
-                  >
+                  <Button variant="outline" onClick={() => setShowRescheduleDialog(false)} className="flex-1">
                     Cancel
                   </Button>
-                  <Button
-                    onClick={handleReschedulePayment}
-                    disabled={!selectedRescheduleTime || paymentProcessing}
-                    className="flex-1"
-                  >
+                  <Button onClick={handleReschedulePayment} disabled={!selectedRescheduleTime || paymentProcessing} className="flex-1">
                     {paymentProcessing ? (
                       <>
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -530,25 +436,22 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
               <p className="text-gray-600">{order.book?.title}</p>
             </div>
             <div>
-              <span className="font-medium">Amount:</span>
-              <p className="text-gray-600">R{order.total_amount}</p>
+              <span className="font-medium">Courier:</span>
+              <p className="text-gray-600">{order.selected_courier_name || order.delivery_data?.provider || "—"}</p>
             </div>
-            {order.pickup_scheduled_at && (
-              <div className="col-span-2">
-                <span className="font-medium">Pickup Scheduled:</span>
-                <p className="text-gray-600">
-                  {new Date(order.pickup_scheduled_at).toLocaleDateString(
-                    "en-ZA",
-                    {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    },
-                  )}
-                </p>
-              </div>
-            )}
+            <div>
+              <span className="font-medium">Service:</span>
+              <p className="text-gray-600">{order.selected_service_name || order.delivery_data?.service_level || "—"}</p>
+            </div>
+            <div>
+              <span className="font-medium">Tracking:</span>
+              <p className="text-gray-600 break-all">{order.tracking_number || order.tracking_data?.tracking_number || "—"}</p>
+            </div>
+          </div>
+          <div className="mt-3">
+            <Alert className="border-blue-200 bg-blue-50">
+              <AlertDescription className="text-blue-800">Track your shipment on the Shipments page.</AlertDescription>
+            </Alert>
           </div>
         </div>
       </CardContent>
