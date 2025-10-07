@@ -2,192 +2,197 @@ import Layout from "@/components/Layout";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, BookOpen, CheckCircle, Database, Eye, Globe, Lock, Shield } from "lucide-react";
 
 const Transparency = () => {
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Eye className="h-7 w-7 text-book-600" /> Transparency & Privacy
-          </h1>
-          <p className="text-gray-600 mt-1">Learn about ReBooked Solutions and how we protect your information.</p>
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-book-50 via-white to-blue-50" aria-hidden="true" />
+        <div className="relative container mx-auto px-4 py-10 lg:py-14">
+          <div className="mb-8 lg:mb-10 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-book-100 text-book-800 text-xs font-medium mb-3">Trusted and Transparent</div>
+            <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-gray-900 flex items-center justify-center gap-2">
+              <Eye className="h-7 w-7 text-book-600" /> Transparency & Privacy
+            </h1>
+            <p className="text-gray-600 mt-2 max-w-2xl mx-auto">We protect your data with bank‑grade security and practice transparent communication for every order.</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 mb-8">
+            <Card className="border-book-200/60">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5 text-green-600" /> Privacy First</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-gray-700 space-y-2">
+                <p>We only collect data needed to run the marketplace. No selling of your personal data. Ever.</p>
+                <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200">POPIA-aligned</Badge>
+              </CardContent>
+            </Card>
+            <Card className="border-book-200/60">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Lock className="h-5 w-5 text-blue-600" /> Secure by design</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-gray-700 space-y-2">
+                <p>Addresses and sensitive data are encrypted end‑to‑end. Payments happen via PCI‑compliant providers.</p>
+                <div className="flex gap-2 flex-wrap">
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">AES‑256</Badge>
+                  <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">PCI</Badge>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border-book-200/60">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Database className="h-5 w-5 text-amber-600" /> Limited Usage</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-gray-700 space-y-2">
+                <p>Your data is used strictly for orders, delivery, support, and platform improvements.</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Tabs defaultValue="about" className="w-full">
+            <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4 h-auto bg-white/70 backdrop-blur border">
+              <TabsTrigger value="about" className="flex items-center gap-2"><BookOpen className="h-4 w-4" /> About</TabsTrigger>
+              <TabsTrigger value="privacy" className="flex items-center gap-2"><Shield className="h-4 w-4" /> Privacy</TabsTrigger>
+              <TabsTrigger value="encryption" className="flex items-center gap-2"><Lock className="h-4 w-4" /> Security</TabsTrigger>
+              <TabsTrigger value="data" className="flex items-center gap-2"><Database className="h-4 w-4" /> Data</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="about" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><BookOpen className="h-5 w-5 text-book-600" /> About ReBooked Solutions</CardTitle>
+                </CardHeader>
+                <CardContent className="text-gray-700 space-y-4">
+                  <p>ReBooked is a student‑focused marketplace connecting buyers and sellers of textbooks across South Africa. Our mission is to make education more affordable with a secure, transparent platform.</p>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="font-semibold mb-2 flex items-center gap-2"><Globe className="h-4 w-4 text-book-600" /> Our Values</h4>
+                      <ul className="list-disc list-inside text-sm space-y-1">
+                        <li>Transparency in operations</li>
+                        <li>Student‑first design</li>
+                        <li>Secure, trusted transactions</li>
+                        <li>Community building</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2 flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-600" /> How it works</h4>
+                      <ul className="list-disc list-inside text-sm space-y-1">
+                        <li>Seller commits within 48 hours</li>
+                        <li>Courier pickup auto‑scheduled</li>
+                        <li>End‑to‑end order tracking</li>
+                        <li>Automatic refunds if seller doesn’t commit</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="privacy" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5 text-green-600" /> Your Privacy</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4 text-gray-700">
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-lg bg-green-50 border border-green-200">
+                      <h4 className="font-medium text-green-900 mb-1">Data Minimization</h4>
+                      <p className="text-sm">We only collect what’s necessary to run the marketplace.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
+                      <h4 className="font-medium text-blue-900 mb-1">Purpose Limitation</h4>
+                      <p className="text-sm">Your data is used only for core platform functions.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-purple-50 border border-purple-200">
+                      <h4 className="font-medium text-purple-900 mb-1">No Selling Data</h4>
+                      <p className="text-sm">We never sell your personal information to third parties.</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="encryption" className="mt-6">
+              <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Lock className="h-5 w-5 text-red-600" /> Address Encryption</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3 text-sm text-gray-700">
+                    <div className="flex gap-2 flex-wrap">
+                      <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">AES‑256</Badge>
+                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">End‑to‑End</Badge>
+                    </div>
+                    <p>Your delivery addresses are encrypted before storage and only decrypted for delivery operations.</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Lock className="h-5 w-5 text-blue-600" /> Banking Security</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3 text-sm text-gray-700">
+                    <div className="flex gap-2 flex-wrap">
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Bank‑grade</Badge>
+                      <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">PCI</Badge>
+                    </div>
+                    <p>We use PCI‑compliant processors. Card info never touches our servers.</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="data" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><Database className="h-5 w-5 text-amber-600" /> Data Usage</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4 text-gray-700">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="font-semibold mb-2">Core Platform</h4>
+                      <ul className="list-disc list-inside text-sm space-y-1">
+                        <li>Authentication & account management</li>
+                        <li>Listings, orders and delivery</li>
+                        <li>Notifications and support</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2">Improvements</h4>
+                      <ul className="list-disc list-inside text-sm space-y-1">
+                        <li>Anonymous analytics</li>
+                        <li>Fraud prevention & security monitoring</li>
+                        <li>Feature development</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <Accordion type="single" collapsible className="w-full border rounded-lg">
+                    <AccordionItem value="item-1">
+                      <AccordionTrigger className="px-4">Can I request my data to be deleted?</AccordionTrigger>
+                      <AccordionContent className="px-4 pb-4 text-sm text-gray-700">
+                        Yes. Contact support and we’ll process your request according to policy.
+                      </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-2">
+                      <AccordionTrigger className="px-4">Who can see my address?</AccordionTrigger>
+                      <AccordionContent className="px-4 pb-4 text-sm text-gray-700">
+                        Only secure system processes and the courier for delivery purposes.
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+
+                  <Alert className="border-amber-200 bg-amber-50">
+                    <AlertCircle className="h-4 w-4 text-amber-600" />
+                    <AlertDescription className="text-amber-800">Questions? Reach out via the Contact page and we’ll help.</AlertDescription>
+                  </Alert>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
-
-        <Tabs defaultValue="about" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1 h-auto p-1">
-            <TabsTrigger value="about" className="flex flex-col sm:flex-row items-center gap-1 p-2 sm:p-3 text-xs sm:text-sm">
-              <Eye className="h-3 w-3 sm:h-4 sm:w-4" /> About
-            </TabsTrigger>
-            <TabsTrigger value="privacy" className="flex flex-col sm:flex-row items-center gap-1 p-2 sm:p-3 text-xs sm:text-sm">
-              <Shield className="h-3 w-3 sm:h-4 sm:w-4" /> Privacy
-            </TabsTrigger>
-            <TabsTrigger value="encryption" className="flex flex-col sm:flex-row items-center gap-1 p-2 sm:p-3 text-xs sm:text-sm">
-              <Lock className="h-3 w-3 sm:h-4 sm:w-4" /> Security
-            </TabsTrigger>
-            <TabsTrigger value="data" className="flex flex-col sm:flex-row items-center gap-1 p-2 sm:p-3 text-xs sm:text-sm">
-              <Database className="h-3 w-3 sm:h-4 sm:w-4" /> Data
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="about" className="space-y-4 mt-4 sm:mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-book-600" /> About ReBooked Solutions
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-gray-700 leading-relaxed">
-                  ReBooked Solutions is a South African student-focused marketplace that connects students buying and selling textbooks across universities. Our mission is to make quality education more affordable and accessible by creating a trusted platform for textbook exchanges.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold flex items-center gap-2">
-                      <Globe className="h-4 w-4 text-book-600" /> Our Values
-                    </h4>
-                    <ul className="text-sm text-gray-600 space-y-1 ml-6">
-                      <li>• Transparency in all operations</li>
-                      <li>• Student-first approach</li>
-                      <li>• Secure and trusted transactions</li>
-                      <li>• Community building and support</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="privacy" className="space-y-4 mt-4 sm:mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-green-600" /> How We Protect Your Privacy
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                    <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium text-green-900">Data Minimization</h4>
-                      <p className="text-sm text-green-700">We only collect information necessary for providing our services - no unnecessary data collection.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                    <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium text-blue-900">Purpose Limitation</h4>
-                      <p className="text-sm text-blue-700">Your data is used only for platform functionality, transactions, and communication - never for unauthorized purposes.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
-                    <Lock className="h-5 w-5 text-purple-600 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium text-purple-900">No Third-Party Sharing</h4>
-                      <p className="text-sm text-purple-700">We never sell or share your personal information with third parties for marketing purposes.</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="encryption" className="space-y-4 mt-4 sm:mt-6">
-            <div className="grid gap-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lock className="h-5 w-5 text-red-600" /> Address Encryption
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">AES-256 Encryption</Badge>
-                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">End-to-End Protected</Badge>
-                    </div>
-                    <p className="text-gray-700 text-sm leading-relaxed">Your delivery addresses are encrypted using military-grade AES-256 encryption before storage. Only authorized system processes can decrypt addresses for legitimate delivery purposes. Your address data is never stored in plain text.</p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lock className="h-5 w-5 text-blue-600" /> Banking Details Encryption
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Bank-Grade Security</Badge>
-                      <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">PCI Compliant</Badge>
-                    </div>
-                    <p className="text-gray-700 text-sm leading-relaxed">Banking information is encrypted using the same standards as major financial institutions. We use tokenization and encryption to ensure your banking details are never exposed. Payment processing is handled through PCI-compliant secure channels.</p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5 text-amber-600" /> Access Controls
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 text-sm leading-relaxed">Access to encrypted data is strictly controlled through role-based permissions. Only essential system operations can access decrypted information, and all access is logged and monitored for security purposes.</p>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="data" className="space-y-4 mt-4 sm:mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Database className="h-5 w-5 text-book-600" /> How We Use Your Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Core Platform Functions</h4>
-                    <ul className="text-sm text-gray-600 space-y-1 ml-4">
-                      <li>• Account creation and authentication</li>
-                      <li>• Book listing and marketplace functionality</li>
-                      <li>• Transaction processing and order management</li>
-                      <li>• Communication between buyers and sellers</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Service Delivery</h4>
-                    <ul className="text-sm text-gray-600 space-y-1 ml-4">
-                      <li>• Address information for delivery coordination</li>
-                      <li>• Banking details for secure payments</li>
-                      <li>• Contact information for transaction updates</li>
-                      <li>• Order tracking and delivery notifications</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Platform Improvement</h4>
-                    <ul className="text-sm text-gray-600 space-y-1 ml-4">
-                      <li>• Anonymized usage analytics to improve user experience</li>
-                      <li>• Security monitoring to protect against fraud</li>
-                      <li>• Customer support and issue resolution</li>
-                      <li>• Platform optimization and feature development</li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="mt-6 p-4 bg-book-50 rounded-lg border border-book-200">
-                  <h4 className="font-semibold text-book-900 mb-2 flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4" /> Your Rights
-                  </h4>
-                  <p className="text-sm text-book-700">You have the right to access, update, or delete your personal information at any time. Contact our support team if you need assistance with your data or have privacy concerns.</p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
       </div>
     </Layout>
   );

@@ -212,6 +212,11 @@ export const getCommitPendingBooks = async (): Promise<any[]> => {
       user.id,
     );
 
+    // Safety net: trigger server-side expiry check (non-blocking)
+    try {
+      supabase.functions.invoke('check-expired-orders', { body: {} }).catch(() => {});
+    } catch {}
+
     // Query orders with pending_commit status - this is the real commit system
     let orders;
     try {
