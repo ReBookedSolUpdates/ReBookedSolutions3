@@ -143,6 +143,15 @@ const Footer = () => {
                   Policies & Terms
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/transparency"
+                  className="text-gray-600 hover:text-book-600 text-sm"
+                  onClick={handleLinkClick}
+                >
+                  Transparency
+                </Link>
+              </li>
             </ul>
           </div>
 
