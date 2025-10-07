@@ -189,7 +189,7 @@ serve(async (req) => {
         business_name: business_name,
         settlement_bank: bank_code,
         account_number: account_number,
-        percentage_charge: 10, // 10% platform fee
+        percentage_charge: 100, // 10% platform fee
         description: `ReBooked seller subaccount for ${business_name}`,
         primary_contact_email: email,
         primary_contact_name: business_name,
@@ -231,7 +231,7 @@ serve(async (req) => {
         business_name: business_name,
         settlement_bank: bank_code,
         account_number: account_number,
-        percentage_charge: 10, // 10% platform fee
+        percentage_charge: 100, // 10% platform fee
         description: `ReBooked seller subaccount for ${business_name}`,
         primary_contact_email: email,
         primary_contact_name: business_name,
