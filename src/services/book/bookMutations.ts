@@ -72,7 +72,7 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
       price: bookData.price,
       category: bookData.category,
       condition: bookData.condition,
-      image_url: bookData.imageUrl,
+      image_url: bookData.imageUrl || bookData.frontCover || bookData.backCover || bookData.insidePages,
       front_cover: bookData.frontCover,
       back_cover: bookData.backCover,
       inside_pages: bookData.insidePages,

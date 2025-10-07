@@ -67,6 +67,7 @@ import RestoreBooks from "./pages/RestoreBooks";
 import ActivityLog from "./pages/ActivityLog";
 import BankingSetup from "./pages/BankingSetup";
 import UserProfile from "./pages/UserProfile";
+import Transparency from "./pages/Transparency";
 // import LockerSearchPage from "./pages/LockerSearchPage"; // DISABLED - Locker functionality removed
 
 
@@ -310,6 +311,7 @@ function App() {
                       <Route path="/policies" element={<Policies />} />
                       <Route path="/shipping" element={<Shipping />} />
                       <Route path="/getting-started" element={<GettingStarted />} />
+                      <Route path="/transparency" element={<Transparency />} />
                                             <Route path="/report" element={<Report />} />
 
 
