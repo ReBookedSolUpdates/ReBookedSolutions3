@@ -148,6 +148,7 @@ serve(async (req) => {
     const sellerPhone = order.seller_phone_number || "0000000000";
     const buyerPhone = order.buyer_phone_number || "0000000000";
 
+    // Prepare Bob Go rates request (match current bobgo-get-rates API shape)
     // Verify buyer selected a courier during checkout
     if (!order.selected_courier_slug || !order.selected_service_code) {
       throw new Error("No courier selected during checkout");
@@ -217,6 +218,7 @@ serve(async (req) => {
     console.log(`[commit-to-sale] Creating Bob Go shipment`);
     const shipmentResponse = await supabase.functions.invoke("bobgo-create-shipment", {
       body: shipmentPayload,
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (shipmentResponse.error) {
