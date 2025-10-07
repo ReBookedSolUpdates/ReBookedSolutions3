@@ -12,7 +12,6 @@ import { useCommit } from "@/hooks/useCommit";
 import { getUserBooks } from "@/services/book/bookQueries";
 import { Book } from "@/types/book";
 import {
-  ArrowLeft,
   Check,
   Clock,
   ShoppingCart,
