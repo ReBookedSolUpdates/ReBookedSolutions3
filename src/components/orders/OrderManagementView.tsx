@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -21,9 +21,29 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import OrderActionsPanel from "./OrderActionsPanel";
-import { Order } from "@/services/orderCancellationService";
-import { logError, getUserFriendlyErrorMessage } from "@/utils/errorLogging";
+import { Order as BaseOrder } from "@/services/orderCancellationService";
+import { logError } from "@/utils/errorLogging";
 
+// Extend the base Order shape with additional fields used in UI
+export type Order = BaseOrder & {
+  tracking_number?: string | null;
+  tracking_data?: any;
+  selected_courier_name?: string | null;
+  selected_service_name?: string | null;
+  cancellation_reason?: string | null;
+  updated_at?: string | null;
+  cancelled_at?: string | null;
+  total_amount?: number;
+  delivery_data?: any;
+  book?: {
+    id?: string;
+    title?: string;
+    author?: string;
+    price?: number;
+    image_url?: string | null;
+    additional_images?: string[] | null;
+  };
+};
 
 interface OrderManagementViewProps {}
 
@@ -32,9 +52,8 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
-  
 
-    useEffect(() => {
+  useEffect(() => {
     if (user) {
       fetchOrders();
     }
@@ -44,102 +63,43 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
-    }, 5000); // Update every 5 seconds
+    }, 5000);
 
     return () => clearInterval(timer);
   }, []);
 
-    const fetchOrders = async () => {
-    if (!user) {
-      console.log("🔍 No user found for order fetching");
-      return;
-    }
-
-    console.log("🔍 Fetching orders for user:", {
-      userId: user.id,
-      userEmail: user.email
-    });
+  const fetchOrders = async () => {
+    if (!user) return;
 
     setLoading(true);
     try {
-      let query = supabase
+      const { data, error } = await supabase
         .from("orders")
-        .select("*")
+        .select(`
+          id, buyer_id, seller_id, status, delivery_status, created_at, updated_at,
+          cancelled_at, cancellation_reason, tracking_number, tracking_data,
+          selected_courier_name, selected_service_name, total_amount, delivery_data,
+          book:books(id, title, author, price, image_url, additional_images)
+        `)
         .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
         .order("created_at", { ascending: false });
 
-      console.log("🔍 About to execute orders query");
-      const { data, error } = await query;
-      console.log("🔍 Orders query result:", { data, error, dataLength: data?.length });
-
       if (error) {
         logError("Error fetching orders (Supabase query)", error);
-        console.error("🔍 Error loading orders:", {
-          message: error instanceof Error ? error.message : String(error),
-          error: error instanceof Error ? {
-            name: error.name,
-            message: error.message,
-            stack: error.stack
-          } : error,
-          timestamp: new Date().toISOString()
-        });
-
-        // Simple error message extraction
-        let errorMsg = 'Failed to load orders';
-        if (error?.message) {
-          errorMsg = error.message;
-        } else if (error?.details) {
-          errorMsg = error.details;
-        } else if (typeof error === 'string') {
-          errorMsg = error;
-        }
-
-        toast.error(errorMsg);
+        toast.error(error.message || "Failed to load orders");
         return;
       }
 
-      // Filter out test/demo data
-      const realOrders = (data || []).filter(order => {
-        // Filter out orders with test/demo indicators
-        const testIndicators = [
-          'unknown book',
-          'test book',
-          'demo book',
-          'sample book',
-          'test order',
-          'demo order'
-        ];
-
-        const hasTestTitle = testIndicators.some(indicator =>
-          order.book_title?.toLowerCase().includes(indicator)
-        );
-
-        // Also filter out orders with no book title
-        const hasValidTitle = order.book_title && order.book_title.trim().length > 0;
-
-        return hasValidTitle && !hasTestTitle;
-      });
-
-      console.log(`🧹 Filtered ${(data?.length || 0) - realOrders.length} test/demo orders`);
-      setOrders(realOrders);
-    } catch (error) {
-      logError("Error fetching orders (catch block)", error);
-
-      // Simple error message extraction
-      let errorMsg = 'Failed to load orders';
-      if (error?.message) {
-        errorMsg = error.message;
-      } else if (typeof error === 'string') {
-        errorMsg = error;
-      }
-
-      toast.error(errorMsg);
+      // Filter out obvious test/demo orders by missing real book data
+      const realOrders = (data || []).filter((o: any) => !!(o.book?.title));
+      setOrders(realOrders as Order[]);
+    } catch (err: any) {
+      logError("Error fetching orders (catch block)", err);
+      toast.error(err?.message || "Failed to load orders");
     } finally {
       setLoading(false);
     }
   };
-
-
 
   const getUserRole = (order: Order): "buyer" | "seller" => {
     return order.buyer_id === user?.id ? "buyer" : "seller";
@@ -148,205 +108,195 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
   const getOrderStats = () => {
     const stats = {
       total: orders.length,
-      pending: orders.filter((o) => ["pending", "pending_commit", "confirmed"].includes(o.status))
-        .length,
+      pending: orders.filter((o) => ["pending", "pending_commit", "confirmed"].includes(o.status)).length,
       active: orders.filter((o) =>
         ["committed", "pending_delivery", "in_transit", "confirmed", "dispatched"].includes(o.status),
       ).length,
       completed: orders.filter((o) => ["delivered", "completed"].includes(o.status)).length,
-      cancelled: orders.filter((o) =>
-        [
-          "cancelled_by_buyer",
-          "declined_by_seller",
-          "cancelled_by_seller_after_missed_pickup",
-          "cancelled",
-          "declined",
-          "expired"
-        ].includes(o.status),
-      ).length,
+      cancelled: orders.filter((o) => ["cancelled"].includes(o.status)).length,
     };
     return stats;
   };
 
+  const formatDate = (d?: string | null) => {
+    if (!d) return "";
+    try { return new Date(d).toLocaleString(); } catch { return d as string; }
+  };
+
+  const OrderHeaderDetails: React.FC<{ order: Order }> = ({ order }) => {
+    const role = getUserRole(order);
+    const img = order.book?.additional_images?.[0] || order.book?.image_url || "/placeholder.svg";
+    return (
+      <div className="flex gap-4">
+        <div className="w-16 h-20 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+          <img
+            src={img}
+            alt={order.book?.title || "Book"}
+            className="w-full h-full object-cover"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/placeholder.svg"; }}
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle className="text-lg font-semibold">
+                {order.book?.title || "Unknown Book"}
+              </CardTitle>
+              <p className="text-sm text-gray-600 mt-0.5">
+                {order.book?.author ? `by ${order.book.author}` : ""}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                Order #{order.id.slice(-8)} • {role === "buyer" ? `Seller` : `Buyer`}: {role === "buyer" ? (order.seller?.name || "Unknown") : (order.buyer?.name || "Unknown")}
+              </p>
+            </div>
+            <div className="text-right">
+              {typeof order.book?.price === "number" && (
+                <div className="text-lg font-semibold text-emerald-600">R{order.book.price}</div>
+              )}
+              <div className="text-xs text-gray-500">{new Date(order.created_at).toLocaleDateString()}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const OrderShipmentSummary: React.FC<{ order: Order }> = ({ order }) => {
+    const courier = order.selected_courier_name || order.delivery_data?.provider;
+    const service = order.selected_service_name || order.delivery_data?.service_level;
+    const tracking = order.tracking_number || order.tracking_data?.tracking_number;
+    const deliveryProgress = (order.delivery_status || "").toLowerCase();
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+        <div className="space-y-1">
+          <div className="text-gray-500">Order status</div>
+          <div className="font-medium capitalize">{order.status.replaceAll("_", " ")}</div>
+        </div>
+        <div className="space-y-1">
+          <div className="text-gray-500">Tracking number</div>
+          <div className="font-mono text-gray-700 break-all">{tracking || "—"}</div>
+        </div>
+        <div className="space-y-1">
+          <div className="text-gray-500">Courier / Service</div>
+          <div className="font-medium">{courier || "—"}{service ? ` • ${service}` : ""}</div>
+        </div>
+        <div className="space-y-1 md:col-span-3">
+          <div className="text-gray-500">Delivery progress</div>
+          <div className="flex items-center gap-2">
+            <span className={`w-2 h-2 rounded-full ${deliveryProgress === "delivered" ? "bg-green-500" : deliveryProgress === "in_transit" ? "bg-blue-500" : deliveryProgress === "pickup_failed" ? "bg-red-500" : "bg-amber-500"}`} />
+            <span className="capitalize">{deliveryProgress || "pending"}</span>
+          </div>
+        </div>
+        {order.tracking_data?.events && Array.isArray(order.tracking_data.events) && order.tracking_data.events.length > 0 && (
+          <div className="md:col-span-3">
+            <div className="text-xs text-gray-500 mb-1">Recent tracking events</div>
+            <ul className="text-xs space-y-1 max-h-32 overflow-auto pr-1">
+              {order.tracking_data.events.slice(-5).reverse().map((ev: any, idx: number) => (
+                <li key={idx} className="flex items-center gap-2 text-gray-600">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                  <span className="whitespace-nowrap">{formatDate(ev.timestamp || ev.date_time)}</span>
+                  <span className="capitalize">{(ev.status || ev.description || "").toString().toLowerCase()}</span>
+                  {ev.location && <span className="text-gray-400">• {ev.location}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div className="md:col-span-3">
+          <Alert className="border-blue-200 bg-blue-50 mt-2">
+            <AlertDescription className="text-blue-800">
+              Track your shipment on the Shipments page.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </div>
+    );
+  };
+
+  const OrderTimeline: React.FC<{ order: Order }> = ({ order }) => (
+    <div className="flex items-center space-x-4 text-sm">
+      <div className="flex items-center space-x-2">
+        <div
+          className={`w-3 h-3 rounded-full ${
+            order.status === "pending_commit"
+              ? "bg-amber-500"
+              : ["committed", "pending_delivery", "in_transit", "completed", "confirmed", "dispatched", "delivered"].includes(order.status)
+                ? "bg-green-500"
+                : "bg-gray-300"
+          }`}
+        />
+        <span>{order.status === "pending_commit" ? "Pending Commit" : "Confirmed"}</span>
+      </div>
+      <div className="flex-1 h-px bg-gray-200" />
+      <div className="flex items-center space-x-2">
+        <div
+          className={`w-3 h-3 rounded-full ${
+            ["pending_delivery", "in_transit", "completed", "dispatched", "delivered"].includes(order.status)
+              ? "bg-green-500"
+              : order.delivery_status === "pickup_failed"
+                ? "bg-red-500"
+                : "bg-gray-300"
+          }`}
+        />
+        <span>Pickup</span>
+      </div>
+      <div className="flex-1 h-px bg-gray-200" />
+      <div className="flex items-center space-x-2">
+        <div className={`w-3 h-3 rounded-full ${["completed", "delivered"].includes(order.status) ? "bg-green-500" : "bg-gray-300"}`} />
+        <span>Delivered</span>
+      </div>
+    </div>
+  );
+
   const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
     const userRole = getUserRole(order);
-    const isMyPurchase = userRole === "buyer";
 
     return (
       <Card className="mb-4">
         <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <CardTitle className="text-lg font-semibold">
-                {order.book?.title || order.book_title || "Unknown Book"}
-              </CardTitle>
-              <p className="text-sm text-gray-600 mt-1">
-                Order #{order.id.slice(-8)}
-              </p>
-              <p className="text-sm text-gray-500">
-                {isMyPurchase
-                  ? `Seller: ${order.seller?.name || 'Unknown'}`
-                  : `Buyer: ${order.buyer?.name || 'Unknown'}`}
-              </p>
-              {order.status === 'pending_commit' && (
-                <div className="flex items-center gap-2 mt-2">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50">
-                            Pending Commit
-                          </Badge>
-                          <Info className="h-4 w-4 text-gray-400 cursor-help" />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Waiting for seller to confirm within 48 hours</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  {(() => {
-                    const orderTime = new Date(order.created_at);
-                    const expiryTime = new Date(orderTime.getTime() + 48 * 60 * 60 * 1000);
-                    const totalMs = Math.max(0, expiryTime.getTime() - currentTime.getTime());
-                    const totalMinutes = Math.floor(totalMs / (1000 * 60));
-                    const hours = Math.floor(totalMinutes / 60);
-                    const minutes = totalMinutes % 60;
-                    const isUrgent = hours < 12;
-
-                    // Format time remaining display - always show minutes
-                    const getTimeDisplay = () => {
-                      if (totalMinutes <= 0) return "Expired";
-                      if (hours > 0) {
-                        return `${hours}h ${minutes}m`;
-                      }
-                      return `${minutes}m`;
-                    };
-
-                    if (totalMinutes > 0) {
-                      return (
-                        <Badge variant="outline" className={`${isUrgent ? 'text-red-600 border-red-300 bg-red-50 animate-pulse' : 'text-blue-600 border-blue-300 bg-blue-50'}`}>
-                          <Clock className="h-3 w-3 mr-1" />
-                          {getTimeDisplay()} remaining
-                        </Badge>
-                      );
-                    } else {
-                      return (
-                        <Badge variant="outline" className="text-red-600 border-red-300 bg-red-50">
-                          <AlertTriangle className="h-3 w-3 mr-1" />
-                          Expired
-                        </Badge>
-                      );
-                    }
-                  })()}
-                </div>
-              )}
-            </div>
-            <div className="text-right">
-              <p className="text-lg font-semibold">R{order.total_amount}</p>
-              <p className="text-xs text-gray-500">
-                {new Date(order.created_at).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
+          <OrderHeaderDetails order={order} />
         </CardHeader>
-
         <CardContent className="space-y-4">
-          {/* Order Status Alerts */}
-          {order.delivery_status === "pickup_failed" &&
-            userRole === "seller" && (
-              <Alert className="border-orange-200 bg-orange-50">
-                <AlertTriangle className="h-4 w-4 text-orange-600" />
-                <AlertDescription className="text-orange-800">
-                  <strong>Action Required:</strong> Courier attempted pickup but
-                  you were unavailable. Please reschedule or cancel the order
-                  within 24 hours.
-                </AlertDescription>
-              </Alert>
-            )}
+          {/* Alerts for specific states */}
+          {order.delivery_status === "pickup_failed" && userRole === "seller" && (
+            <Alert className="border-orange-200 bg-orange-50">
+              <AlertTriangle className="h-4 w-4 text-orange-600" />
+              <AlertDescription className="text-orange-800">
+                <strong>Action Required:</strong> Courier attempted pickup but you were unavailable. Please reschedule or cancel within 24 hours.
+              </AlertDescription>
+            </Alert>
+          )}
 
-          {order.delivery_status === "pickup_failed" &&
-            userRole === "buyer" && (
-              <Alert className="border-blue-200 bg-blue-50">
-                <Clock className="h-4 w-4 text-blue-600" />
-                <AlertDescription className="text-blue-800">
-                  <strong>Pickup Delayed:</strong> The seller missed the
-                  scheduled pickup. They must reschedule or cancel. We'll update
-                  you once they take action.
-                </AlertDescription>
-              </Alert>
-            )}
+          {order.delivery_status === "pickup_failed" && userRole === "buyer" && (
+            <Alert className="border-blue-200 bg-blue-50">
+              <Clock className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-blue-800">
+                <strong>Pickup Delayed:</strong> The seller missed the scheduled pickup. We'll update you once they take action.
+              </AlertDescription>
+            </Alert>
+          )}
 
           {order.delivery_status === "rescheduled_by_seller" && (
             <Alert className="border-blue-200 bg-blue-50">
               <Calendar className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-800">
-                <strong>Pickup Rescheduled:</strong> New pickup date:{" "}
-                {order.pickup_scheduled_at
-                  ? new Date(order.pickup_scheduled_at).toLocaleDateString(
-                      "en-ZA",
-                      {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      },
-                    )
-                  : "TBD"}
+                <strong>Pickup Rescheduled</strong>
               </AlertDescription>
             </Alert>
           )}
 
-          {/* Delivery Timeline */}
-          <div className="flex items-center space-x-4 text-sm">
-            <div className="flex items-center space-x-2">
-              <div
-                className={`w-3 h-3 rounded-full ${
-                  order.status === "pending_commit"
-                    ? "bg-amber-500"
-                    : ["committed", "pending_delivery", "in_transit", "completed", "confirmed", "dispatched", "delivered"].includes(
-                        order.status,
-                      )
-                      ? "bg-green-500"
-                      : "bg-gray-300"
-                }`}
-              />
-              <span>{
-                order.status === "pending_commit"
-                  ? "Pending Commit"
-                  : "Confirmed"
-              }</span>
-            </div>
-            <div className="flex-1 h-px bg-gray-200" />
-            <div className="flex items-center space-x-2">
-              <div
-                className={`w-3 h-3 rounded-full ${
-                  ["pending_delivery", "in_transit", "completed", "dispatched", "delivered"].includes(order.status)
-                    ? "bg-green-500"
-                    : order.delivery_status === "pickup_failed"
-                      ? "bg-red-500"
-                      : "bg-gray-300"
-                }`}
-              />
-              <span>Pickup</span>
-            </div>
-            <div className="flex-1 h-px bg-gray-200" />
-            <div className="flex items-center space-x-2">
-              <div
-                className={`w-3 h-3 rounded-full ${
-                  ["completed", "delivered"].includes(order.status) ? "bg-green-500" : "bg-gray-300"
-                }`}
-              />
-              <span>Delivered</span>
-            </div>
-          </div>
+          <OrderTimeline order={order} />
+          <OrderShipmentSummary order={order} />
 
-          {/* Order Actions */}
-          <OrderActionsPanel
-            order={order}
-            userRole={userRole}
-            onOrderUpdate={fetchOrders}
-          />
+          <OrderActionsPanel order={order} userRole={userRole} onOrderUpdate={fetchOrders} />
+
+          {/* Footer info for completed/cancelled */}
+          {["delivered", "completed"].includes(order.status) && (
+            <div className="text-xs text-gray-500">Completed on {formatDate(order.updated_at)}</div>
+          )}
+          {order.status === "cancelled" && (
+            <div className="text-xs text-red-600">Cancelled: {order.cancellation_reason || "Cancelled"} {order.cancelled_at ? `• ${formatDate(order.cancelled_at)}` : ""}</div>
+          )}
         </CardContent>
       </Card>
     );
@@ -362,6 +312,11 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
       </div>
     );
   }
+
+  // Group orders into Active, Completed, Cancelled
+  const activeOrders = orders.filter((o) => !["cancelled", "delivered", "completed"].includes(o.status));
+  const completedOrders = orders.filter((o) => ["delivered", "completed"].includes(o.status));
+  const cancelledOrders = orders.filter((o) => ["cancelled"].includes(o.status));
 
   return (
     <div className="space-y-6">
@@ -404,21 +359,58 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
         </Card>
       </div>
 
-      {/* Orders List */}
+      {/* Active Orders */}
       <div className="mt-6">
-        {orders.length === 0 ? (
+        <h3 className="text-lg font-semibold mb-3">Active Orders</h3>
+        {activeOrders.length === 0 ? (
           <Card>
-            <CardContent className="text-center py-12">
+            <CardContent className="text-center py-8">
               <Package className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-              <h3 className="text-lg font-semibold mb-2">No orders found</h3>
-              <p className="text-gray-600">
-                You haven't made any orders yet.
-              </p>
+              <h4 className="text-base font-semibold mb-2">No active orders</h4>
+              <p className="text-gray-600">New orders will appear here once created or committed.</p>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-4">
-            {orders.map((order) => (
+            {activeOrders.map((order) => (
+              <OrderCard key={order.id} order={order} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Completed Orders */}
+      <div className="mt-6">
+        <h3 className="text-lg font-semibold mb-3">Completed Orders</h3>
+        {completedOrders.length === 0 ? (
+          <Card>
+            <CardContent className="text-center py-8">
+              <CheckCircle className="h-12 w-12 mx-auto mb-4 text-green-400" />
+              <p className="text-gray-600">No completed orders yet.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            {completedOrders.map((order) => (
+              <OrderCard key={order.id} order={order} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Cancelled Orders */}
+      <div className="mt-6">
+        <h3 className="text-lg font-semibold mb-3">Cancelled Orders</h3>
+        {cancelledOrders.length === 0 ? (
+          <Card>
+            <CardContent className="text-center py-8">
+              <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-red-400" />
+              <p className="text-gray-600">No cancelled orders.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            {cancelledOrders.map((order) => (
               <OrderCard key={order.id} order={order} />
             ))}
           </div>

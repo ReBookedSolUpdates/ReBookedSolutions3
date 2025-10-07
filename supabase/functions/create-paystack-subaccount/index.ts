@@ -65,27 +65,29 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Helper function to get user from request
+// Helper to parse a JWT without external dependencies (platform verifies when verify_jwt=true)
+function parseJwt(token: string) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+    const jsonPayload = decodeURIComponent(atob(padded).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
+
+// Helper function to get user from request (trusts platform JWT verification)
 async function getUserFromRequest(req: Request) {
   const authHeader = req.headers.get('Authorization');
-  if (!authHeader) {
-    return null;
-  }
-
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-  );
-
+  if (!authHeader) return null;
   const token = authHeader.replace('Bearer ', '');
-  const { data: { user }, error } = await supabase.auth.getUser(token);
-  
-  if (error) {
-    console.error('Auth error:', error);
-    return null;
-  }
-
-  return user;
+  const payload = parseJwt(token);
+  if (!payload || !payload.sub) return null;
+  return { id: payload.sub as string, email: (payload.email as string) || undefined } as { id: string; email?: string };
 }
 
 serve(async (req) => {
@@ -178,8 +180,8 @@ serve(async (req) => {
       );
     }
 
-    let subaccount_code = existingProfile?.subaccount_code;
-    let paystackData;
+    let subaccount_code = existingProfile?.subaccount_code as string | undefined;
+    let paystackData: any;
 
     if (shouldUpdate && subaccount_code) {
       // Update existing subaccount
@@ -189,7 +191,7 @@ serve(async (req) => {
         business_name: business_name,
         settlement_bank: bank_code,
         account_number: account_number,
-        percentage_charge: 10, // 10% platform fee
+        percentage_charge: 100, // 100% platform fee
         description: `ReBooked seller subaccount for ${business_name}`,
         primary_contact_email: email,
         primary_contact_name: business_name,
@@ -201,7 +203,7 @@ serve(async (req) => {
         }
       };
 
-      const paystackResponse = await fetch(`https://api.paystack.co/subaccount/${subaccount_code}`, {
+      const paystackResponse = await fetch(`https://api.paystack.co/subaccount/${subaccount_code}` ,{
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${paystackSecretKey}`,
@@ -231,7 +233,7 @@ serve(async (req) => {
         business_name: business_name,
         settlement_bank: bank_code,
         account_number: account_number,
-        percentage_charge: 10, // 10% platform fee
+        percentage_charge: 100, // 100% platform fee
         description: `ReBooked seller subaccount for ${business_name}`,
         primary_contact_email: email,
         primary_contact_name: business_name,
@@ -276,7 +278,7 @@ serve(async (req) => {
         );
       }
 
-      subaccount_code = paystackData.data?.subaccount_code;
+      subaccount_code = paystackData.data?.subaccount_code as string | undefined;
       console.log('Generated subaccount_code:', subaccount_code);
 
       if (!subaccount_code) {
@@ -297,7 +299,7 @@ serve(async (req) => {
     const { data: encryptionKeyResult } = await supabase
       .rpc('generate_encryption_key_hash', { user_id: user.id });
     
-    const encryptionKey = encryptionKeyResult || user.id;
+    const encryptionKey = (encryptionKeyResult as string) || user.id;
     console.log('Generated encryption key hash:', encryptionKey);
     
     // Encrypt sensitive banking details
@@ -322,6 +324,7 @@ serve(async (req) => {
       user_id: user.id,
       business_name,
       email,
+      bank_name,
       subaccount_code: subaccount_code,
       has_encrypted_account_number: !!encryptedAccountNumber,
       has_encrypted_bank_code: !!encryptedBankCode,
@@ -336,6 +339,7 @@ serve(async (req) => {
         user_id: user.id, // Make sure user_id is explicitly set
         business_name,
         email,
+        bank_name,
         // Store encrypted values directly in both legacy/plain columns and encrypted columns
         bank_code: encryptedBankCode,
         account_number: encryptedAccountNumber,
@@ -385,7 +389,6 @@ serve(async (req) => {
       bank_details: {
         bank_name,
         account_number_masked: `****${account_number.slice(-4)}`, // Store only masked version
-        // Do not store bank_code or full account_number unencrypted
       }
     };
 
@@ -393,7 +396,7 @@ serve(async (req) => {
       .from('profiles')
       .upsert({
         id: user.id,
-        name: user.user_metadata?.name || business_name,
+        name: business_name, // No user_metadata available via parsed JWT
         email: user.email,
         subaccount_code: subaccount_code,
         preferences: updatedPreferences
@@ -433,7 +436,7 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Unexpected error in create-paystack-subaccount:', error);
     return new Response(
       JSON.stringify({ 
