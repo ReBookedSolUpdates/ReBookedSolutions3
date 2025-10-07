@@ -22,6 +22,8 @@ serve(async (req) => {
 
     const { order_id, shipment_id, tracking_number, reason } = bodyResult.data!;
 
+    console.log("Cancel request:", { order_id, shipment_id, tracking_number, reason });
+
     if (!order_id && !shipment_id && !tracking_number) {
       return new Response(
         JSON.stringify({ success: false, error: "order_id, shipment_id, or tracking_number required" }),
@@ -44,18 +46,25 @@ serve(async (req) => {
     }
 
     const BOBGO_BASE_URL = resolveBaseUrl();
+    console.log("Using BobGo URL:", BOBGO_BASE_URL);
+
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
     let identifier = shipment_id || tracking_number || null;
     if (!identifier && order_id) {
-      const { data: order } = await supabase
+      const { data: order, error: orderError } = await supabase
         .from("orders")
         .select("tracking_number, delivery_data")
         .eq("id", order_id)
         .single();
+
+      if (orderError) {
+        console.error("Error fetching order:", orderError);
+      }
+
       if (order) {
-        // prefer tracking_number, fallback to stored shipment_id
         identifier = order.tracking_number || order.delivery_data?.shipment_id || null;
+        console.log("Found identifier from order:", identifier);
       }
     }
 
@@ -73,7 +82,7 @@ serve(async (req) => {
           .eq("id", order_id);
       }
       return new Response(
-        JSON.stringify({ success: true, simulated: true, message: "Simulated cancellation" }),
+        JSON.stringify({ success: true, simulated: true, message: "Simulated cancellation - API key not configured" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -86,6 +95,7 @@ serve(async (req) => {
     }
 
     try {
+      console.log("Cancelling shipment:", identifier);
       const resp = await fetch(`${BOBGO_BASE_URL}/shipments/cancel`, {
         method: "POST",
         headers: {
@@ -101,14 +111,15 @@ serve(async (req) => {
 
       if (!resp.ok) {
         const text = await resp.text().catch(() => "");
-        console.error("Bobgo cancel HTTP error:", resp.status, text);
-        throw new Error(`Bobgo cancel HTTP ${resp.status}: ${text}`);
+        console.error("BobGo cancel HTTP error:", resp.status, text);
+        throw new Error(`BobGo cancel HTTP ${resp.status}: ${text}`);
       }
 
       const data = await resp.json();
+      console.log("Cancellation response:", data);
 
       if (order_id) {
-        await supabase
+        const { error: updateError } = await supabase
           .from("orders")
           .update({
             status: "cancelled",
@@ -118,6 +129,10 @@ serve(async (req) => {
             updated_at: new Date().toISOString(),
           })
           .eq("id", order_id);
+
+        if (updateError) {
+          console.error("Error updating order:", updateError);
+        }
       } else if (identifier) {
         const { data: orders } = await supabase
           .from("orders")
