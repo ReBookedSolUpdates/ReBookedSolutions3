@@ -149,6 +149,13 @@ serve(async (req) => {
     const buyerPhone = order.buyer_phone_number || "0000000000";
 
     // Prepare Bob Go rates request (match current bobgo-get-rates API shape)
+    // Verify buyer selected a courier during checkout
+    if (!order.selected_courier_slug || !order.selected_service_code) {
+      throw new Error("No courier selected during checkout");
+    }
+
+    console.log(`[commit-to-sale] Using buyer's selected courier: ${order.selected_courier_name} - ${order.selected_service_name}`);
+
     const fromAddress = {
       streetAddress: pickupAddress.streetAddress || pickupAddress.street_address || "",
       suburb: pickupAddress.local_area || pickupAddress.suburb || pickupAddress.city || "",
@@ -174,64 +181,14 @@ serve(async (req) => {
       value: Number(item?.price) || 100,
     }));
 
-    const declaredValue = parcels.reduce((sum, p) => sum + (p.value || 0), 0) || order.total_amount || order.amount || 0;
-
-    console.log(`[commit-to-sale] Getting Bob Go rates`);
-    const ratesResponse = await supabase.functions.invoke("bobgo-get-rates", {
-      body: { fromAddress, toAddress, parcels, declaredValue },
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (ratesResponse.error) {
-      console.error("[commit-to-sale] Failed to get rates:", ratesResponse.error);
-      throw new Error("Failed to get shipping rates");
-    }
-
-    const quotes: any[] = ratesResponse.data?.quotes || [];
-    if (!Array.isArray(quotes) || quotes.length === 0) {
-      throw new Error("No shipping quotes available");
-    }
-
-    // Try to use buyer's selected courier from order columns
-    let selectedQuote: any = null;
-    
-    if (order.selected_courier_slug && order.selected_service_code) {
-      console.log(`[commit-to-sale] Looking for buyer's selected courier: ${order.selected_courier_slug} / ${order.selected_service_code}`);
-      
-      selectedQuote = quotes.find(
-        (q: any) => q.provider_slug === order.selected_courier_slug &&
-                    q.service_level_code === order.selected_service_code
-      );
-      
-      if (selectedQuote) {
-        console.log(`[commit-to-sale] Using buyer's selected courier: ${selectedQuote.provider_name} - ${selectedQuote.service_level_name}`);
-      } else {
-        console.warn(`[commit-to-sale] Buyer's selected courier not available, falling back to cheapest`);
-      }
-    }
-    
-    // Fallback to cheapest quote if buyer selection not found
-    if (!selectedQuote) {
-      selectedQuote = quotes
-        .slice()
-        .sort((a: any, b: any) => {
-          const costA = typeof a.cost === "number" ? a.cost : (typeof a.rate_amount === "number" ? a.rate_amount : Infinity);
-          const costB = typeof b.cost === "number" ? b.cost : (typeof b.rate_amount === "number" ? b.rate_amount : Infinity);
-          return costA - costB;
-        })[0];
-      console.log(`[commit-to-sale] Using cheapest available quote: ${selectedQuote.provider_name} - ${selectedQuote.service_level_name}`);
-    }
-
-    const providerName = selectedQuote.provider_name || selectedQuote.carrier || selectedQuote.provider || "bobgo";
-    const serviceName = selectedQuote.service_level_name || selectedQuote.service_name || selectedQuote.service_level_code || "Standard";
-
-    console.log(`[commit-to-sale] Selected quote: ${providerName} - ${serviceName}`);
+    const providerName = order.selected_courier_name || "bobgo";
+    const serviceName = order.selected_service_name || "Standard";
 
     // Create shipment with Bob Go (match current bobgo-create-shipment API shape)
     const shipmentPayload = {
       order_id,
-      provider_slug: selectedQuote.provider_slug,
-      service_level_code: selectedQuote.service_level_code,
+      provider_slug: order.selected_courier_slug,
+      service_level_code: order.selected_service_code,
       pickup_address: {
         company: sellerName,
         streetAddress: fromAddress.streetAddress,
@@ -261,6 +218,7 @@ serve(async (req) => {
     console.log(`[commit-to-sale] Creating Bob Go shipment`);
     const shipmentResponse = await supabase.functions.invoke("bobgo-create-shipment", {
       body: shipmentPayload,
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (shipmentResponse.error) {
@@ -282,10 +240,10 @@ serve(async (req) => {
         delivery_data: {
           ...(order.delivery_data || {}),
           provider: providerName,
-          provider_slug: selectedQuote.provider_slug,
+          provider_slug: order.selected_courier_slug,
           service_level: serviceName,
-          service_level_code: selectedQuote.service_level_code,
-          rate_amount: selectedQuote.cost ?? selectedQuote.rate_amount,
+          service_level_code: order.selected_service_code,
+          rate_amount: order.selected_shipping_cost,
           shipment_id: shipmentData.shipment_id,
           waybill_url: shipmentData.waybill_url,
         },
