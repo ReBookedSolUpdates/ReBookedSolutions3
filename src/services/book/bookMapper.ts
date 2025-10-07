@@ -34,7 +34,7 @@ export const mapBookFromDatabase = (bookData: BookQueryResult): Book => {
     frontCover: bookData.front_cover || undefined,
     backCover: bookData.back_cover || undefined,
     insidePages: bookData.inside_pages || undefined,
-    additionalImages: Array.isArray(bookData.additional_images) ? bookData.additional_images : undefined,
+    additionalImages: Array.isArray(bookData.additional_images) ? bookData.additional_images : [],
     sold: bookData.sold || false,
     createdAt: bookData.created_at || new Date().toISOString(),
     grade: bookData.grade,
