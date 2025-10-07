@@ -76,7 +76,7 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
       front_cover: bookData.frontCover,
       back_cover: bookData.backCover,
       inside_pages: bookData.insidePages,
-      additional_images: bookData.additionalImages && bookData.additionalImages.length > 0 ? bookData.additionalImages.filter(Boolean) : null,
+      additional_images: bookData.additionalImages && bookData.additionalImages.length > 0 ? bookData.additionalImages.filter(Boolean) : [],
       grade: bookData.grade,
       university_year: bookData.universityYear,
       province: province,
@@ -224,7 +224,7 @@ export const updateBook = async (
     if (bookData.insidePages !== undefined)
       updateData.inside_pages = bookData.insidePages;
     if (bookData.additionalImages !== undefined)
-      updateData.additional_images = bookData.additionalImages && bookData.additionalImages.length > 0 ? bookData.additionalImages.filter(Boolean) : null;
+      updateData.additional_images = bookData.additionalImages && bookData.additionalImages.length > 0 ? bookData.additionalImages.filter(Boolean) : [];
     if (bookData.grade !== undefined) updateData.grade = bookData.grade;
     if (bookData.universityYear !== undefined)
       updateData.university_year = bookData.universityYear;
