@@ -621,103 +621,100 @@ const Profile = () => {
 
           {/* Activity Tab */}
           <TabsContent value="activity" className="space-y-6">
-            {(() => {
-              const ActivityCommits: React.FC = () => {
-                const { user } = useAuth();
-                const { pendingCommits, refreshPendingCommits, declineBook, isCommitting, isDeclining } = useCommit();
-                const [now, setNow] = useState(new Date());
-                useEffect(() => {
-                  refreshPendingCommits().catch(() => {});
-                  const t = setInterval(() => setNow(new Date()), 5000);
-                  return () => clearInterval(t);
-                }, [refreshPendingCommits]);
-                if (!pendingCommits || pendingCommits.length === 0) return null;
-                return (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Clock className="h-5 w-5 text-amber-600" /> Pending Commits
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <Alert className="border-amber-200 bg-amber-50">
-                        <Clock className="h-4 w-4 text-amber-600" />
-                        <AlertDescription className="text-amber-800">
-                          You have {pendingCommits.length} commitment{pendingCommits.length > 1 ? "s" : ""} awaiting action.
-                        </AlertDescription>
-                      </Alert>
-                      {pendingCommits.map((c: any) => {
-                        const ms = Math.max(0, new Date(c.expiresAt).getTime() - now.getTime());
-                        const mins = Math.floor(ms / 60000);
-                        const hrs = Math.floor(mins / 60);
-                        const rem = mins % 60;
-                        const urgent = hrs < 12;
-                        return (
-                          <Card key={c.id} className={urgent ? "border-red-200 bg-red-50" : "border-amber-200 bg-amber-50"}>
-                            <CardContent className="p-4">
-                              <div className="flex flex-col md:flex-row gap-4 md:items-start">
-                                <div className="w-16 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                                  <img src={c.imageUrl || "/placeholder.svg"} onError={(e: any) => (e.currentTarget.src = "/placeholder.svg")} className="w-full h-full object-cover" alt={c.bookTitle} />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <h3 className="font-semibold text-slate-800 line-clamp-1">{c.bookTitle}</h3>
-                                    {urgent && <Badge className="bg-red-500 text-white">URGENT</Badge>}
-                                  </div>
-                                  {c.author && <p className="text-sm text-gray-600 mb-2">by {c.author}</p>}
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600 mb-3">
-                                    <div className="flex items-center gap-2"><User className="h-4 w-4" />Buyer: <span className="font-medium">{c.buyerName}</span></div>
-                                    <div className="flex items-center gap-2"><ShoppingBag className="h-4 w-4 text-emerald-600" />Price: <span className="font-bold text-emerald-700">R{c.price?.toFixed?.(2) || c.price}</span></div>
-                                  </div>
-                                  <div className="inline-flex items-center gap-2 px-2 py-1 rounded bg-white/70">
-                                    <Clock className={urgent ? "h-4 w-4 text-red-500" : "h-4 w-4 text-amber-600"} />
-                                    <span className={urgent ? "text-red-600 font-medium" : "text-amber-700 font-medium"}>
-                                      {mins <= 0 ? "Expired" : (hrs > 0 ? `${hrs}h ${rem}m` : `${rem}m`)} remaining
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="flex gap-2 md:flex-col md:ml-4">
-                                  <EnhancedOrderCommitButton
-                                    orderId={c.id}
-                                    sellerId={user?.id || ""}
-                                    bookTitle={c.bookTitle}
-                                    buyerName={c.buyerName}
-                                    onCommitSuccess={() => refreshPendingCommits().catch(() => {})}
-                                    disabled={isCommitting || isDeclining}
-                                  />
-                                  <Button
-                                    variant="destructive"
-                                    disabled={isCommitting || isDeclining}
-                                    onClick={async (e) => {
-                                      e.preventDefault();
-                                      try { await declineBook(c.id); await refreshPendingCommits(); } catch {}
-                                    }}
-                                  >
-                                    <X className="h-4 w-4 mr-1" /> Decline
-                                  </Button>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
-                    </CardContent>
-                  </Card>
-                );
-              };
-              return <ActivityCommits />;
-            })()}
+            <Tabs defaultValue="commits" className="w-full">
+              <TabsList className="grid grid-cols-2 w-full">
+                <TabsTrigger value="commits" className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" /> Commits
+                </TabsTrigger>
+                <TabsTrigger value="orders" className="flex items-center gap-2">
+                  <ShoppingBag className="h-4 w-4" /> Ongoing Orders
+                </TabsTrigger>
+              </TabsList>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ShoppingBag className="h-5 w-5 text-blue-600" /> Ongoing Orders
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+              <TabsContent value="commits" className="space-y-4">
+                {(() => {
+                  const ActivityCommits: React.FC = () => {
+                    const { user } = useAuth();
+                    const { pendingCommits, refreshPendingCommits, declineBook, isCommitting, isDeclining } = useCommit();
+                    const [now, setNow] = useState(new Date());
+                    useEffect(() => {
+                      refreshPendingCommits().catch(() => {});
+                      const t = setInterval(() => setNow(new Date()), 5000);
+                      return () => clearInterval(t);
+                    }, [refreshPendingCommits]);
+                    if (!pendingCommits || pendingCommits.length === 0) return (
+                      <Alert className="border-amber-200 bg-amber-50">
+                        <AlertDescription className="text-amber-800">No pending commits.</AlertDescription>
+                      </Alert>
+                    );
+                    return (
+                      <div className="space-y-4">
+                        {pendingCommits.map((c: any) => {
+                          const ms = Math.max(0, new Date(c.expiresAt).getTime() - now.getTime());
+                          const mins = Math.floor(ms / 60000);
+                          const hrs = Math.floor(mins / 60);
+                          const rem = mins % 60;
+                          const urgent = hrs < 12;
+                          return (
+                            <Card key={c.id} className={urgent ? "border-red-200 bg-red-50" : "border-amber-200 bg-amber-50"}>
+                              <CardContent className="p-4">
+                                <div className="flex flex-col md:flex-row gap-4 md:items-start">
+                                  <div className="w-16 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                                    <img src={c.imageUrl || "/placeholder.svg"} onError={(e: any) => (e.currentTarget.src = "/placeholder.svg")} className="w-full h-full object-cover" alt={c.bookTitle} />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <h3 className="font-semibold text-slate-800 line-clamp-1">{c.bookTitle}</h3>
+                                      {urgent && <Badge className="bg-red-500 text-white">URGENT</Badge>}
+                                    </div>
+                                    {c.author && <p className="text-sm text-gray-600 mb-2">by {c.author}</p>}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600 mb-3">
+                                      <div className="flex items-center gap-2"><User className="h-4 w-4" />Buyer: <span className="font-medium">{c.buyerName}</span></div>
+                                      <div className="flex items-center gap-2"><ShoppingBag className="h-4 w-4 text-emerald-600" />Price: <span className="font-bold text-emerald-700">R{c.price?.toFixed?.(2) || c.price}</span></div>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2 px-2 py-1 rounded bg-white/70">
+                                      <Clock className={urgent ? "h-4 w-4 text-red-500" : "h-4 w-4 text-amber-600"} />
+                                      <span className={urgent ? "text-red-600 font-medium" : "text-amber-700 font-medium"}>
+                                        {mins <= 0 ? "Expired" : (hrs > 0 ? `${hrs}h ${rem}m` : `${rem}m`)} remaining
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="flex gap-2 md:flex-col md:ml-4">
+                                    <EnhancedOrderCommitButton
+                                      orderId={c.id}
+                                      sellerId={user?.id || ""}
+                                      bookTitle={c.bookTitle}
+                                      buyerName={c.buyerName}
+                                      onCommitSuccess={() => refreshPendingCommits().catch(() => {})}
+                                      disabled={isCommitting || isDeclining}
+                                    />
+                                    <Button
+                                      variant="destructive"
+                                      disabled={isCommitting || isDeclining}
+                                      onClick={async (e) => {
+                                        e.preventDefault();
+                                        try { await declineBook(c.id); await refreshPendingCommits(); } catch {}
+                                      }}
+                                    >
+                                      <X className="h-4 w-4 mr-1" /> Decline
+                                    </Button>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                    );
+                  };
+                  return <ActivityCommits />;
+                })()}
+              </TabsContent>
+
+              <TabsContent value="orders">
                 <OrderManagementView />
-              </CardContent>
-            </Card>
+              </TabsContent>
+            </Tabs>
           </TabsContent>
 
           {/* Settings Tab */}
@@ -774,39 +771,42 @@ const Profile = () => {
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="0821234567 or +27821234567"
                         className="w-full pl-10 px-3 py-2 border border-gray-300 rounded-md"
+                        readOnly={Boolean(phone)}
                       />
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={async () => {
-                        try {
-                          const phoneTrim = phone.trim();
-                          if (phoneTrim && !/^(\+27|0)[1-9]\d{8}$/.test(phoneTrim)) {
-                            toast.error("Enter a valid South African phone number");
-                            return;
+                    {phone ? (
+                      <Button asChild variant="outline" size="sm" className="cursor-not-allowed opacity-70">
+                        <a href="/contact">Contact Support to change</a>
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={async () => {
+                          try {
+                            const phoneTrim = phone.trim();
+                            if (phoneTrim && !/^(\+27|0)[1-9]\d{8}$/.test(phoneTrim)) {
+                              toast.error("Enter a valid South African phone number");
+                              return;
+                            }
+                            const { error } = await supabase.auth.updateUser({ data: { phone_number: phoneTrim || null, phone: phoneTrim || null } });
+                            if (error) throw error;
+                            if (user?.id) {
+                              const { error: profileErr } = await supabase
+                                .from('profiles')
+                                .update({ phone_number: phoneTrim || null })
+                                .eq('id', user.id);
+                              if (profileErr) throw profileErr;
+                            }
+                            toast.success("Phone number saved");
+                          } catch (err) {
+                            toast.error("Failed to save phone");
                           }
-                          // Update Supabase auth user metadata (both phone_number and phone for backward compatibility)
-                          const { error } = await supabase.auth.updateUser({ data: { phone_number: phoneTrim || null, phone: phoneTrim || null } });
-                          if (error) throw error;
-
-                          // Also persist to profiles table for server-side usage
-                          if (user?.id) {
-                            const { error: profileErr } = await supabase
-                              .from('profiles')
-                              .update({ phone_number: phoneTrim || null })
-                              .eq('id', user.id);
-                            if (profileErr) throw profileErr;
-                          }
-
-                          toast.success("Phone number updated");
-                        } catch (err) {
-                          toast.error("Failed to update phone");
-                        }
-                      }}
-                    >
-                      Save
-                    </Button>
+                        }}
+                      >
+                        Save
+                      </Button>
+                    )}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">Used for delivery updates and account security.</p>
                 </div>
