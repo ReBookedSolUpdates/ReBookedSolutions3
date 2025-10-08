@@ -56,6 +56,7 @@ const EnhancedBursaryListing = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<BursaryFilters>({});
   const [expandedBursary, setExpandedBursary] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Filter university bursaries only
   const filteredBursaries = useMemo(() => {
@@ -277,350 +278,199 @@ const EnhancedBursaryListing = () => {
 
   return (
     <div className="space-y-6">
-      {/* Hero Section */}
-      <div className="text-center space-y-4 bg-gradient-to-r from-green-600 via-book-600 to-emerald-600 text-white p-8 rounded-xl">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <GraduationCap className="h-12 w-12" />
-          <h1 className="text-4xl font-bold">
-            University Bursary Opportunities
+      {/* Header */}
+      <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+        <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-emerald-200/40 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-green-200/40 blur-3xl" aria-hidden="true" />
+        <div className="relative text-center space-y-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">Updated Weekly</div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            <span className="bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">University Bursaries</span>
           </h1>
-        </div>
-        <p className="text-xl max-w-3xl mx-auto opacity-90">
-          Unlock your educational dreams with comprehensive university funding
-          opportunities. Find the perfect bursary for your degree and career
-          aspirations.
-        </p>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6 max-w-3xl mx-auto">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-            <div className="text-2xl font-bold">
-              {filteredBursaries.length}+
-            </div>
-            <div className="text-sm opacity-90">University Bursaries</div>
-          </div>
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-            <div className="text-2xl font-bold">R2B+</div>
-            <div className="text-sm opacity-90">Available Funding</div>
-          </div>
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-            <div className="text-2xl font-bold">All Fields</div>
-            <div className="text-sm opacity-90">Study Areas</div>
-          </div>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Discover verified funding opportunities for your studies. Filter by field, province, requirements, and more.
+          </p>
         </div>
       </div>
 
-      {/* High School Student Information */}
-      <Card className="border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+      {/* Info */}
+      <Card className="border border-gray-200 bg-white">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl text-green-800 flex items-center justify-center gap-2">
-            <BookOpen className="h-6 w-6" />
-            Stay Updated on Bursary Opportunities
+          <CardTitle className="text-base sm:text-lg text-gray-900 flex items-center justify-center gap-2">
+            <BookOpen className="h-5 w-5 text-emerald-600" /> Tips & Updates
           </CardTitle>
-          <CardDescription className="text-lg text-green-700">
-            Get the latest news on bursaries and educational funding. Check{" "}
-            <a
-              href="https://rebookednews.co.za"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-green-600 hover:text-green-800 underline font-semibold"
-            >
-              ReBooked News
-            </a>{" "}
-            for updates on new opportunities and application deadlines
+          <CardDescription className="text-gray-600">
+            Check <a href="https://rebookednews.co.za" target="_blank" rel="noopener noreferrer" className="text-emerald-700 hover:text-emerald-900 underline">ReBooked News</a> for bursary updates and deadlines.
           </CardDescription>
         </CardHeader>
       </Card>
 
-      {/* Search and Filters */}
-      <Card className="shadow-sm">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-xl font-semibold text-green-800 flex items-center gap-2">
-                <Search className="h-5 w-5" />
-                Find Your Perfect Bursary
-              </CardTitle>
-              <CardDescription className="text-muted-foreground mt-1">
-                Use the filters below to discover bursaries that match your
-                academic goals and financial needs
-              </CardDescription>
-            </div>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2 border-green-200 text-green-700 hover:bg-green-50"
-                >
-                  <Info className="h-4 w-4" />
-                  Help
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>
-                    Understanding Bursaries & Requirements
-                  </DialogTitle>
-                  <DialogDescription>
-                    Your guide to university bursary applications and high
-                    school preparation
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 text-sm">
-                  <div>
-                    <h4 className="font-semibold mb-2">What are Bursaries?</h4>
-                    <p>
-                      Bursaries are financial assistance programs that help
-                      students pay for their education. Unlike loans, bursaries
-                      typically don't need to be repaid, making them an
-                      excellent form of financial aid.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">
-                      For High School Students:
-                    </h4>
-                    <p>
-                      Each bursary shows the Grade 11 and Matric marks you need
-                      to achieve. Start preparing early:
-                    </p>
-                    <ul className="list-disc ml-4 space-y-1 mt-2">
-                      <li>
-                        <strong>Grade 11:</strong> Aim for 5-10% higher than the
-                        minimum requirement
-                      </li>
-                      <li>
-                        <strong>Matric:</strong> Must meet or exceed the stated
-                        minimum average
-                      </li>
-                      <li>
-                        <strong>Subject Requirements:</strong> Focus on
-                        mathematics and science if required
-                      </li>
-                      <li>
-                        <strong>NSC Requirements:</strong> Ensure you meet
-                        National Senior Certificate standards
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div className="bg-green-50 p-3 rounded border border-green-200">
-                    <h4 className="font-semibold text-green-800 mb-2">
-                      Application Tips:
-                    </h4>
-                    <ul className="text-green-700 text-xs space-y-1">
-                      <li>
-                        • Apply early - most bursaries have strict deadlines
-                      </li>
-                      <li>• Start preparing documents in Grade 11</li>
-                      <li>• Maintain consistent academic performance</li>
-                      <li>
-                        • Apply for multiple bursaries to increase chances
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          {/* Search Bar Section */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-muted-foreground">
-              Search Bursaries
-            </label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+      {/* Controls */}
+      <Card className="border border-gray-200 rounded-2xl shadow-sm">
+        <CardHeader className="pb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            {/* Search */}
+            <div className="relative w-full sm:max-w-xl">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 placeholder="Search by name, provider, or field of study..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-11 border-border focus:border-green-400 focus:ring-green-400"
+                className="pl-10 h-11"
               />
             </div>
-          </div>
-
-          {/* Main Filters Section */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-foreground border-b border-border pb-2">
-              Primary Filters
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Field of Study
-                </label>
-                <Select
-                  value={filters.fieldOfStudy || "all"}
-                  onValueChange={(value) =>
-                    updateFilter(
-                      "fieldOfStudy",
-                      value === "all" ? undefined : value,
-                    )
-                  }
-                >
-                  <SelectTrigger className="h-11 border-border focus:border-green-400">
-                    <SelectValue placeholder="Select field of study" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All fields</SelectItem>
-                    {BURSARY_FIELDS_OF_STUDY.map((field) => (
-                      <SelectItem key={field} value={field}>
-                        {field}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Province
-                </label>
-                <Select
-                  value={filters.province || "all"}
-                  onValueChange={(value) =>
-                    updateFilter(
-                      "province",
-                      value === "all" ? undefined : value,
-                    )
-                  }
-                >
-                  <SelectTrigger className="h-11 border-border focus:border-green-400">
-                    <SelectValue placeholder="Select province" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All provinces</SelectItem>
-                    {PROVINCES.map((province) => (
-                      <SelectItem key={province} value={province}>
-                        {province}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Min. Academic Average (%)
-                </label>
-                <Input
-                  type="number"
-                  placeholder="e.g. 65"
-                  min="0"
-                  max="100"
-                  value={filters.minMarks || ""}
-                  onChange={(e) =>
-                    updateFilter(
-                      "minMarks",
-                      e.target.value ? parseInt(e.target.value) : undefined,
-                    )
-                  }
-                  className="h-11 border-border focus:border-green-400 focus:ring-green-400"
-                />
-              </div>
+            {/* Actions */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-gray-300"
+                onClick={() => setShowFilters((v) => !v)}
+              >
+                <Filter className="h-4 w-4 mr-2" /> {showFilters ? "Hide Filters" : "Show Filters"}
+              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="border-gray-300">
+                    <Info className="h-4 w-4 mr-2" /> Help
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Understanding Bursaries & Requirements</DialogTitle>
+                    <DialogDescription>Your guide to applications and preparation</DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 text-sm">
+                    <p>Bursaries help fund your studies and usually don't need to be repaid. Read requirements carefully and apply early.</p>
+                    <div className="bg-emerald-50 p-3 rounded border border-emerald-200">
+                      <h4 className="font-semibold text-emerald-800 mb-1">Quick Tips</h4>
+                      <ul className="text-emerald-800 text-xs space-y-1">
+                        <li>• Apply ahead of deadlines</li>
+                        <li>• Prepare documents in advance</li>
+                        <li>• Apply to multiple opportunities</li>
+                      </ul>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
+        </CardHeader>
 
-          {/* Financial & Demographics Section */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-foreground border-b border-border pb-2">
-              Financial & Demographics
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Max. Household Income (R)
-                </label>
-                <Input
-                  type="number"
-                  placeholder="e.g. 350,000"
-                  min="0"
-                  value={filters.maxHouseholdIncome || ""}
-                  onChange={(e) =>
-                    updateFilter(
-                      "maxHouseholdIncome",
-                      e.target.value ? parseInt(e.target.value) : undefined,
-                    )
-                  }
-                  className="h-11 border-border focus:border-green-400 focus:ring-green-400"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Gender Requirements
-                </label>
-                <Select
-                  value={filters.genderSpecific || "any"}
-                  onValueChange={(value) =>
-                    updateFilter(
-                      "genderSpecific",
-                      value === "any" ? undefined : value,
-                    )
-                  }
-                >
-                  <SelectTrigger className="h-11 border-border focus:border-green-400">
-                    <SelectValue placeholder="Any gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any Gender</SelectItem>
-                    <SelectItem value="female">Female Only</SelectItem>
-                    <SelectItem value="male">Male Only</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Race Requirements
-                </label>
-                <Select
-                  value={filters.raceSpecific || "any"}
-                  onValueChange={(value) =>
-                    updateFilter(
-                      "raceSpecific",
-                      value === "any" ? undefined : value,
-                    )
-                  }
-                >
-                  <SelectTrigger className="h-11 border-border focus:border-green-400">
-                    <SelectValue placeholder="Any race" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any Race</SelectItem>
-                    <SelectItem value="african">African</SelectItem>
-                    <SelectItem value="coloured">Coloured</SelectItem>
-                    <SelectItem value="indian">Indian</SelectItem>
-                    <SelectItem value="white">White</SelectItem>
-                  </SelectContent>
-                </Select>
+        {showFilters && (
+          <CardContent className="space-y-6 pt-4">
+            {/* Primary Filters */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-gray-900">Primary Filters</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Field of Study</label>
+                  <Select
+                    value={filters.fieldOfStudy || "all"}
+                    onValueChange={(value) => updateFilter("fieldOfStudy", value === "all" ? undefined : value)}
+                  >
+                    <SelectTrigger className="h-11">
+                      <SelectValue placeholder="Select field of study" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All fields</SelectItem>
+                      {BURSARY_FIELDS_OF_STUDY.map((field) => (
+                        <SelectItem key={field} value={field}>{field}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Province</label>
+                  <Select
+                    value={filters.province || "all"}
+                    onValueChange={(value) => updateFilter("province", value === "all" ? undefined : value)}
+                  >
+                    <SelectTrigger className="h-11">
+                      <SelectValue placeholder="Select province" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All provinces</SelectItem>
+                      {PROVINCES.map((province) => (
+                        <SelectItem key={province} value={province}>{province}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Min. Academic Average (%)</label>
+                  <Input
+                    type="number"
+                    placeholder="e.g. 65"
+                    min="0"
+                    max="100"
+                    value={filters.minMarks || ""}
+                    onChange={(e) => updateFilter("minMarks", e.target.value ? parseInt(e.target.value) : undefined)}
+                    className="h-11"
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Special Criteria Section removed as per requirements */}
-
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-4 border-t border-border">
-            <Button
-              variant="outline"
-              onClick={clearFilters}
-              className="flex items-center gap-2 border-border hover:bg-muted/50"
-            >
-              <AlertCircle className="h-4 w-4" />
-              Clear All Filters
-            </Button>
-            <div className="text-sm text-muted-foreground flex items-center">
-              Use filters to narrow down {filteredBursaries.length} available
-              bursaries
+            {/* Financial & Demographics */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-gray-900">Financial & Demographics</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Max. Household Income (R)</label>
+                  <Input
+                    type="number"
+                    placeholder="e.g. 350,000"
+                    min="0"
+                    value={filters.maxHouseholdIncome || ""}
+                    onChange={(e) => updateFilter("maxHouseholdIncome", e.target.value ? parseInt(e.target.value) : undefined)}
+                    className="h-11"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Gender Requirements</label>
+                  <Select
+                    value={filters.genderSpecific || "any"}
+                    onValueChange={(value) => updateFilter("genderSpecific", value === "any" ? undefined : value)}
+                  >
+                    <SelectTrigger className="h-11">
+                      <SelectValue placeholder="Any gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any Gender</SelectItem>
+                      <SelectItem value="female">Female Only</SelectItem>
+                      <SelectItem value="male">Male Only</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-muted-foreground">Race Requirements</label>
+                  <Select
+                    value={filters.raceSpecific || "any"}
+                    onValueChange={(value) => updateFilter("raceSpecific", value === "any" ? undefined : value)}
+                  >
+                    <SelectTrigger className="h-11">
+                      <SelectValue placeholder="Any race" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any Race</SelectItem>
+                      <SelectItem value="african">African</SelectItem>
+                      <SelectItem value="coloured">Coloured</SelectItem>
+                      <SelectItem value="indian">Indian</SelectItem>
+                      <SelectItem value="white">White</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
-          </div>
-        </CardContent>
+
+            {/* Actions */}
+            <div className="flex items-center justify-between pt-2">
+              <div className="text-sm text-muted-foreground">Use filters to narrow down {filteredBursaries.length} bursaries</div>
+              <Button variant="outline" onClick={clearFilters} className="border-gray-300">Clear All Filters</Button>
+            </div>
+          </CardContent>
+        )}
       </Card>
 
       {/* Results Summary */}
