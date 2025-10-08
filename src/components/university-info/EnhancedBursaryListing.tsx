@@ -44,6 +44,7 @@ import {
   TrendingUp,
   Award,
   Banknote,
+  Filter,
 } from "lucide-react";
 import {
   BURSARIES,
