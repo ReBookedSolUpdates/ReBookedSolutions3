@@ -279,7 +279,7 @@ const PrivateInstitutionExplorer = () => {
             <div className="text-sm text-gray-700">
               Stay updated on private education, careers, and student tips via
               {" "}
-              <a href="https://rebookednews.co.za" target="_blank" rel="noopener noreferrer" className="text-book-600 hover:text-book-800 underline font-medium">ReBooked News</a>.
+              <a href="https://www.rebookednews.co.za/" target="_blank" rel="noopener noreferrer" className="text-book-600 hover:text-book-800 underline font-medium">ReBooked News</a>.
             </div>
           </div>
 
