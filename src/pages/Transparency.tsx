@@ -75,6 +75,7 @@ const Transparency = () => {
                         <li>Student‑first design</li>
                         <li>Secure, trusted transactions</li>
                         <li>Community building</li>
+                        <li>Accountability and clear communication</li>
                       </ul>
                     </div>
                     <div>
@@ -82,9 +83,26 @@ const Transparency = () => {
                       <ul className="list-disc list-inside text-sm space-y-1">
                         <li>Seller commits within 48 hours</li>
                         <li>Courier pickup auto‑scheduled</li>
-                        <li>End‑to‑end order tracking</li>
+                        <li>End‑to‑end order tracking with SMS/email updates</li>
                         <li>Automatic refunds if seller doesn’t commit</li>
                       </ul>
+                    </div>
+                  </div>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Your Rights</h4>
+                      <ul className="list-disc list-inside text-sm space-y-1 text-gray-700">
+                        <li>Access, correction and deletion of your data</li>
+                        <li>Opt‑out of non‑essential communications</li>
+                      </ul>
+                    </div>
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Data Retention</h4>
+                      <p className="text-sm text-gray-700">Order and payout records are retained for legal and financial auditing, then securely archived.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Third‑Party Processors</h4>
+                      <p className="text-sm text-gray-700">We use vetted providers for payments, delivery and analytics. No selling of personal data.</p>
                     </div>
                   </div>
                 </CardContent>
