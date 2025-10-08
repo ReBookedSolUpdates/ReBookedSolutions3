@@ -296,14 +296,20 @@ const EnhancedBursaryListing = () => {
       </div>
 
       {/* Info */}
-      <Card className="border border-gray-200 bg-white">
-        <CardHeader className="text-center">
+      <Card className="relative overflow-hidden border border-gray-200 bg-white rounded-2xl">
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500" aria-hidden="true" />
+        <CardHeader className="text-center space-y-2">
           <CardTitle className="text-base sm:text-lg text-gray-900 flex items-center justify-center gap-2">
             <BookOpen className="h-5 w-5 text-emerald-600" /> Tips & Updates
           </CardTitle>
           <CardDescription className="text-gray-600">
-            Check <a href="https://rebookednews.co.za" target="_blank" rel="noopener noreferrer" className="text-emerald-700 hover:text-emerald-900 underline">ReBooked News</a> for bursary updates and deadlines.
+            Quick pointers to improve your chances. Get the latest on <a href="https://rebookednews.co.za" target="_blank" rel="noopener noreferrer" className="text-emerald-700 hover:text-emerald-900 underline">ReBooked News</a>.
           </CardDescription>
+          <ul className="text-sm text-gray-700 grid sm:grid-cols-3 gap-2 sm:gap-4 mt-1">
+            <li className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">Apply early and track deadlines</li>
+            <li className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">Prepare documents (ID, results, proof of income)</li>
+            <li className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">Tailor your motivation letter</li>
+          </ul>
         </CardHeader>
       </Card>
 
@@ -507,7 +513,7 @@ const EnhancedBursaryListing = () => {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <CardTitle className="text-lg font-semibold text-gray-900 truncate">
+                    <CardTitle className="text-lg font-semibold text-gray-900 break-words leading-snug">
                       {bursary.name}
                     </CardTitle>
                     <CardDescription className="mt-1 text-gray-600 truncate">
