@@ -246,13 +246,42 @@ const PrivateInstitutionExplorer = () => {
           <Accordion type="single" collapsible className="border rounded-lg">
             <AccordionItem value="faq-1">
               <AccordionTrigger className="px-4">Are private qualifications recognised?</AccordionTrigger>
-              <AccordionContent className="px-4 pb-4 text-sm">Yes — if CHE‑accredited and SAQA���registered. Always verify codes before enrolling.</AccordionContent>
+              <AccordionContent className="px-4 pb-4 text-sm">Yes — if CHE‑accredited and SAQA‑registered. Always verify provider and programme codes before enrolling.</AccordionContent>
             </AccordionItem>
             <AccordionItem value="faq-2">
               <AccordionTrigger className="px-4">Which path is better for me?</AccordionTrigger>
-              <AccordionContent className="px-4 pb-4 text-sm">Choose based on your goals: research/academia vs career‑oriented learning with smaller classes and WIL.</AccordionContent>
+              <AccordionContent className="px-4 pb-4 text-sm">Choose based on your goals: research/academia vs. career‑oriented learning with smaller classes and work‑integrated learning (WIL).</AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-3">
+              <AccordionTrigger className="px-4">How do I verify accreditation?</AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 text-sm">Check the CHE (provider/programme accreditation), SAQA (qualification registration with NQF level/credits), and DHET (private provider registration) sites.</AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-4">
+              <AccordionTrigger className="px-4">Are online or hybrid programmes recognised?</AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 text-sm">Yes — delivery mode can be contact, distance, or hybrid. Recognition depends on accreditation and registration status, not just study mode.</AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-5">
+              <AccordionTrigger className="px-4">Can I transfer to a public university later?</AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 text-sm">Possibly. Request credit transfer/RPL with transcripts and module outlines. Final decisions rest with the receiving university.</AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-6">
+              <AccordionTrigger className="px-4">Do employers recognise private qualifications?</AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 text-sm">Employers recognise accredited, SAQA‑registered qualifications. Look for strong industry links, WIL, and graduate outcomes.</AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-7">
+              <AccordionTrigger className="px-4">What funding options are available?</AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 text-sm">Institutions may offer bursaries or payment plans; some employers sponsor studies. Explore our bursary tools for additional opportunities.</AccordionContent>
             </AccordionItem>
           </Accordion>
+
+          {/* ReBooked News promo */}
+          <div className="mt-4 p-4 rounded-lg bg-white border flex items-start gap-3">
+            <div className="text-sm text-gray-700">
+              Stay updated on private education, careers, and student tips via
+              {" "}
+              <a href="https://www.rebookednews.co.za/" target="_blank" rel="noopener noreferrer" className="text-book-600 hover:text-book-800 underline font-medium">ReBooked News</a>.
+            </div>
+          </div>
 
           <div className="flex flex-wrap gap-2">
             <Badge variant="secondary" className="bg-book-100 text-book-800 border-book-200">CHE</Badge>
