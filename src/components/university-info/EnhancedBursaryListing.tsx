@@ -639,46 +639,137 @@ const EnhancedBursaryListing = () => {
         )}
       </div>
 
-      {/* Bursary List (simplified) */}
-      <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
+      {/* Modern Bursary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredBursaries.map((bursary) => {
           const applicationStatus = getApplicationStatus(bursary.applicationDeadline);
+          const isExpanded = expandedBursary === bursary.id;
           return (
-            <div
+            <Card
               key={bursary.id}
-              className="p-4 sm:p-5 border-b last:border-b-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+              className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-lg hover:border-green-200"
             >
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-semibold text-gray-900 truncate">{bursary.name}</span>
-                  <Badge variant={applicationStatus.status === 'open' ? 'default' : applicationStatus.status === 'closing' ? 'destructive' : 'secondary'}>
+              {/* Accent gradient bar */}
+              <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500" />
+
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <CardTitle className="text-lg font-semibold text-gray-900 truncate">
+                      {bursary.name}
+                    </CardTitle>
+                    <CardDescription className="mt-1 text-gray-600 truncate">
+                      {bursary.provider}
+                    </CardDescription>
+                  </div>
+                  <Badge
+                    variant={
+                      applicationStatus.status === 'open'
+                        ? 'default'
+                        : applicationStatus.status === 'closing'
+                        ? 'destructive'
+                        : 'secondary'
+                    }
+                    className="whitespace-nowrap"
+                  >
                     {applicationStatus.message}
                   </Badge>
                 </div>
-                <div className="text-sm text-muted-foreground">{bursary.provider}</div>
-                <p className="text-sm text-gray-600 mt-1 line-clamp-2">{bursary.description}</p>
-                <div className="mt-2 flex items-center gap-2 text-sm text-green-700">
-                  <DollarSign className="h-4 w-4" />
-                  <span className="font-medium">{bursary.amount}</span>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                {/* Amount */}
+                <div className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-3 py-1.5 text-sm font-medium text-green-800">
+                  <DollarSign className="h-4 w-4" /> {bursary.amount}
                 </div>
-              </div>
-              <div className="flex items-center gap-3 flex-shrink-0">
-                <div className="text-sm text-gray-700 flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span className="whitespace-nowrap">{bursary.applicationDeadline}</span>
+
+                {/* Description */}
+                <p className="text-sm text-gray-700 line-clamp-2">{bursary.description}</p>
+
+                {/* Meta */}
+                <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+                  <div className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-2.5 py-1 border border-gray-200">
+                    <Calendar className="h-3.5 w-3.5 text-gray-500" />
+                    <span>{bursary.applicationDeadline}</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-2.5 py-1 border border-gray-200">
+                    <MapPin className="h-3.5 w-3.5 text-gray-500" />
+                    <span>
+                      {bursary.provinces.includes('All provinces')
+                        ? 'All provinces'
+                        : bursary.provinces.slice(0, 2).join(', ')}
+                      {bursary.provinces.length > 2 && !bursary.provinces.includes('All provinces') && ' +more'}
+                    </span>
+                  </div>
                 </div>
-                {bursary.website && (
-                  <a
-                    href={bursary.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+
+                {/* Fields of study */}
+                <div className="flex flex-wrap gap-1.5">
+                  {bursary.fieldsOfStudy.slice(0, 3).map((field, i) => (
+                    <Badge key={i} variant="outline" className="text-xs">
+                      {field}
+                    </Badge>
+                  ))}
+                  {bursary.fieldsOfStudy.length > 3 && (
+                    <Badge variant="outline" className="text-xs">+{bursary.fieldsOfStudy.length - 3}</Badge>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-between pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-200 hover:bg-gray-50"
+                    onClick={() => setExpandedBursary(isExpanded ? null : bursary.id)}
                   >
-                    <ExternalLink className="h-3 w-3" /> Apply
-                  </a>
+                    {isExpanded ? 'Hide details' : 'View details'}
+                  </Button>
+                  {bursary.website && (
+                    <a
+                      href={bursary.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-sm text-green-700 hover:text-green-900 font-medium"
+                    >
+                      Apply <ExternalLink className="h-4 w-4" />
+                    </a>
+                  )}
+                </div>
+
+                {/* Expanded content */}
+                {isExpanded && (
+                  <div className="mt-3 space-y-3 border-t pt-3">
+                    {/* Eligibility */}
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-600" /> Eligibility Criteria
+                      </h4>
+                      <ul className="space-y-1">
+                        {bursary.eligibilityCriteria.slice(0, 6).map((c, idx) => (
+                          <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
+                            <span className="text-green-600 mt-1">•</span>
+                            <span>{c}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Application Process */}
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-900 mb-1">Application Process</h4>
+                      <p className="text-sm text-gray-700">{bursary.applicationProcess}</p>
+                    </div>
+
+                    {/* Contact */}
+                    <div className="bg-muted/50 p-3 rounded-lg">
+                      <h4 className="text-sm font-semibold text-gray-900 mb-1">Contact</h4>
+                      <p className="text-sm text-gray-700">{bursary.contactInfo}</p>
+                    </div>
+                  </div>
                 )}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           );
         })}
       </div>
