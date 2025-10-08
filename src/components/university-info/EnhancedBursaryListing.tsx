@@ -639,256 +639,46 @@ const EnhancedBursaryListing = () => {
         )}
       </div>
 
-      {/* Bursary Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Bursary List (simplified) */}
+      <div className="bg-white border rounded-lg shadow-sm overflow-hidden">
         {filteredBursaries.map((bursary) => {
-          const applicationStatus = getApplicationStatus(
-            bursary.applicationDeadline,
-          );
-          const isExpanded = expandedBursary === bursary.id;
-          const highSchoolReqs = getHighSchoolRequirements(bursary);
-
+          const applicationStatus = getApplicationStatus(bursary.applicationDeadline);
           return (
-            <Card
+            <div
               key={bursary.id}
-              className="rounded-xl border shadow-sm transition-shadow hover:shadow-md"
+              className="p-4 sm:p-5 border-b last:border-b-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
             >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg font-semibold text-book-800">
-                      {bursary.name}
-                    </CardTitle>
-                    <CardDescription className="text-muted-foreground font-medium mt-1">
-                      {bursary.provider}
-                    </CardDescription>
-                  </div>
-                  <div className="flex gap-2">
-                    <Badge
-                      variant={
-                        applicationStatus.status === "open"
-                          ? "default"
-                          : applicationStatus.status === "closing"
-                            ? "destructive"
-                            : "secondary"
-                      }
-                    >
-                      {applicationStatus.message}
-                    </Badge>
-                  </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-semibold text-gray-900 truncate">{bursary.name}</span>
+                  <Badge variant={applicationStatus.status === 'open' ? 'default' : applicationStatus.status === 'closing' ? 'destructive' : 'secondary'}>
+                    {applicationStatus.message}
+                  </Badge>
                 </div>
-
-                {/* Amount / Benefits */}
-                <div className="mt-3 rounded-lg border border-green-200 bg-green-50 text-green-800 px-3 py-2 flex items-center gap-2 text-sm sm:text-base font-semibold">
+                <div className="text-sm text-muted-foreground">{bursary.provider}</div>
+                <p className="text-sm text-gray-600 mt-1 line-clamp-2">{bursary.description}</p>
+                <div className="mt-2 flex items-center gap-2 text-sm text-green-700">
                   <DollarSign className="h-4 w-4" />
-                  <span className="leading-snug">{bursary.amount}</span>
+                  <span className="font-medium">{bursary.amount}</span>
                 </div>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground line-clamp-3">{bursary.description}</p>
-
-                {/* High School Requirements Preview */}
-                {highSchoolReqs.length > 0 && (
-                  <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-                    <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
-                      📚 High School Requirements:
-                    </h4>
-                    <div className="text-sm text-green-700">
-                      {highSchoolReqs.slice(0, 1).map((req, idx) => (
-                        <div key={idx} className="space-y-1">
-                          {req.grade11 && (
-                            <div>
-                              • <strong>Grade 11:</strong> {req.grade11}
-                            </div>
-                          )}
-                          {req.matric && (
-                            <div>
-                              • <strong>Matric:</strong> {req.matric}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                      {highSchoolReqs.length > 1 && (
-                        <div className="text-green-600 text-xs mt-2">
-                          View details for complete requirements
-                        </div>
-                      )}
-                    </div>
-                  </div>
+              </div>
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <div className="text-sm text-gray-700 flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span className="whitespace-nowrap">{bursary.applicationDeadline}</span>
+                </div>
+                {bursary.website && (
+                  <a
+                    href={bursary.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+                  >
+                    <ExternalLink className="h-3 w-3" /> Apply
+                  </a>
                 )}
-
-                {/* Key Details */}
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Deadline:</span>
-                    <span className="font-medium">
-                      {bursary.applicationDeadline}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Provinces:</span>
-                    <span className="font-medium">
-                      {bursary.provinces.includes("All provinces")
-                        ? "All"
-                        : bursary.provinces.slice(0, 2).join(", ")}
-                      {bursary.provinces.length > 2 &&
-                        !bursary.provinces.includes("All provinces") &&
-                        "..."}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Fields of Study */}
-                <div>
-                  <h4 className="text-sm font-medium text-foreground mb-2">
-                    Fields of Study:
-                  </h4>
-                  <div className="flex flex-wrap gap-1">
-                    {bursary.fieldsOfStudy.slice(0, 3).map((field, index) => (
-                      <Badge
-                        key={index}
-                        variant="outline"
-                        className="text-xs"
-                      >
-                        {field}
-                      </Badge>
-                    ))}
-                    {bursary.fieldsOfStudy.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{bursary.fieldsOfStudy.length - 3} more
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-
-                {/* Expand/Collapse Button */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setExpandedBursary(isExpanded ? null : bursary.id)
-                  }
-                  className="w-full"
-                >
-                  {isExpanded ? "Show Less" : "View Details & Requirements"}
-                </Button>
-
-                {/* Expanded Details */}
-                {isExpanded && (
-                  <div className="space-y-4 pt-4 border-t">
-                    {/* High School Requirements - Detailed */}
-                    {highSchoolReqs.length > 0 && (
-                      <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                        <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
-                          🎯 High School Preparation Requirements:
-                        </h4>
-                        <div className="space-y-3">
-                          {highSchoolReqs.map((req, idx) => (
-                            <div
-                              key={idx}
-                              className="bg-white p-3 rounded border border-green-200"
-                            >
-                              {req.type === "academic" && (
-                                <div>
-                                  <h5 className="font-medium text-green-800 mb-2">
-                                    Academic Performance:
-                                  </h5>
-                                  <div className="grid md:grid-cols-2 gap-2 text-sm">
-                                    {req.grade11 && (
-                                      <div className="flex items-center gap-2">
-                                        <span className="font-medium text-green-700">
-                                          Grade 11:
-                                        </span>
-                                        <span className="text-green-600">
-                                          {req.grade11}
-                                        </span>
-                                      </div>
-                                    )}
-                                    {req.matric && (
-                                      <div className="flex items-center gap-2">
-                                        <span className="font-medium text-green-700">
-                                          Matric NSC:
-                                        </span>
-                                        <span className="text-green-600">
-                                          {req.matric}
-                                        </span>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-                              {req.type === "nsc" && (
-                                <div>
-                                  <h5 className="font-medium text-green-800 mb-2">
-                                    NSC Requirements:
-                                  </h5>
-                                  <p className="text-sm text-green-600">
-                                    {req.requirement}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Eligibility Criteria */}
-                    <div>
-                      <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        Eligibility Criteria:
-                      </h4>
-                      <ul className="space-y-1">
-                        {bursary.eligibilityCriteria.map((criteria, index) => (
-                          <li
-                            key={index}
-                            className="text-sm flex items-start gap-2"
-                          >
-                            <span className="text-green-600 mt-1">•</span>
-                            {criteria}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Application Process */}
-                    <div>
-                      <h4 className="font-medium text-foreground mb-2">
-                        Application Process:
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {bursary.applicationProcess}
-                      </p>
-                    </div>
-
-                    {/* Contact Information */}
-                    <div className="bg-muted/50 p-3 rounded-lg">
-                      <h4 className="font-medium text-foreground mb-2">
-                        Contact Information:
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {bursary.contactInfo}
-                      </p>
-                      {bursary.website && (
-                        <a
-                          href={bursary.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 mt-2"
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                          Visit Website
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           );
         })}
       </div>
