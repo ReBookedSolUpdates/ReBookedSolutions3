@@ -129,6 +129,23 @@ const Transparency = () => {
                       <p className="text-sm">We never sell your personal information to third parties.</p>
                     </div>
                   </div>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+                      <h4 className="font-medium text-yellow-900 mb-1">User Controls</h4>
+                      <ul className="list-disc list-inside text-sm space-y-1 text-yellow-900">
+                        <li>Download your data on request</li>
+                        <li>Delete account and personal data (subject to legal holds)</li>
+                      </ul>
+                    </div>
+                    <div className="p-4 rounded-lg bg-rose-50 border border-rose-200">
+                      <h4 className="font-medium text-rose-900 mb-1">Children’s Data</h4>
+                      <p className="text-sm">ReBooked is for users 16+; we do not knowingly collect data from minors.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-teal-50 border border-teal-200">
+                      <h4 className="font-medium text-teal-900 mb-1">International Transfers</h4>
+                      <p className="text-sm">Data is hosted with providers that meet international security standards.</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
