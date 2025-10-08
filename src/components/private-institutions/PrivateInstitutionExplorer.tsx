@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { PRIVATE_INSTITUTIONS } from "@/constants/private-institutions";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -245,7 +246,7 @@ const PrivateInstitutionExplorer = () => {
           <Accordion type="single" collapsible className="border rounded-lg">
             <AccordionItem value="faq-1">
               <AccordionTrigger className="px-4">Are private qualifications recognised?</AccordionTrigger>
-              <AccordionContent className="px-4 pb-4 text-sm">Yes — if CHE‑accredited and SAQA‑registered. Always verify codes before enrolling.</AccordionContent>
+              <AccordionContent className="px-4 pb-4 text-sm">Yes — if CHE‑accredited and SAQA���registered. Always verify codes before enrolling.</AccordionContent>
             </AccordionItem>
             <AccordionItem value="faq-2">
               <AccordionTrigger className="px-4">Which path is better for me?</AccordionTrigger>
