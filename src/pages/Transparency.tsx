@@ -53,7 +53,7 @@ const Transparency = () => {
           </div>
 
           <Tabs defaultValue="about" className="w-full">
-            <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4 h-auto bg-white/70 backdrop-blur border">
+            <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4 h-auto bg-white border rounded-lg shadow-sm">
               <TabsTrigger value="about" className="flex items-center gap-2"><BookOpen className="h-4 w-4" /> About</TabsTrigger>
               <TabsTrigger value="privacy" className="flex items-center gap-2"><Shield className="h-4 w-4" /> Privacy</TabsTrigger>
               <TabsTrigger value="encryption" className="flex items-center gap-2"><Lock className="h-4 w-4" /> Security</TabsTrigger>
