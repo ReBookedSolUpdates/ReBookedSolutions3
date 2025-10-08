@@ -83,4 +83,4 @@ export const CREATE_LISTING_CATEGORIES: string[] = Array.from(
       c.trim(),
     ])
   ).values()
-);
+).sort((a, b) => a.localeCompare(b));
