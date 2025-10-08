@@ -204,6 +204,21 @@ const Transparency = () => {
                     </div>
                   </div>
 
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Data Retention</h4>
+                      <p className="text-sm text-gray-700">Order, payment and courier records are stored for legal, tax and security reasons, then archived.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Access Requests</h4>
+                      <p className="text-sm text-gray-700">Email legal@rebookedsolutions.co.za to request a copy or deletion of your data.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Third‑Party Sharing</h4>
+                      <p className="text-sm text-gray-700">Shared only with delivery and payment partners to complete your order.</p>
+                    </div>
+                  </div>
+
                   <Accordion type="single" collapsible className="w-full border rounded-lg">
                     <AccordionItem value="item-1">
                       <AccordionTrigger className="px-4">Can I request my data to be deleted?</AccordionTrigger>
