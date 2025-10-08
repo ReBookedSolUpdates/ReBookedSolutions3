@@ -16,6 +16,7 @@ export interface Book {
   grade?: string;
   universityYear?: string;
   university?: string;
+  curriculum?: 'CAPS' | 'Cambridge' | 'IEB';
   province?: string;
   // Quantity fields
   initialQuantity?: number;
@@ -43,6 +44,7 @@ export interface BookFormData {
   grade?: string;
   universityYear?: string;
   university?: string;
+  curriculum?: 'CAPS' | 'Cambridge' | 'IEB';
   province?: string;
   // Quantity to create listing with
   quantity?: number;
