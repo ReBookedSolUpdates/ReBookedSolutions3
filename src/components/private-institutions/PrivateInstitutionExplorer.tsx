@@ -92,7 +92,7 @@ const PrivateInstitutionExplorer = () => {
       {filtered.length > 0 ? (
         <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {(showAll ? filtered : filtered.slice(0, 9)).map((inst) => (
+          {(showAll ? filtered : filtered.slice(0, 6)).map((inst) => (
             <Card key={inst.id} className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:border-book-200">
               <CardHeader className="pb-3">
                 <div className="flex items-start gap-3 min-w-0">
@@ -150,7 +150,7 @@ const PrivateInstitutionExplorer = () => {
             </Card>
           ))}
         </div>
-        {!showAll && filtered.length > 9 && (
+        {!showAll && filtered.length > 6 && (
           <div className="flex justify-center">
             <Button onClick={() => setShowAll(true)} variant="outline" className="mt-2">
               View More
@@ -172,6 +172,52 @@ const PrivateInstitutionExplorer = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Educational Info Section */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-xl">Understanding Private Institutions vs Universities</CardTitle>
+          <CardDescription>Know your options, employment outcomes, and how credit transfer works.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4 text-gray-700">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="p-4 rounded-lg bg-book-50 border border-book-200">
+              <h4 className="font-semibold text-book-900 mb-1">What are Private Institutions?</h4>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li>Independently operated but accredited by the Council on Higher Education (CHE).</li>
+                <li>Often smaller classes, industry‑linked curricula, and flexible scheduling.</li>
+                <li>Degrees, diplomas and certificates are registered on the NQF via SAQA.</li>
+              </ul>
+            </div>
+            <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <h4 className="font-semibold text-gray-900 mb-1">Private vs University</h4>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li>Universities focus on research and broad academic depth.</li>
+                <li>Private institutions tend to be career‑oriented and skills‑focused.</li>
+                <li>Both can be excellent paths when programmes are properly accredited.</li>
+              </ul>
+            </div>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="p-4 rounded-lg bg-green-50 border border-green-200">
+              <h4 className="font-semibold text-green-900 mb-1">Employment Outcomes</h4>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li>Employers value accreditation, practical experience and portfolio work.</li>
+                <li>Choose programmes with industry placements, projects or internships.</li>
+              </ul>
+            </div>
+            <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
+              <h4 className="font-semibold text-blue-900 mb-1">Transferring Credits</h4>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li>Credit transfer depends on NQF level, SAQA registration and institutional rules.</li>
+                <li>Request an official transcript and module outlines; the receiving university evaluates equivalence.</li>
+                <li>Partial credit is common; bridging modules may be required.</li>
+              </ul>
+            </div>
+          </div>
+          <p className="text-sm">Tip: Confirm CHE accreditation and SAQA registration codes before enrolling. When in doubt, ask the institution’s admissions office for written confirmation.</p>
+        </CardContent>
+      </Card>
     </div>
   );
 };
