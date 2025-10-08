@@ -36,6 +36,7 @@ const Transparency = () => {
               </CardHeader>
               <CardContent className="text-sm text-gray-700 space-y-2">
                 <p>Addresses and sensitive data are encrypted end‑to‑end. Payments happen via PCI‑compliant providers.</p>
+                <p>Bank account details and address information are encrypted in our backend to ensure user privacy and data security.</p>
                 <div className="flex gap-2 flex-wrap">
                   <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">AES‑256</Badge>
                   <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">PCI</Badge>
