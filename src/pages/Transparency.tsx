@@ -53,7 +53,7 @@ const Transparency = () => {
           </div>
 
           <Tabs defaultValue="about" className="w-full">
-            <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4 h-auto bg-white/70 backdrop-blur border">
+            <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4 h-auto bg-white border rounded-lg shadow-sm">
               <TabsTrigger value="about" className="flex items-center gap-2"><BookOpen className="h-4 w-4" /> About</TabsTrigger>
               <TabsTrigger value="privacy" className="flex items-center gap-2"><Shield className="h-4 w-4" /> Privacy</TabsTrigger>
               <TabsTrigger value="encryption" className="flex items-center gap-2"><Lock className="h-4 w-4" /> Security</TabsTrigger>
@@ -75,6 +75,7 @@ const Transparency = () => {
                         <li>Student‑first design</li>
                         <li>Secure, trusted transactions</li>
                         <li>Community building</li>
+                        <li>Accountability and clear communication</li>
                       </ul>
                     </div>
                     <div>
@@ -82,9 +83,26 @@ const Transparency = () => {
                       <ul className="list-disc list-inside text-sm space-y-1">
                         <li>Seller commits within 48 hours</li>
                         <li>Courier pickup auto‑scheduled</li>
-                        <li>End‑to‑end order tracking</li>
+                        <li>End‑to‑end order tracking with SMS/email updates</li>
                         <li>Automatic refunds if seller doesn’t commit</li>
                       </ul>
+                    </div>
+                  </div>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Your Rights</h4>
+                      <ul className="list-disc list-inside text-sm space-y-1 text-gray-700">
+                        <li>Access, correction and deletion of your data</li>
+                        <li>Opt‑out of non‑essential communications</li>
+                      </ul>
+                    </div>
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Data Retention</h4>
+                      <p className="text-sm text-gray-700">Order and payout records are retained for legal and financial auditing, then securely archived.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Third‑Party Processors</h4>
+                      <p className="text-sm text-gray-700">We use vetted providers for payments, delivery and analytics. No selling of personal data.</p>
                     </div>
                   </div>
                 </CardContent>
@@ -109,6 +127,23 @@ const Transparency = () => {
                     <div className="p-4 rounded-lg bg-purple-50 border border-purple-200">
                       <h4 className="font-medium text-purple-900 mb-1">No Selling Data</h4>
                       <p className="text-sm">We never sell your personal information to third parties.</p>
+                    </div>
+                  </div>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+                      <h4 className="font-medium text-yellow-900 mb-1">User Controls</h4>
+                      <ul className="list-disc list-inside text-sm space-y-1 text-yellow-900">
+                        <li>Download your data on request</li>
+                        <li>Delete account and personal data (subject to legal holds)</li>
+                      </ul>
+                    </div>
+                    <div className="p-4 rounded-lg bg-rose-50 border border-rose-200">
+                      <h4 className="font-medium text-rose-900 mb-1">Children’s Data</h4>
+                      <p className="text-sm">ReBooked is for users 16+; we do not knowingly collect data from minors.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-teal-50 border border-teal-200">
+                      <h4 className="font-medium text-teal-900 mb-1">International Transfers</h4>
+                      <p className="text-sm">Data is hosted with providers that meet international security standards.</p>
                     </div>
                   </div>
                 </CardContent>
@@ -166,6 +201,21 @@ const Transparency = () => {
                         <li>Fraud prevention & security monitoring</li>
                         <li>Feature development</li>
                       </ul>
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Data Retention</h4>
+                      <p className="text-sm text-gray-700">Order, payment and courier records are stored for legal, tax and security reasons, then archived.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Access Requests</h4>
+                      <p className="text-sm text-gray-700">Email legal@rebookedsolutions.co.za to request a copy or deletion of your data.</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                      <h4 className="font-medium text-gray-900 mb-1">Third‑Party Sharing</h4>
+                      <p className="text-sm text-gray-700">Shared only with delivery and payment partners to complete your order.</p>
                     </div>
                   </div>
 

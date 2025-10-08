@@ -2,10 +2,11 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { PRIVATE_INSTITUTIONS } from "@/constants/private-institutions";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Building, Search, ExternalLink, Globe } from "lucide-react";
+import { Building, Search, ExternalLink, Globe, CheckCircle, GraduationCap, School, Landmark, ArrowRight, Shield } from "lucide-react";
 
 const PrivateInstitutionExplorer = () => {
   const [query, setQuery] = useState("");
@@ -92,7 +93,7 @@ const PrivateInstitutionExplorer = () => {
       {filtered.length > 0 ? (
         <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {(showAll ? filtered : filtered.slice(0, 9)).map((inst) => (
+          {(showAll ? filtered : filtered.slice(0, 6)).map((inst) => (
             <Card key={inst.id} className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm hover:border-book-200">
               <CardHeader className="pb-3">
                 <div className="flex items-start gap-3 min-w-0">
@@ -150,7 +151,7 @@ const PrivateInstitutionExplorer = () => {
             </Card>
           ))}
         </div>
-        {!showAll && filtered.length > 9 && (
+        {!showAll && filtered.length > 6 && (
           <div className="flex justify-center">
             <Button onClick={() => setShowAll(true)} variant="outline" className="mt-2">
               View More
@@ -172,6 +173,94 @@ const PrivateInstitutionExplorer = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Educational Info Section */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2"><GraduationCap className="w-5 h-5 text-book-600" /> Study Paths: Private vs University</CardTitle>
+          <CardDescription>Accreditation, outcomes, and how to transfer credits.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6 text-gray-700">
+          {/* Side-by-side comparison */}
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="p-4 rounded-lg border bg-white">
+              <h4 className="font-semibold mb-2 flex items-center gap-2"><School className="w-4 h-4 text-book-700" /> Private Institutions</h4>
+              <ul className="space-y-1 text-sm">
+                <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5" /> Smaller classes and career‑focused programmes</li>
+                <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5" /> Strong industry links and work‑integrated learning (WIL)</li>
+                <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5" /> Must be CHE accredited and SAQA registered (NQF level/credits)</li>
+              </ul>
+            </div>
+            <div className="p-4 rounded-lg border bg-white">
+              <h4 className="font-semibold mb-2 flex items-center gap-2"><GraduationCap className="w-4 h-4 text-gray-800" /> Public Universities</h4>
+              <ul className="space-y-1 text-sm">
+                <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5" /> Research‑driven with broad academic depth</li>
+                <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5" /> Wide range of postgraduate pathways</li>
+                <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-green-600 mt-0.5" /> Recognised nationally when programmes meet SAQA/NQF standards</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Key guidance */}
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div className="p-4 rounded-lg bg-book-50 border border-book-200">
+              <h4 className="font-semibold text-book-900 mb-1 flex items-center gap-2"><Shield className="w-4 h-4 text-book-800" /> Accreditation checklist</h4>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li>CHE‑accredited provider and programme</li>
+                <li>SAQA registration with NQF level and credits</li>
+                <li>DHET registration for private providers</li>
+              </ul>
+              <div className="text-xs mt-2">
+                Verify on: <a href="https://www.che.ac.za/" className="text-book-600 hover:underline" target="_blank" rel="noreferrer">CHE</a> • <a href="https://www.saqa.org.za/" className="text-book-600 hover:underline" target="_blank" rel="noreferrer">SAQA</a>
+              </div>
+            </div>
+            <div className="p-4 rounded-lg bg-green-50 border border-green-200">
+              <h4 className="font-semibold text-green-900 mb-1">Employment tips</h4>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li>Prioritise programmes with WIL/internships and portfolio projects</li>
+                <li>Include accreditation codes (CHE/SAQA/NQF) on your CV</li>
+              </ul>
+            </div>
+            <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
+              <h4 className="font-semibold text-blue-900 mb-1">Costs & support</h4>
+              <ul className="list-disc list-inside text-sm space-y-1">
+                <li>Fees vary by institution; compare total cost (tuition + materials)</li>
+                <li>Ask about bursaries, scholarships, and payment plans</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Transfer pathway */}
+          <div className="p-4 rounded-lg bg-gray-50 border">
+            <h4 className="font-semibold mb-2">Transfer pathway (credits)</h4>
+            <ol className="list-decimal list-inside space-y-1 text-sm">
+              <li>Request official transcript and module outlines</li>
+              <li>Confirm NQF level, credits and SAQA registration</li>
+              <li>Apply for RPL/credit transfer at the receiving university</li>
+              <li>Complete bridging modules if required</li>
+            </ol>
+            <p className="text-xs mt-2 text-gray-600">Note: Final decisions rest with the receiving institution.</p>
+          </div>
+
+          {/* FAQs */}
+          <Accordion type="single" collapsible className="border rounded-lg">
+            <AccordionItem value="faq-1">
+              <AccordionTrigger className="px-4">Are private qualifications recognised?</AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 text-sm">Yes — if CHE‑accredited and SAQA���registered. Always verify codes before enrolling.</AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="faq-2">
+              <AccordionTrigger className="px-4">Which path is better for me?</AccordionTrigger>
+              <AccordionContent className="px-4 pb-4 text-sm">Choose based on your goals: research/academia vs career‑oriented learning with smaller classes and WIL.</AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="secondary" className="bg-book-100 text-book-800 border-book-200">CHE</Badge>
+            <Badge variant="secondary" className="bg-book-100 text-book-800 border-book-200">SAQA</Badge>
+            <Badge variant="secondary" className="bg-book-100 text-book-800 border-book-200">NQF</Badge>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
