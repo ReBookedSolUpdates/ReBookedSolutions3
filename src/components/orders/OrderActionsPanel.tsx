@@ -28,7 +28,6 @@ import {
   Clock,
   TruckIcon,
   CheckCircle,
-  FileDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import OrderCancellationService, {
@@ -184,36 +183,6 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
     }
   };
 
-  const handleGetLabel = async () => {
-    setIsLoading(true);
-    try {
-      const tracking = order.tracking_number || order.tracking_data?.tracking_number || undefined;
-      const shipmentId = order.delivery_data?.shipment_id || undefined;
-      if (!tracking && !shipmentId) {
-        toast.error("No tracking details available yet");
-        setIsLoading(false);
-        return;
-      }
-      const { data, error } = await supabase.functions.invoke("bobgo-get-label", {
-        body: { tracking_number: tracking, shipment_id: shipmentId },
-      });
-      if (error || !data?.success) {
-        throw new Error(error?.message || data?.error || "Failed to get label");
-      }
-      if (data.waybill_url) {
-        window.open(data.waybill_url, "_blank");
-      } else if (data.waybill_base64 && data.content_type) {
-        const url = `data:${data.content_type};base64,${data.waybill_base64}`;
-        window.open(url, "_blank");
-      } else {
-        toast.success("Label generated successfully");
-      }
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to retrieve label");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const getOrderStatusBadge = () => {
     const statusConfig: Record<string, { label: string; color: string }> = {
@@ -267,13 +236,11 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Seller: Get Label */}
-        {userRole === "seller" && (
-          <Button onClick={handleGetLabel} disabled={isLoading} variant="outline" className="w-full">
-            {isLoading ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <FileDown className="w-4 h-4 mr-2" />}
-            Get Label
-          </Button>
-        )}
+        <Alert className="border-blue-200 bg-blue-50">
+          <AlertDescription className="text-blue-800">
+            Please check your email (and your spam folder) for your waybill. You can also visit the Getting Started guide in the footer for more information.
+          </AlertDescription>
+        </Alert>
 
         {/* Unified Cancel for Buyer and Seller when not collected/in transit */}
         {canCancelShipment && (
