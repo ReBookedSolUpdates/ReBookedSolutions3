@@ -98,9 +98,6 @@ const ProfileHeader = ({
                       Share
                     </Button>
 
-                    <Link to="/transparency" className="text-blue-600 hover:underline text-xs px-3 py-1 h-8 inline-flex items-center">
-                      <Eye className="h-3 w-3 mr-1" /> Transparency
-                    </Link>
 
                     <Button
                       onClick={onBookNotSelling}
@@ -154,9 +151,6 @@ const ProfileHeader = ({
                 Share Profile
               </Button>
 
-              <Link to="/transparency" className="text-blue-600 hover:underline inline-flex items-center">
-                <Eye className="h-4 w-4 mr-2" /> Transparency
-              </Link>
 
               {onMessageUser && (
                 <Button

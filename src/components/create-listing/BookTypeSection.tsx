@@ -31,11 +31,12 @@ export const BookTypeSection = ({
   // Imported from constants to keep Create Listing and Books filters in sync
 
 
-  const categories = CREATE_LISTING_CATEGORIES;
+  const categories = CREATE_LISTING_CATEGORIES.slice().sort((a, b) => a.localeCompare(b));
 
   const conditions = ["New", "Good", "Better", "Average", "Below Average"];
 
   const grades = [
+    "N/A",
     "Grade 1",
     "Grade 2",
     "Grade 3",
@@ -108,6 +109,27 @@ export const BookTypeSection = ({
         {errors.category && (
           <p className="text-sm text-red-500 mt-1">{errors.category}</p>
         )}
+      </div>
+
+      <div>
+        <Label htmlFor="curriculum" className="text-base font-medium">
+          Curriculum <span className="text-gray-400">(Optional)</span>
+        </Label>
+        <Select
+          value={(formData as any).curriculum || ""}
+          onValueChange={(value) => onSelectChange("curriculum", value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select curriculum (optional)" />
+          </SelectTrigger>
+          <SelectContent>
+            {['CAPS', 'Cambridge', 'IEB'].map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div>

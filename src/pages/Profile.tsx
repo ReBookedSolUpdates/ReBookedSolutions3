@@ -321,13 +321,6 @@ const Profile = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button asChild variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
-                    <a href="/transparency">
-                      <Eye className="w-4 h-4 mr-2" />
-                      Transparency
-                    </a>
-                  </Button>
-
                   <Button
                     onClick={() => navigate("/create-listing")}
                     className="bg-book-600 hover:bg-book-700"

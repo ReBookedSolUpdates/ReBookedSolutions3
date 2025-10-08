@@ -126,18 +126,35 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       .select("*", { count: "exact", head: true })
       .gte("created_at", oneWeekAgo.toISOString());
 
-    // Get sales this month
+    // Get sales this month (count) and sum commissions accurately
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
 
-    const { count: salesThisMonth } = await supabase
+    const { data: monthTx, error: monthTxError } = await supabase
       .from("transactions")
-      .select("*", { count: "exact", head: true })
+      .select("commission, created_at")
       .gte("created_at", startOfMonth.toISOString());
 
-    // Calculate commissions (mock data for now)
-    const weeklyCommission = (salesThisMonth || 0) * 0.1 * 50; // 10% commission, avg R50 per book
-    const monthlyCommission = weeklyCommission * 4;
+    if (monthTxError) {
+      console.warn("Error fetching monthly transactions:", monthTxError);
+    }
+
+    const salesThisMonth = monthTx?.length || 0;
+    const monthlyCommission = (monthTx || []).reduce((sum, t: any) => sum + (Number(t.commission) || 0), 0);
+
+    // Weekly commission (last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const { data: weekTx, error: weekTxError } = await supabase
+      .from("transactions")
+      .select("commission, created_at")
+      .gte("created_at", sevenDaysAgo.toISOString());
+
+    if (weekTxError) {
+      console.warn("Error fetching weekly transactions:", weekTxError);
+    }
+
+    const weeklyCommission = (weekTx || []).reduce((sum, t: any) => sum + (Number(t.commission) || 0), 0);
 
     return {
       totalUsers: totalUsers || 0,
@@ -145,7 +162,7 @@ export const getAdminStats = async (): Promise<AdminStats> => {
       booksSold: booksSold || 0,
       reportedIssues: pendingReports || 0,
       newUsersThisWeek: newUsersThisWeek || 0,
-      salesThisMonth: salesThisMonth || 0,
+      salesThisMonth,
       weeklyCommission,
       monthlyCommission,
       pendingReports: pendingReports || 0,

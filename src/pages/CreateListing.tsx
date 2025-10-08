@@ -49,6 +49,7 @@ const CreateListing = () => {
     price: 0,
     condition: "Good",
     category: "",
+    curriculum: undefined,
     grade: "",
     universityYear: "",
     university: "",
@@ -508,16 +509,16 @@ const CreateListing = () => {
                   required
                 />
                 <div className="space-y-1 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-start gap-2 flex-wrap">
                     <Label
                       htmlFor="sellerPolicy"
-                      className="text-sm text-gray-600 leading-relaxed cursor-pointer"
+                      className="text-sm text-gray-600 leading-snug cursor-pointer break-words whitespace-normal flex-1"
                     >
                       I agree to the{" "}
                       <button
                         type="button"
                         onClick={() => setShowSellerPolicyModal(true)}
-                        className="text-book-600 hover:text-book-800 underline font-medium"
+                        className="text-book-600 hover:text-book-800 underline font-medium inline break-words whitespace-normal text-left"
                       >
                         Seller Policy and ReBooked's platform rules
                       </button>

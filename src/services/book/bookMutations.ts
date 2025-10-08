@@ -79,9 +79,10 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
       additional_images: bookData.additionalImages && bookData.additionalImages.length > 0 ? bookData.additionalImages.filter(Boolean) : [],
       grade: bookData.grade,
       university_year: bookData.universityYear,
+      curriculum: (bookData as any).curriculum || null,
       province: province,
       seller_subaccount_code: paystackSubaccountCode,
-      requires_banking_setup: false, // Set to false since user passed banking requirements
+      requires_banking_setup: false,
       // Quantity fields at creation
       initial_quantity: quantity,
       available_quantity: quantity,
@@ -215,6 +216,8 @@ export const updateBook = async (
       updateData.category = bookData.category;
     if (bookData.condition !== undefined)
       updateData.condition = bookData.condition;
+    if ((bookData as any).curriculum !== undefined)
+      updateData.curriculum = (bookData as any).curriculum;
     if (bookData.imageUrl !== undefined)
       updateData.image_url = bookData.imageUrl;
     if (bookData.frontCover !== undefined)
@@ -228,6 +231,12 @@ export const updateBook = async (
     if (bookData.grade !== undefined) updateData.grade = bookData.grade;
     if (bookData.universityYear !== undefined)
       updateData.university_year = bookData.universityYear;
+    if ((bookData as any).quantity !== undefined) {
+      const qty = Math.max(1, Number((bookData as any).quantity));
+      updateData.available_quantity = qty;
+      // Do not reduce initial_quantity on edit; optionally increase if higher than initial
+      updateData.initial_quantity = updateData.initial_quantity ?? undefined;
+    }
 
     const { data: book, error } = await supabase
       .from("books")
