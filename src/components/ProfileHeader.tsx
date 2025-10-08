@@ -151,9 +151,6 @@ const ProfileHeader = ({
                 Share Profile
               </Button>
 
-              <Link to="/transparency" className="text-blue-600 hover:underline inline-flex items-center">
-                <Eye className="h-4 w-4 mr-2" /> Transparency
-              </Link>
 
               {onMessageUser && (
                 <Button
