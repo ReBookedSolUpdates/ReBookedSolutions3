@@ -277,12 +277,11 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
     const userRole = getUserRole(order);
 
     return (
-      <Card className="mb-4">
+      <Card className="mb-4 border border-gray-200 shadow-sm rounded-lg">
         <CardHeader className="pb-3">
           <OrderHeaderDetails order={order} />
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Alerts for specific states */}
           {order.delivery_status === "pickup_failed" && userRole === "seller" && (
             <Alert className="border-orange-200 bg-orange-50">
               <AlertTriangle className="h-4 w-4 text-orange-600" />
@@ -310,12 +309,15 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
             </Alert>
           )}
 
+          <Separator />
           <OrderTimeline order={order} />
+          <Separator />
           <OrderShipmentSummary order={order} />
+          <Separator />
 
           <OrderActionsPanel order={order} userRole={userRole} onOrderUpdate={fetchOrders} />
 
-          {/* Footer info for completed/cancelled */}
+          <Separator />
           {["delivered", "completed"].includes(order.status) && (
             <div className="text-xs text-gray-500">Completed on {formatDate(order.updated_at)}</div>
           )}
