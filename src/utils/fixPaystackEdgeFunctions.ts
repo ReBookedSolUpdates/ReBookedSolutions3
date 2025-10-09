@@ -34,7 +34,7 @@ export const testAllPaystackFunctions = async () => {
     "paystack-split-management",
     "paystack-transfer-management",
     "manage-paystack-subaccount",
-    "paystack-refund-management",
+    "refund-management",
   ];
 
   console.log("🔍 Testing all Paystack Edge Functions...");

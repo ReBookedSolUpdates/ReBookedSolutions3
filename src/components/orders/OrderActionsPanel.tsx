@@ -96,11 +96,10 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
   const handleSellerCancel = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("cancel-order", {
+      const { data, error } = await supabase.functions.invoke("cancel-order-with-refund", {
         body: {
           order_id: order.id,
-          buyer_id: order.buyer_id,
-          cancellation_reason: cancelReason || "Cancelled by Seller",
+          reason: cancelReason || "Cancelled by Seller",
         },
       });
       if (error || !data?.success) {
