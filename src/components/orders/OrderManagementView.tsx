@@ -226,11 +226,7 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
         )}
 
         <div className="text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-md p-2">
-          {tracking ? (
-            <span>
-              Track on BobGo: <a href={`https://track.bobgo.co.za/${encodeURIComponent(tracking)}`} target="_blank" rel="noopener noreferrer" className="underline text-blue-700">https://track.bobgo.co.za/{tracking}</a>
-            </span>
-          ) : (
+          {!tracking && (
             <span>Tracking link will appear once assigned</span>
           )}
         </div>
