@@ -168,40 +168,49 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
     const tracking = order.tracking_number || order.tracking_data?.tracking_number;
     const deliveryProgress = (order.delivery_status || "").toLowerCase();
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-        <div className="space-y-1">
-          <div className="text-gray-500">Order status</div>
-          <div className="font-medium capitalize">{order.status.replaceAll("_", " ")}</div>
-        </div>
-        <div className="space-y-1">
-          <div className="text-gray-500">Tracking number</div>
-          <div className="font-mono text-gray-700 break-all">{tracking || "—"}</div>
-          {tracking && (
-            <div className="text-xs mt-1">
-              <a
-                href={`https://track.bobgo.co.za/${encodeURIComponent(tracking)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-700 underline"
-              >
-                Open in BobGo tracking
-              </a>
+      <div className="space-y-3 text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="space-y-1">
+            <div className="text-gray-500">Order status</div>
+            <div className="font-medium capitalize flex items-center gap-2">
+              <Badge variant="secondary" className="capitalize">{order.status.replaceAll("_", " ")}</Badge>
             </div>
-          )}
+          </div>
+          <div className="space-y-1">
+            <div className="text-gray-500">Tracking</div>
+            <div className="font-mono text-gray-700 break-all">{tracking || "—"}</div>
+            {tracking && (
+              <div className="text-xs mt-1">
+                <a
+                  href={`https://track.bobgo.co.za/${encodeURIComponent(tracking)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-700 underline"
+                >
+                  Open in BobGo
+                </a>
+              </div>
+            )}
+          </div>
+          <div className="space-y-1">
+            <div className="text-gray-500">Courier / Service</div>
+            <div className="font-medium flex flex-wrap items-center gap-2">
+              {courier ? <Badge variant="outline">{courier}</Badge> : <span>—</span>}
+              {service ? <Badge variant="outline">{service}</Badge> : null}
+            </div>
+          </div>
         </div>
-        <div className="space-y-1">
-          <div className="text-gray-500">Courier / Service</div>
-          <div className="font-medium">{courier || "—"}{service ? ` • ${service}` : ""}</div>
-        </div>
-        <div className="space-y-1 md:col-span-3">
+
+        <div>
           <div className="text-gray-500">Delivery progress</div>
           <div className="flex items-center gap-2">
             <span className={`w-2 h-2 rounded-full ${deliveryProgress === "delivered" ? "bg-green-500" : deliveryProgress === "in_transit" ? "bg-blue-500" : deliveryProgress === "pickup_failed" ? "bg-red-500" : "bg-amber-500"}`} />
             <span className="capitalize">{deliveryProgress || "pending"}</span>
           </div>
         </div>
+
         {order.tracking_data?.events && Array.isArray(order.tracking_data.events) && order.tracking_data.events.length > 0 && (
-          <div className="md:col-span-3">
+          <div>
             <div className="text-xs text-gray-500 mb-1">Recent tracking events</div>
             <ul className="text-xs space-y-1 max-h-32 overflow-auto pr-1">
               {order.tracking_data.events.slice(-5).reverse().map((ev: any, idx: number) => (
@@ -215,23 +224,15 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
             </ul>
           </div>
         )}
-        <div className="md:col-span-3">
-          <Alert className="border-blue-200 bg-blue-50 mt-2">
-            <AlertDescription className="text-blue-800">
-              Track your shipment on our Shipments page, or via BobGo: {tracking ? (
-                <a
-                  href={`https://track.bobgo.co.za/${encodeURIComponent(tracking)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline text-blue-700"
-                >
-                  https://track.bobgo.co.za/{tracking}
-                </a>
-              ) : (
-                <span>tracking link will appear once assigned</span>
-              )}
-            </AlertDescription>
-          </Alert>
+
+        <div className="text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-md p-2">
+          {tracking ? (
+            <span>
+              Track on BobGo: <a href={`https://track.bobgo.co.za/${encodeURIComponent(tracking)}`} target="_blank" rel="noopener noreferrer" className="underline text-blue-700">https://track.bobgo.co.za/{tracking}</a>
+            </span>
+          ) : (
+            <span>Tracking link will appear once assigned</span>
+          )}
         </div>
       </div>
     );
