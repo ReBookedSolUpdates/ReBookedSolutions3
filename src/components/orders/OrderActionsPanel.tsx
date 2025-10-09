@@ -77,7 +77,48 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
   const handleBuyerCancel = async () => {
     setIsLoading(true);
     try {
-      const result = await OrderCancellationService.cancelDeliveryByBuyer(order.id, cancelReason || "Cancelled by Buyer");
+      // If order has NOT been committed yet, trigger refund-management directly and set status to "declined"
+      if (order.status !== "committed") {
+        const { data: orderRow, error: orderFetchError } = await supabase
+          .from("orders")
+          .select("payment_reference")
+          .eq("id", order.id)
+          .single();
+
+        if (orderFetchError || !orderRow?.payment_reference) {
+          throw new Error("Payment reference not found for refund");
+        }
+
+        const { data: refundData, error: refundError } = await supabase.functions.invoke("refund-management", {
+          body: {
+            payment_reference: orderRow.payment_reference,
+            reason: cancelReason || "Cancelled by Buyer",
+            order_id: order.id,
+          },
+        });
+
+        if (refundError || !refundData?.success) {
+          throw new Error(refundError?.message || refundData?.error || "Refund failed");
+        }
+
+        const { error: updateError } = await supabase
+          .from("orders")
+          .update({ status: "declined" })
+          .eq("id", order.id);
+
+        if (updateError) throw updateError;
+
+        toast.success("Order cancelled and refunded");
+        setShowCancelDialog(false);
+        onOrderUpdate();
+        return;
+      }
+
+      // Otherwise, follow existing cancellation flow (shipment already in process)
+      const result = await OrderCancellationService.cancelDeliveryByBuyer(
+        order.id,
+        cancelReason || "Cancelled by Buyer",
+      );
       if (result.success) {
         toast.success(result.message);
         setShowCancelDialog(false);
@@ -85,8 +126,8 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
       } else {
         toast.error(result.message);
       }
-    } catch (error) {
-      toast.error("Failed to cancel order. Please try again.");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to cancel order. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -249,12 +290,15 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
     if (!order.delivery_status) return null;
 
     const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
+      created: { label: "Created", color: "bg-gray-500", icon: Clock },
       pending: { label: "Pickup Pending", color: "bg-yellow-500", icon: Clock },
       pickup_scheduled: { label: "Pickup Scheduled", color: "bg-blue-500", icon: Calendar },
       pickup_failed: { label: "Pickup Failed", color: "bg-red-500", icon: AlertTriangle },
       rescheduled_by_seller: { label: "Rescheduled", color: "bg-blue-500", icon: Calendar },
-      picked_up: { label: "Picked Up", color: "bg-green-500", icon: TruckIcon },
+      collected: { label: "Collected", color: "bg-green-500", icon: TruckIcon },
+      picked_up: { label: "Collected", color: "bg-green-500", icon: TruckIcon },
       in_transit: { label: "In Transit", color: "bg-blue-500", icon: TruckIcon },
+      out_for_delivery: { label: "Out for Delivery", color: "bg-blue-600", icon: TruckIcon },
       delivered: { label: "Delivered", color: "bg-green-500", icon: CheckCircle },
     };
 
