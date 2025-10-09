@@ -36,7 +36,7 @@ import OrderCancellationService, {
 } from "@/services/orderCancellationService";
 import { supabase } from "@/integrations/supabase/client";
 import { ENV } from "@/config/environment";
-import { Download } from "lucide-react";
+import { Download, Info } from "lucide-react";
 
 // Extend order with shipping-related optional fields
 type Order = BaseOrder & {
@@ -281,11 +281,10 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Alert className="border-blue-200 bg-blue-50">
-          <AlertDescription className="text-blue-800">
-            Please check your email (and your spam folder) for your waybill. You can also visit the Getting Started guide in the footer for more information.
-          </AlertDescription>
-        </Alert>
+        <div className="text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-md p-2 flex items-start gap-2">
+          <Info className="w-4 h-4 text-gray-500 mt-0.5" />
+          <span>We also email the waybill to you for records.</span>
+        </div>
 
         {userRole === "seller" && (order.tracking_number || order.tracking_data?.tracking_number) && (
           <Button onClick={handleGetWaybill} className="w-full">
