@@ -35,6 +35,8 @@ import OrderCancellationService, {
   RescheduleQuote,
 } from "@/services/orderCancellationService";
 import { supabase } from "@/integrations/supabase/client";
+import { ENV } from "@/config/environment";
+import { Download } from "lucide-react";
 
 // Extend order with shipping-related optional fields
 type Order = BaseOrder & {
