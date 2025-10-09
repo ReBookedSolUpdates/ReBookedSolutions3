@@ -1162,7 +1162,7 @@ Time: ${new Date().toISOString()}
           <PaystackPopupMobile
             email={userEmail}
             amount={orderSummary.total_price}
-            subaccountCode={orderSummary.book.seller_subaccount_code}
+
             orderReference={`ORDER-${Date.now()}-${userId}`}
             metadata={{
               book_id: orderSummary.book.id,
@@ -1194,7 +1194,7 @@ Time: ${new Date().toISOString()}
           <PaystackPopup
             email={userEmail}
             amount={orderSummary.total_price}
-            subaccountCode={orderSummary.book.seller_subaccount_code}
+
             orderReference={`ORDER-${Date.now()}-${userId}`}
             metadata={{
               book_id: orderSummary.book.id,
