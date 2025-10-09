@@ -351,41 +351,7 @@ serve(async (req) => {
 
     const sellerCount = Object.keys(sellerGroups).length;
 
-    // Check if sellers have payment setup (subaccounts)
-    const sellersWithoutPayment = items.filter(
-      (item) => !item.seller_subaccount,
-    );
-    if (sellersWithoutPayment.length > 0) {
-      const affectedSellers = [
-        ...new Set(
-          sellersWithoutPayment.map((item) => ({
-            seller_id: item.seller_id,
-            seller_name: item.seller_name,
-            books: sellersWithoutPayment
-              .filter((si) => si.seller_id === item.seller_id)
-              .map((si) => ({ id: si.book_id, title: si.title })),
-          })),
-        ),
-      ];
-
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "SELLERS_PAYMENT_NOT_CONFIGURED",
-          details: {
-            sellers_without_payment: affectedSellers,
-            affected_books_count: sellersWithoutPayment.length,
-            message: "Some sellers haven't configured their payment details",
-          },
-          fix_instructions:
-            "These sellers need to complete their banking setup before their books can be purchased. Contact the sellers or choose different books.",
-        }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
-    }
+    // Do not block checkout if sellers lack subaccounts; funds go to main Paystack account
 
     // Initialize payment with Paystack (supports multi-seller split)
     try {
