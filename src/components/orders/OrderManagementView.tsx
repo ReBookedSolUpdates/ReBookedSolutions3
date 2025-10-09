@@ -175,6 +175,18 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
         <div className="space-y-1">
           <div className="text-gray-500">Tracking number</div>
           <div className="font-mono text-gray-700 break-all">{tracking || "—"}</div>
+          {tracking && (
+            <div className="text-xs mt-1">
+              <a
+                href={`https://track.bobgo.co.za/${encodeURIComponent(tracking)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-700 underline"
+              >
+                Open in BobGo tracking
+              </a>
+            </div>
+          )}
         </div>
         <div className="space-y-1">
           <div className="text-gray-500">Courier / Service</div>
@@ -205,7 +217,18 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
         <div className="md:col-span-3">
           <Alert className="border-blue-200 bg-blue-50 mt-2">
             <AlertDescription className="text-blue-800">
-              Track your shipment on the Shipments page.
+              Track your shipment on our Shipments page, or via BobGo: {tracking ? (
+                <a
+                  href={`https://track.bobgo.co.za/${encodeURIComponent(tracking)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-blue-700"
+                >
+                  https://track.bobgo.co.za/{tracking}
+                </a>
+              ) : (
+                <span>tracking link will appear once assigned</span>
+              )}
             </AlertDescription>
           </Alert>
         </div>
