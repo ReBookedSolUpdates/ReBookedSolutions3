@@ -1610,11 +1610,13 @@ export const HIGH_SCHOOL_BURSARIES: Bursary[] = [
 ];
 
 // Combine all bursaries
+import { EXTRA_BURSARIES } from "@/constants/bursaries-extra";
 export const ALL_BURSARIES: Bursary[] = [
   ...ENHANCED_BURSARIES,
   ...ADDITIONAL_BURSARIES,
   ...ADDITIONAL_VALID_BURSARIES,
   ...HIGH_SCHOOL_BURSARIES,
+  ...EXTRA_BURSARIES,
 ];
 
 // Export as BURSARIES for backward compatibility
