@@ -35,6 +35,8 @@ import OrderCancellationService, {
   RescheduleQuote,
 } from "@/services/orderCancellationService";
 import { supabase } from "@/integrations/supabase/client";
+import { ENV } from "@/config/environment";
+import { Download, Info } from "lucide-react";
 
 // Extend order with shipping-related optional fields
 type Order = BaseOrder & {
@@ -94,11 +96,10 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
   const handleSellerCancel = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("cancel-order", {
+      const { data, error } = await supabase.functions.invoke("cancel-order-with-refund", {
         body: {
           order_id: order.id,
-          buyer_id: order.buyer_id,
-          cancellation_reason: cancelReason || "Cancelled by Seller",
+          reason: cancelReason || "Cancelled by Seller",
         },
       });
       if (error || !data?.success) {
@@ -183,6 +184,50 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
     }
   };
 
+  const handleGetWaybill = async () => {
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token || ENV.VITE_SUPABASE_ANON_KEY;
+      const url = `${ENV.VITE_SUPABASE_URL}/functions/v1/bobgo-waybill?order_id=${encodeURIComponent(order.id)}`;
+      const resp = await fetch(url, {
+        headers: {
+          apikey: ENV.VITE_SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${token}`,
+          Accept: "application/pdf, application/json",
+        },
+      });
+
+      const contentType = resp.headers.get("content-type") || "";
+      if (!resp.ok) {
+        let message = "Failed to get waybill";
+        try {
+          const err = await resp.json();
+          message = err?.message || err?.error || message;
+        } catch {}
+        toast.error(message);
+        return;
+      }
+
+      if (contentType.includes("application/pdf")) {
+        const blob = await resp.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, "_blank");
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+        toast.success("Waybill opened in a new tab");
+      } else {
+        const data = await resp.json().catch(() => null);
+        const urlFromJson = data?.waybill_url || data?.url || data?.download_url;
+        if (urlFromJson) {
+          window.open(urlFromJson, "_blank");
+          toast.success("Waybill opened in a new tab");
+        } else {
+          toast.error("Waybill not available yet");
+        }
+      }
+    } catch (e: any) {
+      toast.error(e?.message || "Could not retrieve waybill");
+    }
+  };
 
   const getOrderStatusBadge = () => {
     const statusConfig: Record<string, { label: string; color: string }> = {
@@ -236,11 +281,17 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Alert className="border-blue-200 bg-blue-50">
-          <AlertDescription className="text-blue-800">
-            Please check your email (and your spam folder) for your waybill. You can also visit the Getting Started guide in the footer for more information.
-          </AlertDescription>
-        </Alert>
+        <div className="text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-md p-2 flex items-start gap-2">
+          <Info className="w-4 h-4 text-gray-500 mt-0.5" />
+          <span>We also email the waybill to you for records.</span>
+        </div>
+
+        {userRole === "seller" && (order.tracking_number || order.tracking_data?.tracking_number) && (
+          <Button onClick={handleGetWaybill} className="w-full">
+            <Download className="w-4 h-4 mr-2" />
+            Get Waybill
+          </Button>
+        )}
 
         {/* Unified Cancel for Buyer and Seller when not collected/in transit */}
         {canCancelShipment && (

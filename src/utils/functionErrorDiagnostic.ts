@@ -152,7 +152,7 @@ export const diagnoseFunctionError = async (): Promise<DiagnosticResult[]> => {
     'verify-paystack-payment',
     'create-paystack-subaccount',
     'paystack-transfer-management',
-    'paystack-refund-management'
+    'refund-management'
   ];
 
   let deployedCount = 0;
