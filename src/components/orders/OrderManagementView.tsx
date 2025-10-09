@@ -234,40 +234,69 @@ const OrderManagementView: React.FC<OrderManagementViewProps> = () => {
     );
   };
 
-  const OrderTimeline: React.FC<{ order: Order }> = ({ order }) => (
-    <div className="flex items-center space-x-4 text-sm">
-      <div className="flex items-center space-x-2">
-        <div
-          className={`w-3 h-3 rounded-full ${
-            order.status === "pending_commit"
-              ? "bg-amber-500"
-              : ["committed", "pending_delivery", "in_transit", "completed", "confirmed", "dispatched", "delivered"].includes(order.status)
-                ? "bg-green-500"
-                : "bg-gray-300"
-          }`}
-        />
-        <span>{order.status === "pending_commit" ? "Pending Commit" : "Confirmed"}</span>
+  const OrderTimeline: React.FC<{ order: Order }> = ({ order }) => {
+    const committed = [
+      "committed",
+      "pending_delivery",
+      "in_transit",
+      "completed",
+      "confirmed",
+      "dispatched",
+      "delivered",
+    ].includes(order.status);
+
+    const deliveryStatus = (order.delivery_status || "created").toLowerCase();
+    const steps = ["created", "collected", "in_transit", "out_for_delivery", "delivered"] as const;
+
+    const statusToIndex: Record<string, number> = {
+      created: 0,
+      pending: 0,
+      pickup_scheduled: 0,
+      collected: 1,
+      picked_up: 1,
+      in_transit: 2,
+      out_for_delivery: 3,
+      delivered: 4,
+    };
+
+    const currentIndex = statusToIndex[deliveryStatus] ?? 0;
+
+    return (
+      <div className="space-y-3">
+        {/* Keep green status indicator for committed vs not committed */}
+        <div className="flex items-center space-x-2 text-sm">
+          <div
+            className={`w-3 h-3 rounded-full ${
+              order.status === "pending_commit" ? "bg-amber-500" : committed ? "bg-green-500" : "bg-gray-300"
+            }`}
+          />
+          <span>{order.status === "pending_commit" ? "Not Committed" : "Committed"}</span>
+        </div>
+
+        {/* Delivery stages */}
+        <div className="grid grid-cols-5 gap-2">
+          {steps.map((step, idx) => (
+            <div key={step} className="flex flex-col items-center text-xs">
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  idx < currentIndex
+                    ? "bg-green-500"
+                    : idx === currentIndex
+                    ? deliveryStatus === "pickup_failed"
+                      ? "bg-red-500"
+                      : "bg-blue-500"
+                    : "bg-gray-300"
+                }`}
+              />
+              <span className="mt-1 capitalize text-gray-600">
+                {step.replaceAll("_", " ")}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="flex-1 h-px bg-gray-200" />
-      <div className="flex items-center space-x-2">
-        <div
-          className={`w-3 h-3 rounded-full ${
-            ["pending_delivery", "in_transit", "completed", "dispatched", "delivered"].includes(order.status)
-              ? "bg-green-500"
-              : order.delivery_status === "pickup_failed"
-                ? "bg-red-500"
-                : "bg-gray-300"
-          }`}
-        />
-        <span>Pickup</span>
-      </div>
-      <div className="flex-1 h-px bg-gray-200" />
-      <div className="flex items-center space-x-2">
-        <div className={`w-3 h-3 rounded-full ${["completed", "delivered"].includes(order.status) ? "bg-green-500" : "bg-gray-300"}`} />
-        <span>Delivered</span>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
     const userRole = getUserRole(order);
