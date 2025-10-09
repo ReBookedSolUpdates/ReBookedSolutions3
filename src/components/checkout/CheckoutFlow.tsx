@@ -371,12 +371,53 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ book }) => {
         },
       };
 
-      // Get buyer address (optional initially)
-      const buyerData = await getBuyerCheckoutData(user.id).catch(() => null);
+      // Get buyer address (try multiple sources, prefer encrypted)
+      let buyerAddress: CheckoutAddress | null = null;
 
-      console.log("📦 Checkout data loaded from books table:", {
+      // 1) Standard checkout data helper (encrypted + legacy JSONB fallback)
+      const buyerData = await getBuyerCheckoutData(user.id).catch(() => null);
+      if (buyerData?.address) buyerAddress = buyerData.address;
+
+      // 2) Direct encrypted fetch as a second attempt
+      if (!buyerAddress) {
+        try {
+          const { getSimpleUserAddresses } = await import("@/services/simplifiedAddressService");
+          const addrData = await getSimpleUserAddresses(user.id);
+          const sa: any = addrData?.shipping_address || addrData?.pickup_address;
+          if (sa?.streetAddress && sa?.city && sa?.province && (sa?.postalCode || sa?.postal_code)) {
+            buyerAddress = {
+              street: sa.streetAddress || sa.street,
+              city: sa.city,
+              province: sa.province,
+              postal_code: sa.postalCode || sa.postal_code,
+              country: "South Africa",
+            };
+          }
+        } catch {}
+      }
+
+      // 3) Comprehensive address service as final fallback
+      if (!buyerAddress) {
+        try {
+          const { getUserAddresses } = await import("@/services/addressService");
+          const full = await getUserAddresses(user.id);
+          const sa: any = full?.shipping_address || full?.pickup_address;
+          if (sa?.street && sa?.city && sa?.province && (sa?.postalCode || sa?.postal_code)) {
+            buyerAddress = {
+              street: sa.street || sa.streetAddress,
+              city: sa.city,
+              province: sa.province,
+              postal_code: sa.postalCode || sa.postal_code,
+              country: sa.country || "South Africa",
+            } as CheckoutAddress;
+          }
+        } catch {}
+      }
+
+      console.log("📦 Checkout data loaded:", {
         seller_address: sellerAddress,
         buyer_data: buyerData,
+        buyer_address_resolved: buyerAddress,
         book: updatedBook,
       });
 
@@ -384,14 +425,12 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ book }) => {
         ...prev,
         book: updatedBook,
         seller_address: sellerAddress,
-        buyer_address: buyerData?.address || null,
+        buyer_address: buyerAddress,
         loading: false,
       }));
 
-      if (!buyerData) {
-        toast.info(
-          "Please add your delivery address to continue with checkout",
-        );
+      if (!buyerAddress) {
+        toast.info("Please add your delivery address to continue with checkout");
       }
     } catch (error) {
       console.error("�� Checkout initialization error:", error);
