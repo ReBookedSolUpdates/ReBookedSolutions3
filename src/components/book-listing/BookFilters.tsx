@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { Filter, Search, School, GraduationCap, BookOpen, MapPin } from "lucide-react";
 import { UniversitySelector } from "@/components/ui/university-selector";
 import { UNIVERSITY_YEARS } from "@/constants/universities";
@@ -133,18 +134,31 @@ const BookFilters = ({
     }
   };
 
+  const anyActive = Boolean(
+    searchQuery ||
+    selectedCategory ||
+    selectedCondition ||
+    selectedGrade ||
+    selectedUniversityYear ||
+    selectedUniversity ||
+    selectedProvince
+  );
+
   return (
     <>
       {/* Mobile Toggle */}
-      <div className="lg:hidden mb-4">
+      <div className="lg:hidden mb-4 flex items-center justify-between gap-2">
         <Button
           onClick={() => setShowFilters(!showFilters)}
           variant="outline"
-          className="w-full flex items-center justify-center"
+          className="flex-1 flex items-center justify-center"
         >
           <Filter className="mr-2 h-4 w-4" />
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
+        {!showFilters && anyActive && (
+          <Badge variant="outline" className="text-xs whitespace-nowrap">Filters active</Badge>
+        )}
       </div>
 
       {/* Filters Section */}

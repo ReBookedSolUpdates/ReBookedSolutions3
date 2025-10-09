@@ -1123,11 +1123,13 @@ Time: ${new Date().toISOString()}
             </div>
           </div>
 
-          <div className="text-sm text-gray-600 space-y-2">
-            <p>• Payment will be processed immediately</p>
-            <p>��� You'll receive an email confirmation</p>
-            <p>• Seller will be notified to prepare shipment</p>
-            <p>�� You can track your order in your account</p>
+          <div className="text-sm text-gray-600">
+            <ul className="list-disc list-inside space-y-1">
+              <li>Payment will be processed immediately</li>
+              <li>You'll receive an email confirmation</li>
+              <li>Seller will be notified to prepare shipment</li>
+              <li>You can track your order in your account</li>
+            </ul>
           </div>
         </CardContent>
       </Card>

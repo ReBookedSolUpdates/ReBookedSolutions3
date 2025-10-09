@@ -211,6 +211,11 @@ const EnhancedBursaryListing = () => {
     setFilters({});
   };
 
+  const anyFiltersActive = useMemo(() => {
+    const hasFilterValues = Object.values(filters).some((v) => v !== undefined && v !== "" && v !== "any");
+    return !!searchTerm || hasFilterValues;
+  }, [searchTerm, filters]);
+
   const getApplicationStatus = (deadline: string) => {
     const today = new Date();
     const deadlineDate = new Date(deadline);
@@ -337,6 +342,9 @@ const EnhancedBursaryListing = () => {
               >
                 <Filter className="h-4 w-4 mr-2" /> {showFilters ? "Hide Filters" : "Show Filters"}
               </Button>
+              {!showFilters && anyFiltersActive && (
+                <Badge variant="outline" className="text-xs">Filters active</Badge>
+              )}
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="sm" className="border-gray-300">

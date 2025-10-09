@@ -419,7 +419,7 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
           <div className="mt-3">
             <Alert className="border-blue-200 bg-blue-50">
               <AlertDescription className="text-blue-800">
-                Track on our Shipments page, or via BobGo: {order.tracking_number || order.tracking_data?.tracking_number ? (
+                Track your shipment on the official BobGo site: {order.tracking_number || order.tracking_data?.tracking_number ? (
                   <a
                     href={`https://track.bobgo.co.za/${encodeURIComponent(order.tracking_number || order.tracking_data?.tracking_number)}`}
                     target="_blank"
@@ -429,7 +429,7 @@ const OrderActionsPanel: React.FC<OrderActionsPanelProps> = ({
                     https://track.bobgo.co.za/{order.tracking_number || order.tracking_data?.tracking_number}
                   </a>
                 ) : (
-                  <span>tracking link appears once assigned</span>
+                  <span>link appears once tracking number is assigned</span>
                 )}
               </AlertDescription>
             </Alert>
