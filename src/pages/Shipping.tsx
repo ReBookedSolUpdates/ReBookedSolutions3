@@ -4,7 +4,6 @@ import SEO from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import UnifiedTrackingComponent from "@/components/delivery/UnifiedTrackingComponent";
 import { Truck, Clock, ShieldCheck, Wallet, ArrowRight, PackageSearch, Sparkles } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
@@ -180,26 +179,12 @@ const Shipping = () => {
             </CardContent>
           </Card>
 
-          {/* Tracking */}
-          <Card className="border-0 shadow-md ring-1 ring-black/5 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-50 to-book-100/60 p-6 sm:p-8">
-              <CardHeader className="items-center text-center p-0">
-                <CardTitle className="text-xl sm:text-2xl">Track your shipment</CardTitle>
-                <p className="text-gray-600 text-sm sm:text-base mt-1">
-                  Enter your tracking number below. You can also use ?tracking=YOUR_CODE in the URL.
-                </p>
-              </CardHeader>
-              <CardContent className="mt-4">
-                <UnifiedTrackingComponent provider="bobgo" initialTrackingNumber={initialTracking} />
-              </CardContent>
-            </div>
-          </Card>
-
+          {/* Tracking section removed per policy; use official tracking site */}
           <Separator />
 
           {/* Help */}
           <div className="text-center text-sm text-gray-600">
-            Need help with shipping? Use the Help menu, or check your Order details for tracking updates.
+            For tracking, use the official BobGo site with your tracking number: https://track.bobgo.co.za
           </div>
         </div>
       </div>

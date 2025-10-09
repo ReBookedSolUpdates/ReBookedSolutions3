@@ -311,7 +311,7 @@ export const trackUnifiedShipment = async (
     events,
     recipient_signature: t.recipient_signature,
     proof_of_delivery: undefined,
-    tracking_url: undefined,
+    tracking_url: `https://track.bobgo.co.za/${encodeURIComponent(trackingNumber)}`,
   };
 };
 

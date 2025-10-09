@@ -71,7 +71,7 @@ export const getSellerCheckoutData = async (sellerId: string) => {
     const hasSubaccount = profile.subaccount_code;
 
     return {
-      valid: hasAddress && hasSubaccount,
+      valid: !!hasAddress,
       profile,
       hasAddress: !!hasAddress,
       hasSubaccount: !!hasSubaccount,

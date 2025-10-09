@@ -215,51 +215,7 @@ serve(async (req) => {
       });
     }
 
-    // Check if we need to create a split for multiple sellers
-    const sellerIds = [...new Set(items.map((item: any) => item.seller_id))];
-    let splitCode = null;
-
-    if (
-      sellerIds.length > 1 ||
-      (sellerIds.length === 1 && sellerIds[0] !== null)
-    ) {
-      try {
-        // Create a payment split using the split management function
-        const splitResponse = await fetch(
-          `${SUPABASE_URL}/functions/v1/paystack-split-management`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-            },
-            body: JSON.stringify({
-              name: `Order Split ${Date.now()}`,
-              type: "flat",
-              currency: "ZAR",
-              order_items: items,
-              bearer_type: "account",
-            }),
-          },
-        );
-
-        if (splitResponse.ok) {
-          const splitResult = await splitResponse.json();
-          if (splitResult.success) {
-            splitCode = splitResult.split_code;
-            console.log("Split created successfully:", splitCode);
-          } else {
-            console.warn("Split creation failed:", splitResult.error);
-            // Continue without split - payment will go to main account
-          }
-        } else {
-          console.warn("Split creation request failed:", splitResponse.status);
-        }
-      } catch (splitError) {
-        console.warn("Error creating split:", splitError.message);
-        // Continue without split - payment will go to main account
-      }
-    }
+    // Always charge to main Paystack account: no split or subaccounts used
 
     // Initialize Paystack payment
     const paystackData: any = {
@@ -271,18 +227,11 @@ serve(async (req) => {
         user_id,
         items,
         shipping_address,
-        split_code: splitCode,
         ...metadata,
       },
     };
 
-    // Add split code if we have one
-    if (splitCode) {
-      paystackData.split_code = splitCode;
-      console.log("Using split code for payment:", splitCode);
-    } else {
-      console.log("No split code - payment goes to main account");
-    }
+    // No split code - payment goes to main account
 
     try {
       let paystackResponse;
@@ -392,7 +341,6 @@ serve(async (req) => {
           status: "pending",
           items,
           shipping_address,
-          split_code: splitCode,
           paystack_data: paystackResult.data,
           created_at: new Date().toISOString(),
         });

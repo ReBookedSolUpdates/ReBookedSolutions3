@@ -532,20 +532,7 @@ Time: ${new Date().toISOString()}
         throw new Error("User authentication error");
       }
 
-      // Seller subaccount should already be available from books table
-      if (!orderSummary.book.seller_subaccount_code) {
-        console.error("Missing seller_subaccount_code in payment step:", {
-          bookId: orderSummary.book.id,
-          sellerId: orderSummary.book.seller_id,
-          isMobile,
-        });
-
-        throw new Error(
-          isMobile
-            ? "This seller's payment setup is incomplete. Please try a different book or contact support."
-            : "Seller payment setup is incomplete. The seller needs to set up their banking details before accepting payments.",
-        );
-      }
+      // Subaccount not required: funds go to main Paystack account
 
       // Step 1: Create order first
       const createOrderRequest = {
@@ -563,7 +550,6 @@ Time: ${new Date().toISOString()}
           price: orderSummary.delivery_price,
         },
         paystackReference: `order_${Date.now()}_${userId}`, // Temporary reference
-        paystackSubaccount: orderSummary.book.seller_subaccount_code,
       };
 
       console.log("Creating order with data:", createOrderRequest);
@@ -792,8 +778,6 @@ Time: ${new Date().toISOString()}
                   quantity: 1,
                   condition: orderSummary.book.condition,
                   seller_id: orderSummary.book.seller_id,
-                  seller_subaccount_code:
-                    orderSummary.book.seller_subaccount_code,
                 },
               ],
 
@@ -861,7 +845,6 @@ Time: ${new Date().toISOString()}
             email: userData.user.email,
             amount: orderSummary.total_price * 100,
             reference: paymentData.data.reference,
-            subaccount: orderSummary.book.seller_subaccount_code,
             metadata: {
               order_id: createdOrder.id,
               order_data: orderData,
@@ -1140,11 +1123,13 @@ Time: ${new Date().toISOString()}
             </div>
           </div>
 
-          <div className="text-sm text-gray-600 space-y-2">
-            <p>• Payment will be processed immediately</p>
-            <p>• You'll receive an email confirmation</p>
-            <p>• Seller will be notified to prepare shipment</p>
-            <p>�� You can track your order in your account</p>
+          <div className="text-sm text-gray-600">
+            <ul className="list-disc list-inside space-y-1">
+              <li>Payment will be processed immediately</li>
+              <li>You'll receive an email confirmation</li>
+              <li>Seller will be notified to prepare shipment</li>
+              <li>You can track your order in your account</li>
+            </ul>
           </div>
         </CardContent>
       </Card>
@@ -1162,7 +1147,7 @@ Time: ${new Date().toISOString()}
           <PaystackPopupMobile
             email={userEmail}
             amount={orderSummary.total_price}
-            subaccountCode={orderSummary.book.seller_subaccount_code}
+
             orderReference={`ORDER-${Date.now()}-${userId}`}
             metadata={{
               book_id: orderSummary.book.id,
@@ -1194,7 +1179,7 @@ Time: ${new Date().toISOString()}
           <PaystackPopup
             email={userEmail}
             amount={orderSummary.total_price}
-            subaccountCode={orderSummary.book.seller_subaccount_code}
+
             orderReference={`ORDER-${Date.now()}-${userId}`}
             metadata={{
               book_id: orderSummary.book.id,

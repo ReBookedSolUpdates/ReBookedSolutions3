@@ -321,9 +321,10 @@ const UnifiedTrackingComponent: React.FC<UnifiedTrackingComponentProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    window.open(trackingData.tracking_url, "_blank")
-                  }
+                  onClick={() => {
+                    const url = trackingData.tracking_url || `https://track.bobgo.co.za/${encodeURIComponent(trackingData.tracking_number)}`;
+                    window.open(url, "_blank");
+                  }}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   View on Courier Website
