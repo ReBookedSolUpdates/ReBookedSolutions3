@@ -79,6 +79,36 @@ const GettingStarted = () => {
               <div className="absolute -left-20 -top-16 h-40 w-40 rounded-full bg-white/10 blur-xl" />
               <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.45)_1px,transparent_1px)] [background-size:20px_20px]" />
             </div>
+
+            {/* Quick visual guide */}
+            <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              {/* Seller steps */}
+              <div className="bg-white/10 rounded-lg p-3">
+                <div className="flex items-center gap-2 text-white mb-1"><Package className="h-4 w-4" /><span className="font-semibold">List</span></div>
+                <p className="text-white/80 text-xs">Add photos, price, and details</p>
+              </div>
+              <div className="bg-white/10 rounded-lg p-3">
+                <div className="flex items-center gap-2 text-white mb-1"><CheckCircle className="h-4 w-4" /><span className="font-semibold">Confirm</span></div>
+                <p className="text-white/80 text-xs">Approve sale within 48 hours</p>
+              </div>
+              <div className="bg-white/10 rounded-lg p-3">
+                <div className="flex items-center gap-2 text-white mb-1"><Truck className="h-4 w-4" /><span className="font-semibold">Ship</span></div>
+                <p className="text-white/80 text-xs">Print waybill, courier collects</p>
+              </div>
+              {/* Buyer steps */}
+              <div className="bg-white/10 rounded-lg p-3">
+                <div className="flex items-center gap-2 text-white mb-1"><BookOpen className="h-4 w-4" /><span className="font-semibold">Search</span></div>
+                <p className="text-white/80 text-xs">Find the right edition fast</p>
+              </div>
+              <div className="bg-white/10 rounded-lg p-3">
+                <div className="flex items-center gap-2 text-white mb-1"><CreditCard className="h-4 w-4" /><span className="font-semibold">Pay</span></div>
+                <p className="text-white/80 text-xs">Secure checkout and receipts</p>
+              </div>
+              <div className="bg-white/10 rounded-lg p-3">
+                <div className="flex items-center gap-2 text-white mb-1"><ShieldCheck className="h-4 w-4" /><span className="font-semibold">Track</span></div>
+                <p className="text-white/80 text-xs">Delivery updates as it moves</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
