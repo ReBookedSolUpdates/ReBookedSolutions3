@@ -3,7 +3,7 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
-import { Search, BookOpen } from "lucide-react";
+import { Search, BookOpen, Laptop, Sigma, Dna, FlaskConical, Telescope, TrendingUp, GraduationCap, School } from "lucide-react";
 import FeaturedBooks from "@/components/home/FeaturedBooks";
 import HowItWorks from "@/components/home/HowItWorks";
 import ReadyToGetStarted from "@/components/home/ReadyToGetStarted";
@@ -36,12 +36,12 @@ const Index = () => {
   };
 
   const categories = [
-    { name: "Computer Science", icon: "💻" },
-    { name: "Mathematics", icon: "📊" },
-    { name: "Biology", icon: "🧬" },
-    { name: "Chemistry", icon: "⚗️" },
-    { name: "Physics", icon: "🔭" },
-    { name: "Economics", icon: "📈" },
+    { name: "Computer Science", icon: <Laptop className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
+    { name: "Mathematics", icon: <Sigma className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
+    { name: "Biology", icon: <Dna className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
+    { name: "Chemistry", icon: <FlaskConical className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
+    { name: "Physics", icon: <Telescope className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
+    { name: "Economics", icon: <TrendingUp className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
   ];
 
   return (
@@ -141,7 +141,7 @@ const Index = () => {
                 to={`/books?category=${encodeURIComponent(category.name)}`}
                 className="bg-white rounded-lg shadow-md p-4 sm:p-6 text-center hover:shadow-lg transition-shadow duration-200"
               >
-                <span className="text-2xl sm:text-4xl mb-2 sm:mb-4 block">
+                <span className="mb-2 sm:mb-4 block flex items-center justify-center">
                   {category.icon}
                 </span>
                 <h3 className="font-semibold text-book-800 text-xs sm:text-base leading-tight">
@@ -179,32 +179,24 @@ const Index = () => {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto text-sm sm:text-base">
               <div className="bg-white/10 rounded-lg p-3 sm:p-4">
-                <div className="text-2xl mb-2">🎓</div>
+                <GraduationCap className="h-6 w-6 sm:h-7 sm:w-7 mb-2 text-white" />
                 <div className="font-semibold">APS Calculator</div>
-                <div className="text-white/80 text-xs sm:text-sm">
-                  Calculate your score
-                </div>
+                <div className="text-white/80 text-xs sm:text-sm">Calculate your score</div>
               </div>
               <div className="bg-white/10 rounded-lg p-3 sm:p-4">
-                <div className="text-2xl mb-2">🏫</div>
-                <div className="font-semibold">23+ Universities</div>
-                <div className="text-white/80 text-xs sm:text-sm">
-                  Explore programs
-                </div>
+                <School className="h-6 w-6 sm:h-7 sm:w-7 mb-2 text-white" />
+                <div className="font-semibold">26 universities</div>
+                <div className="text-white/80 text-xs sm:text-sm">Explore programs</div>
               </div>
               <div className="bg-white/10 rounded-lg p-3 sm:p-4">
-                <div className="text-2xl mb-2">💰</div>
+                <TrendingUp className="h-6 w-6 sm:h-7 sm:w-7 mb-2 text-white" />
                 <div className="font-semibold">Find Bursaries</div>
-                <div className="text-white/80 text-xs sm:text-sm">
-                  Get funding
-                </div>
+                <div className="text-white/80 text-xs sm:text-sm">Get funding</div>
               </div>
               <div className="bg-white/10 rounded-lg p-3 sm:p-4">
-                <div className="text-2xl mb-2">📚</div>
+                <BookOpen className="h-6 w-6 sm:h-7 sm:w-7 mb-2 text-white" />
                 <div className="font-semibold">Campus Books</div>
-                <div className="text-white/80 text-xs sm:text-sm">
-                  From your university
-                </div>
+                <div className="text-white/80 text-xs sm:text-sm">From your university</div>
               </div>
             </div>
 

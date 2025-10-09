@@ -55,29 +55,54 @@ const GettingStarted = () => {
       {/* Hero */}
       <section id="top" className="px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         <div className="max-w-6xl mx-auto">
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-tr from-book-700 via-book-600 to-book-700 text-white shadow-xl ring-1 ring-white/10 border border-white/10">
-            <div className="px-6 sm:px-12 py-10 sm:py-14">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">Getting Started</h1>
-              <p className="mt-4 text-white/85 max-w-2xl leading-relaxed">
+          <div className="rounded-lg bg-white shadow border border-gray-200">
+            <div className="px-6 sm:px-10 py-6 sm:py-8">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900">Getting Started</h1>
+              <p className="mt-2 text-gray-600 max-w-2xl leading-relaxed">
                 A quick, visual guide to buying and selling books safely on ReBooked Solutions.
               </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Button asChild size="lg" className="bg-white text-book-700 hover:bg-white/90 shadow-sm">
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button asChild size="sm" className="bg-book-600 text-white hover:bg-book-700 shadow-sm">
                   <a href="#seller" aria-label="Jump to Becoming a Seller">
                     <Package className="mr-2" /> I'm selling
                   </a>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                <Button asChild size="sm" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
                   <a href="#buyer" aria-label="Jump to Becoming a Buyer">
                     <ShoppingCart className="mr-2" /> I'm buying
                   </a>
                 </Button>
               </div>
             </div>
-            <div className="absolute inset-0 pointer-events-none" aria-hidden>
-              <div className="absolute -right-24 -bottom-24 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
-              <div className="absolute -left-20 -top-16 h-40 w-40 rounded-full bg-white/10 blur-xl" />
-              <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.45)_1px,transparent_1px)] [background-size:20px_20px]" />
+            
+            {/* Quick visual guide */}
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
+              {/* Seller steps */}
+              <div className="rounded-md border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100 transition">
+                <div className="flex items-center gap-2 text-gray-900 mb-1"><Package className="h-3 w-3" /><span className="font-semibold">List</span></div>
+                <p className="text-gray-600 text-[11px]">Add photos, price, and details</p>
+              </div>
+              <div className="rounded-md border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100 transition">
+                <div className="flex items-center gap-2 text-gray-900 mb-1"><CheckCircle className="h-3 w-3" /><span className="font-semibold">Confirm</span></div>
+                <p className="text-gray-600 text-[11px]">Approve sale within 48 hours</p>
+              </div>
+              <div className="rounded-md border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100 transition">
+                <div className="flex items-center gap-2 text-gray-900 mb-1"><Truck className="h-3 w-3" /><span className="font-semibold">Ship</span></div>
+                <p className="text-gray-600 text-[11px]">Print waybill, courier collects</p>
+              </div>
+              {/* Buyer steps */}
+              <div className="rounded-md border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100 transition">
+                <div className="flex items-center gap-2 text-gray-900 mb-1"><BookOpen className="h-3 w-3" /><span className="font-semibold">Search</span></div>
+                <p className="text-gray-600 text-[11px]">Find the right edition fast</p>
+              </div>
+              <div className="rounded-md border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100 transition">
+                <div className="flex items-center gap-2 text-gray-900 mb-1"><CreditCard className="h-3 w-3" /><span className="font-semibold">Pay</span></div>
+                <p className="text-gray-600 text-[11px]">Secure checkout and receipts</p>
+              </div>
+              <div className="rounded-md border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100 transition">
+                <div className="flex items-center gap-2 text-gray-900 mb-1"><ShieldCheck className="h-3 w-3" /><span className="font-semibold">Track</span></div>
+                <p className="text-gray-600 text-[11px]">Delivery updates as it moves</p>
+              </div>
             </div>
           </div>
         </div>
