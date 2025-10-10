@@ -5,6 +5,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { validateSAPhoneNumber } from "@/utils/shippingUtils";
 import {
   User,
   Edit,
@@ -16,6 +21,8 @@ import {
   Settings,
   AlertTriangle,
   Info,
+  Phone,
+  CheckCircle,
 } from "lucide-react";
 import { UserProfile } from "@/types/address";
 
