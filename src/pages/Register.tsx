@@ -143,7 +143,7 @@ const Register = () => {
         });
 
         setTimeout(() => {
-          navigate("/", { replace: true });
+          navigate("/profile", { replace: true });
         }, 1000);
       }
     } catch (error: unknown) {

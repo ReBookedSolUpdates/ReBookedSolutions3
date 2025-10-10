@@ -788,7 +788,8 @@ const Profile = () => {
                               const { error: profileErr } = await supabase
                                 .from('profiles')
                                 .update({ phone_number: phoneTrim || null })
-                                .eq('id', user.id);
+                                .eq('id', user.id)
+                                .is('phone_number', null);
                               if (profileErr) throw profileErr;
                             }
                             toast.success("Phone number saved");

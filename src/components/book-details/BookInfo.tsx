@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Book } from '@/types/book';
 
@@ -20,43 +20,45 @@ const BookInfo = ({ book }: BookInfoProps) => {
       </div>
 
       {/* Book Details */}
-      <Card>
-        <CardContent className="p-4 space-y-3">
-          <h3 className="font-semibold text-lg">Book Details</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="font-medium">Category:</span>
-              <p className="text-gray-600">{book.category}</p>
+      <Card className="overflow-hidden">
+        <CardHeader className="pb-3 border-b">
+          <CardTitle className="text-xl">Book Details</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="rounded-lg border bg-muted/30 p-3">
+              <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">Category</dt>
+              <dd className="mt-1 text-sm font-medium text-foreground">{book.category}</dd>
             </div>
-            <div>
-              <span className="font-medium">Condition:</span>
-              <p className="text-gray-600">{book.condition}</p>
+            <div className="rounded-lg border bg-muted/30 p-3">
+              <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">Condition</dt>
+              <dd className="mt-1 text-sm font-medium text-foreground">{book.condition}</dd>
             </div>
             {typeof book.availableQuantity === 'number' && (
-              <div>
-                <span className="font-medium">Available:</span>
-                <p className="text-gray-600">{book.availableQuantity}</p>
+              <div className="rounded-lg border bg-muted/30 p-3">
+                <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">Available</dt>
+                <dd className="mt-1 text-sm font-medium text-foreground">{book.availableQuantity}</dd>
               </div>
             )}
             {book.universityYear && (
-              <div>
-                <span className="font-medium">University Year:</span>
-                <p className="text-gray-600">{book.universityYear}</p>
+              <div className="rounded-lg border bg-muted/30 p-3">
+                <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">University Year</dt>
+                <dd className="mt-1 text-sm font-medium text-foreground">{book.universityYear}</dd>
               </div>
             )}
             {book.grade && (
-              <div>
-                <span className="font-medium">Grade:</span>
-                <p className="text-gray-600">{book.grade}</p>
+              <div className="rounded-lg border bg-muted/30 p-3">
+                <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">Grade</dt>
+                <dd className="mt-1 text-sm font-medium text-foreground">{book.grade}</dd>
               </div>
             )}
             {book.curriculum && (
-              <div>
-                <span className="font-medium">Curriculum:</span>
-                <p className="text-gray-600">{book.curriculum}</p>
+              <div className="rounded-lg border bg-muted/30 p-3">
+                <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">Curriculum</dt>
+                <dd className="mt-1 text-sm font-medium text-foreground">{book.curriculum}</dd>
               </div>
             )}
-          </div>
+          </dl>
         </CardContent>
       </Card>
     </div>
