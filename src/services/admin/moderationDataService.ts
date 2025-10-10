@@ -1,7 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
 
-import { supabase } from "@/integrations/supabase/client";
-
 export interface Report {
   id: string;
   book_title: string;
