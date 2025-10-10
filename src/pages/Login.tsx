@@ -60,7 +60,7 @@ const Login = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/", { replace: true });
+      navigate("/profile", { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
@@ -140,7 +140,7 @@ const Login = () => {
       setTimeout(() => {
         if (isAuthenticated) {
           console.log("✅ Login successful - user is authenticated");
-          navigate("/", { replace: true });
+          navigate("/profile", { replace: true });
         }
       }, 100);
 
@@ -151,7 +151,7 @@ const Login = () => {
         if (isAuthenticated) {
           console.log("✅ Login actually succeeded despite error - redirecting user");
           toast.success("Login successful!");
-          navigate("/", { replace: true });
+          navigate("/profile", { replace: true });
           return;
         }
 
