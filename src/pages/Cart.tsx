@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import FeatureUpdateDialog from "@/components/FeatureUpdateDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -244,11 +244,13 @@ const Cart = () => {
                           Visit Store
                         </Button>
                         {hasMultipleCarts && (
-                          <FeatureUpdateDialog
-                            label="Checkout This Cart"
-                            muted
+                          <Button
                             size="sm"
-                          />
+                            className="bg-book-600 hover:bg-book-700 text-white"
+                            onClick={() => handleCheckout(sellerId)}
+                          >
+                            Checkout This Cart
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -345,11 +347,13 @@ const Cart = () => {
                       >
                         Visit Store
                       </Button>
-                      <FeatureUpdateDialog
-                        label="Checkout This Cart"
-                        muted
+                      <Button
                         size="sm"
-                      />
+                        className="bg-book-600 hover:bg-book-700 text-white"
+                        onClick={() => handleCheckout(cart.sellerId)}
+                      >
+                        Checkout This Cart
+                      </Button>
                     </div>
                   </div>
                 </CardHeader>
@@ -518,11 +522,13 @@ const Cart = () => {
                       </p>
                     </div>
 
-                    <FeatureUpdateDialog
-                      label="Proceed to Checkout"
-                      muted
-                      className="w-full text-sm md:text-base py-2 md:py-3"
-                    />
+                    <Button
+                      disabled={isProcessing}
+                      onClick={() => handleCheckout()}
+                      className="w-full text-sm md:text-base py-2 md:py-3 bg-book-600 hover:bg-book-700 text-white"
+                    >
+                      {isProcessing ? "Processing..." : "Proceed to Checkout"}
+                    </Button>
                   </>
                 )}
 
