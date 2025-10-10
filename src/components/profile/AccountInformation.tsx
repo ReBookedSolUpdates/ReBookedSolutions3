@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { validateSAPhoneNumber } from "@/utils/shippingUtils";
+import { validateSAPhoneNumber, normalizeZAPhoneNumber } from "@/utils/shippingUtils";
 import {
   User,
   Edit,
@@ -52,7 +52,8 @@ const AccountInformation = ({
       toast.error("Please enter your phone number");
       return;
     }
-    if (!validateSAPhoneNumber(value)) {
+    const normalized = normalizeZAPhoneNumber(value);
+    if (!validateSAPhoneNumber(normalized)) {
       toast.error("Enter a valid South African phone number");
       return;
     }
@@ -69,7 +70,7 @@ const AccountInformation = ({
     try {
       // Update auth metadata (non-blocking)
       try {
-        await supabase.auth.updateUser({ data: { phone_number: value, phone: value } });
+        await supabase.auth.updateUser({ data: { phone_number: normalized, phone: normalized } });
       } catch (e) {
         console.warn("Auth metadata phone update failed (non-fatal)", e);
       }
@@ -77,7 +78,7 @@ const AccountInformation = ({
       // Persist to profiles table only if empty
       const { error } = await supabase
         .from("profiles")
-        .update({ phone_number: value, updated_at: new Date().toISOString() })
+        .update({ phone_number: normalized, updated_at: new Date().toISOString() })
         .eq("id", user.id)
         .is("phone_number", null);
 
