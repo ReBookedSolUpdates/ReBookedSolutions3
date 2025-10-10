@@ -20,42 +20,42 @@ const BookInfo = ({ book }: BookInfoProps) => {
       </div>
 
       {/* Book Details */}
-      <Card>
-        <CardHeader className="pb-3">
+      <Card className="overflow-hidden">
+        <CardHeader className="pb-3 border-b">
           <CardTitle className="text-xl">Book Details</CardTitle>
         </CardHeader>
-        <CardContent className="pt-0">
-          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-            <div>
-              <dt className="text-sm text-muted-foreground">Category</dt>
-              <dd className="font-medium">{book.category}</dd>
+        <CardContent className="pt-4">
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="rounded-lg border bg-muted/30 p-3">
+              <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">Category</dt>
+              <dd className="mt-1 text-sm font-medium text-foreground">{book.category}</dd>
             </div>
-            <div>
-              <dt className="text-sm text-muted-foreground">Condition</dt>
-              <dd className="font-medium">{book.condition}</dd>
+            <div className="rounded-lg border bg-muted/30 p-3">
+              <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">Condition</dt>
+              <dd className="mt-1 text-sm font-medium text-foreground">{book.condition}</dd>
             </div>
             {typeof book.availableQuantity === 'number' && (
-              <div>
-                <dt className="text-sm text-muted-foreground">Available</dt>
-                <dd className="font-medium">{book.availableQuantity}</dd>
+              <div className="rounded-lg border bg-muted/30 p-3">
+                <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">Available</dt>
+                <dd className="mt-1 text-sm font-medium text-foreground">{book.availableQuantity}</dd>
               </div>
             )}
             {book.universityYear && (
-              <div>
-                <dt className="text-sm text-muted-foreground">University Year</dt>
-                <dd className="font-medium">{book.universityYear}</dd>
+              <div className="rounded-lg border bg-muted/30 p-3">
+                <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">University Year</dt>
+                <dd className="mt-1 text-sm font-medium text-foreground">{book.universityYear}</dd>
               </div>
             )}
             {book.grade && (
-              <div>
-                <dt className="text-sm text-muted-foreground">Grade</dt>
-                <dd className="font-medium">{book.grade}</dd>
+              <div className="rounded-lg border bg-muted/30 p-3">
+                <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">Grade</dt>
+                <dd className="mt-1 text-sm font-medium text-foreground">{book.grade}</dd>
               </div>
             )}
             {book.curriculum && (
-              <div>
-                <dt className="text-sm text-muted-foreground">Curriculum</dt>
-                <dd className="font-medium">{book.curriculum}</dd>
+              <div className="rounded-lg border bg-muted/30 p-3">
+                <dt className="text-[12px] uppercase tracking-wide text-muted-foreground">Curriculum</dt>
+                <dd className="mt-1 text-sm font-medium text-foreground">{book.curriculum}</dd>
               </div>
             )}
           </dl>
