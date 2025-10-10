@@ -143,7 +143,7 @@ export const getSellerProfileWithRetry = async (sellerId: string) => {
     () =>
       supabase
         .from("profiles")
-        .select("id, name, email")
+        .select("id, first_name, last_name, email")
         .eq("id", sellerId)
         .single(),
     {

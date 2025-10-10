@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import BackButton from "@/components/ui/BackButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -13,7 +12,6 @@ import { useCommit } from "@/hooks/useCommit";
 import { getUserBooks } from "@/services/book/bookQueries";
 import { Book } from "@/types/book";
 import {
-  ArrowLeft,
   Check,
   Clock,
   ShoppingCart,
@@ -281,15 +279,6 @@ const ActivityLog = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
-            <BackButton
-              fallbackPath="/"
-              className="mb-4 text-slate-600 hover:text-slate-800 btn-mobile"
-              variant="ghost"
-            >
-              <ArrowLeft className="btn-mobile-icon" />
-              <span className="btn-mobile-text">Back</span>
-            </BackButton>
-
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 via-blue-600 to-indigo-600 bg-clip-text text-transparent">

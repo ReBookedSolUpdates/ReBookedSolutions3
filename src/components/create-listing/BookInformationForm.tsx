@@ -20,7 +20,7 @@ export const BookInformationForm = ({
   const isMobile = useIsMobile();
 
   return (
-    <div className={`space-y-${isMobile ? "3" : "4"}`}>
+    <div className="space-y-3 md:space-y-4">
       <div>
         <Label
           htmlFor="title"

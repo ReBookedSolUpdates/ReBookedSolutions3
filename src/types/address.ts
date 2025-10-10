@@ -17,8 +17,12 @@ export interface AddressData {
 
 export interface UserProfile {
   id: string;
-  name?: string;
+  first_name?: string;
+  last_name?: string;
+  name?: string; // legacy fallback
   email?: string;
+  phone_number?: string;
+  phone_verified?: boolean;
   isAdmin?: boolean;
   avatar_url?: string;
   bio?: string;

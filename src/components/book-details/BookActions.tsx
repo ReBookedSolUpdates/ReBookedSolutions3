@@ -122,15 +122,29 @@ const BookActions = ({
                 Share Book
               </Button>
               <Button
-                onClick={() => {
+                onClick={async () => {
                   const sellerId = book.seller?.id;
-                  if (sellerId) {
-                    const listingsUrl = `${window.location.origin}/seller/${sellerId}`;
-                    navigator.clipboard.writeText(listingsUrl);
-                    toast.success("Seller profile link copied!");
-                  } else {
+                  if (!sellerId) {
                     toast.error("Could not find seller information.");
+                    return;
                   }
+                  const listingsUrl = `${window.location.origin}/seller/${sellerId}`;
+                  try { await navigator.clipboard.writeText(listingsUrl); } catch {}
+                  const shareData = {
+                    title: `${book.seller?.name ? book.seller.name + ' ' : ''}ReBooked Mini`,
+                    text: book.seller?.name ? `Check out ${book.seller.name}'s books on ReBooked!` : `Check out this seller on ReBooked!`,
+                    url: listingsUrl,
+                  };
+                  if (navigator.share) {
+                    try {
+                      await navigator.share(shareData);
+                      toast.success("Link copied • Share sheet opened");
+                      return;
+                    } catch (err) {
+                      if (err instanceof Error && err.name === 'AbortError') return;
+                    }
+                  }
+                  toast.success("Seller profile link copied!");
                 }}
                 variant="outline"
                 className="flex-1"

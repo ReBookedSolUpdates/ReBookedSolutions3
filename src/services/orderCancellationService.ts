@@ -63,11 +63,10 @@ export class OrderCancellationService {
       }
 
       // Use the new edge function for comprehensive cancellation handling
-      const { data, error } = await supabase.functions.invoke('cancel-order', {
+      const { data, error } = await supabase.functions.invoke('cancel-order-with-refund', {
         body: {
           order_id: orderId,
-          buyer_id: user.id,
-          cancellation_reason: reason,
+          reason,
         },
       });
 

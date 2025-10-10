@@ -17,7 +17,6 @@ import { ArrowLeft, AlertTriangle, BookOpen } from "lucide-react";
 import { useBookDetails } from "@/hooks/useBookDetails";
 import { extractBookId } from "@/utils/bookUtils";
 import { toast } from "sonner";
-import GoogleAdsense from "@/components/GoogleAdsense";
 
 const BookDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -64,6 +63,11 @@ const BookDetails = () => {
 
     if (book.sold) {
       toast.error("This book has already been sold");
+      return;
+    }
+
+    if (typeof book.availableQuantity === 'number' && book.availableQuantity <= 0) {
+      toast.error("This book is out of stock");
       return;
     }
 
@@ -125,22 +129,21 @@ const BookDetails = () => {
       url: bookUrl,
     };
 
-    console.log("Sharing book with URL:", bookUrl);
+    try { await navigator.clipboard.writeText(bookUrl); } catch {}
 
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-        toast.success("Book shared successfully!");
+        toast.success("Link copied • Share sheet opened");
+        return;
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
-          // User cancelled sharing, don't show error
           return;
         }
-        fallbackShare(bookUrl);
       }
-    } else {
-      fallbackShare(bookUrl);
     }
+
+    toast.success("Book link copied to clipboard!");
   };
 
   const fallbackShare = (url?: string) => {
@@ -276,10 +279,6 @@ const BookDetails = () => {
           </div>
         </div>
 
-        {/* Ad Placement - After Book Details */}
-        <div className="mt-8 flex justify-center">
-          <GoogleAdsense />
-        </div>
 
         <ReportBookDialog
           isOpen={isReportDialogOpen}

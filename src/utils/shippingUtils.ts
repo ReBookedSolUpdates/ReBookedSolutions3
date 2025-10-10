@@ -234,16 +234,32 @@ export const validateSAPostalCode = (postalCode: string): boolean => {
 };
 
 /**
+ * Normalize South African phone number to local format per rules:
+ * - If starts with "+27" or "27", replace with "0" prefix
+ * - If starts with "0", keep as-is
+ * - If starts with "0027", replace with "0" prefix
+ * - Leave other formats untouched
+ * Also strips spaces, hyphens, and parentheses
+ */
+export const normalizeZAPhoneNumber = (phoneNumber: string): string => {
+  const s = (phoneNumber || "").trim().replace(/[\s\-\(\)]/g, "");
+  if (/^\+27/.test(s)) return "0" + s.slice(3);
+  if (/^27/.test(s)) return "0" + s.slice(2);
+  if (/^0027/.test(s)) return "0" + s.slice(4);
+  if (/^0[0-9]/.test(s)) return s;
+  return s;
+};
+
+/**
  * Validate South African phone number
  */
 export const validateSAPhoneNumber = (phoneNumber: string): boolean => {
-  // Remove spaces and special characters
-  const cleanPhone = phoneNumber.replace(/[\s\-\(\)]/g, "");
+  const cleanPhone = normalizeZAPhoneNumber(phoneNumber);
 
-  // South African phone number patterns
+  // South African phone number patterns (local format only)
   const patterns = [
-    /^(\+27|0)[1-9][0-9]{8}$/, // Standard landline and mobile
-    /^(\+27|0)[6-8][0-9]{8}$/, // Mobile specific
+    /^0[1-9][0-9]{8}$/, // Standard landline and mobile
+    /^0[6-8][0-9]{8}$/, // Mobile specific
   ];
 
   return patterns.some((pattern) => pattern.test(cleanPhone));

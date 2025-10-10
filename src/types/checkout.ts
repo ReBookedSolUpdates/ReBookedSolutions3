@@ -38,6 +38,9 @@ export interface DeliveryOption {
   estimated_days: number;
   description: string;
   zone_type?: "local" | "provincial" | "national";
+  provider_name?: string;
+  provider_slug?: string;
+  service_level_code?: string;
 }
 
 export interface OrderSummary {

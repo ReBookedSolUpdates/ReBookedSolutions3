@@ -29,11 +29,14 @@ import {
   Alert,
   AlertDescription,
 } from "@/components/ui/alert";
+import { compressImage } from "@/utils/imageCompression";
 
 interface BookImages {
   frontCover: string;
   backCover: string;
   insidePages: string;
+  extra1?: string;
+  extra2?: string;
 }
 
 interface EnhancedMobileImageUploadProps {
@@ -64,20 +67,24 @@ const EnhancedMobileImageUpload = ({
   const frontCameraInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const isMobile = useIsMobile();
 
-  // Convert images to array format for consistent handling
+  // Convert images to array format for consistent handling (preserve indices)
   const getImageArray = (): string[] => {
+    const max = Math.max(3, maxImages);
     if (variant === "object") {
       const bookImages = (currentImages || images) as BookImages;
-      if (!bookImages) return [];
-      return [
-        bookImages.frontCover,
-        bookImages.backCover,
-        bookImages.insidePages,
-      ]
-        .filter(Boolean)
-        .slice(0, 3);
+      const arr = [
+        bookImages?.frontCover || "",
+        bookImages?.backCover || "",
+        bookImages?.insidePages || "",
+        bookImages?.extra1 || "",
+        bookImages?.extra2 || "",
+      ];
+      return arr.slice(0, max);
     }
-    return ((images || []) as string[]).slice(0, 3);
+    const arr = Array.isArray(images) ? (images as string[]) : [];
+    // Ensure fixed length with empty slots preserved
+    const filled = Array.from({ length: max }, (_, i) => arr[i] || "");
+    return filled;
   };
 
   // Convert array back to appropriate format
@@ -87,6 +94,8 @@ const EnhancedMobileImageUpload = ({
         frontCover: newImages[0] || "",
         backCover: newImages[1] || "",
         insidePages: newImages[2] || "",
+        extra1: newImages[3] || "",
+        extra2: newImages[4] || "",
       };
       onImagesChange(bookImages);
     } else {
@@ -96,46 +105,58 @@ const EnhancedMobileImageUpload = ({
 
   const imageArray = getImageArray();
 
-  const slots = [
-    { 
-      label: "Front Cover", 
-      index: 0, 
+  const baseSlots = [
+    {
+      label: "Front Cover",
+      index: 0,
+      required: true,
       description: "Clear photo of book front",
       orientation: "portrait",
       tips: "Hold phone vertically, ensure good lighting"
     },
-    { 
-      label: "Back Cover", 
-      index: 1, 
+    {
+      label: "Back Cover",
+      index: 1,
+      required: true,
       description: "Clear photo of book back",
-      orientation: "portrait", 
+      orientation: "portrait",
       tips: "Hold phone vertically, capture entire back cover"
     },
-    { 
-      label: "Inside Pages", 
-      index: 2, 
+    {
+      label: "Inside Pages",
+      index: 2,
+      required: true,
       description: "Open book showing content",
       orientation: "landscape",
       tips: "Hold phone horizontally, show 2 pages clearly"
     },
   ];
 
-  const uploadImage = async (file: File): Promise<string> => {
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `book-images/${fileName}`;
+  const optionalSlots = [
+    { label: "Extra Photo 1", index: 3, required: false, description: "Optional extra angle or page", orientation: "portrait", tips: "Use good lighting" },
+    { label: "Extra Photo 2", index: 4, required: false, description: "Optional extra angle or page", orientation: "portrait", tips: "Use good lighting" },
+  ];
 
-    console.log("Starting image upload:", {
-      fileName,
-      fileSize: file.size,
-      fileType: file.type,
+  const slots = [...baseSlots, ...optionalSlots].slice(0, Math.max(3, maxImages));
+
+  const uploadImage = async (file: File): Promise<string> => {
+    // Compress to WebP before upload for faster transfers
+    const compressed = await compressImage(file, {
+      maxWidth: 1600,
+      maxHeight: 1600,
+      quality: 0.8,
+      format: "image/webp",
     });
+
+    const fileName = `${Math.random()}.${compressed.extension}`;
+    const filePath = `book-images/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from("book-images")
-      .upload(filePath, file, {
+      .upload(filePath, compressed.blob, {
         upsert: false,
         cacheControl: "31536000",
+        contentType: compressed.mimeType,
       });
 
     if (uploadError) {
@@ -147,7 +168,6 @@ const EnhancedMobileImageUpload = ({
       data: { publicUrl },
     } = supabase.storage.from("book-images").getPublicUrl(filePath);
 
-    console.log("Image uploaded successfully:", publicUrl);
     return publicUrl;
   };
 
@@ -181,6 +201,12 @@ const EnhancedMobileImageUpload = ({
       return;
     }
 
+    // Instantly show local preview
+    const objectUrl = URL.createObjectURL(file);
+    const tempImages = [...imageArray];
+    tempImages[index] = objectUrl;
+    updateImages(tempImages);
+
     setIsUploading((prev) => ({ ...prev, [index]: true }));
 
     try {
@@ -192,9 +218,14 @@ const EnhancedMobileImageUpload = ({
     } catch (error) {
       console.error("Upload failed:", error);
       toast.error(`Failed to upload ${slots[index].label}. Please try again.`);
+      // Remove temporary preview on failure
+      const newImages = [...imageArray];
+      newImages[index] = "";
+      updateImages(newImages);
     } finally {
       setIsUploading((prev) => ({ ...prev, [index]: false }));
-      // Reset the inputs
+      // Reset the inputs and cleanup preview URL
+      try { URL.revokeObjectURL(objectUrl); } catch {}
       event.target.value = "";
     }
   };
@@ -252,7 +283,7 @@ const EnhancedMobileImageUpload = ({
       )}
 
       <div
-        className={`grid ${isMobile ? "grid-cols-1 gap-4" : "grid-cols-3 gap-6"}`}
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 md:gap-6"
       >
         {slots.map((slot) => {
           const index = slot.index;
@@ -263,7 +294,7 @@ const EnhancedMobileImageUpload = ({
             <div key={slot.label} className="space-y-2">
               <div className="flex items-center justify-center gap-2">
                 <h3 className={`font-medium text-center ${isMobile ? "text-sm" : "text-base"}`}>
-                  {slot.label} <span className="text-red-500">*</span>
+                  {slot.label} {slot.required ? <span className="text-red-500">*</span> : <span className="text-gray-400 text-xs">(optional)</span>}
                 </h3>
                 <Badge variant="outline" className="text-xs">
                   {slot.orientation === 'portrait' ? (

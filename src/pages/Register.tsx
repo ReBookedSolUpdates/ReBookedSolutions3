@@ -12,10 +12,22 @@ import { BackupEmailService } from "@/utils/backupEmailService";
 
 
 const Register = () => {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const normalizePhone = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (value.trim().startsWith("+27")) {
+      return ("0" + digits.slice(2)).slice(0, 10);
+    }
+    if (digits.startsWith("27")) {
+      return ("0" + digits.slice(2)).slice(0, 10);
+    }
+    return digits.slice(0, 10);
+  };
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -37,12 +49,13 @@ const Register = () => {
 
     console.log("🚀 Starting registration process...");
     console.log("📧 Email:", email);
-    console.log("👤 Name:", name);
+    console.log("👤 First Name:", firstName);
+    console.log("👤 Last Name:", lastName);
     console.log("🔐 Password length:", password.length);
     console.log("✅ Terms accepted:", termsAccepted);
 
     try {
-      if (!name.trim() || !email.trim() || !password.trim()) {
+      if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim() || !phone.trim()) {
         throw new Error("All fields are required");
       }
 
@@ -60,8 +73,21 @@ const Register = () => {
         throw new Error("Password must be at least 6 characters long");
       }
 
+      // Normalize to 0XXXXXXXXX format and validate length
+      const normalizedPhone = normalizePhone(phone);
+      setPhone(normalizedPhone);
+      if (!/^0\d{9}$/.test(normalizedPhone)) {
+        const proceed = window.confirm(
+          "Are you sure your number is correct? South African numbers should start with 0 and be 10 digits. It's used for delivery; if incorrect, couriers may not reach you and you may need to pay for rescheduling."
+        );
+        if (!proceed) {
+          setIsLoading(false);
+          return;
+        }
+      }
+
       console.log("🔄 Calling register function...");
-      const result = await register(email, password, name);
+      const result = await register(email, password, firstName, lastName, normalizedPhone);
       console.log("✅ Register function returned:", result);
 
       // Handle different registration outcomes
@@ -134,7 +160,7 @@ const Register = () => {
         });
 
         setTimeout(() => {
-          navigate("/", { replace: true });
+          navigate("/profile", { replace: true });
         }, 1000);
       }
     } catch (error: unknown) {
@@ -143,7 +169,8 @@ const Register = () => {
       console.error("Error:", error);
       console.error("Message:", error instanceof Error ? error.message : String(error));
       console.error("Email:", email);
-      console.error("Name:", name);
+      console.error("First Name:", firstName);
+      console.error("Last Name:", lastName);
       console.groupEnd();
 
       const errorMessage =
@@ -207,11 +234,11 @@ const Register = () => {
 
   return (
     <Layout>
-      <div className="min-h-[80vh] flex items-center justify-center px-4">
-        <div className="w-full max-w-md">
+      <div className="min-h-[80vh] flex items-center justify-center px-4 py-10 sm:py-16">
+        <div className="w-full max-w-sm md:max-w-md">
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div className="p-6 sm:p-8">
-              <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+            <div className="p-5 sm:p-6">
+              <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">
                 Create an Account
               </h1>
 
@@ -230,20 +257,41 @@ const Register = () => {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <User className="h-5 w-5 text-gray-400" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="first_name">First Name</Label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                          <User className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <Input
+                          id="first_name"
+                          type="text"
+                          placeholder="John"
+                          className="pl-10"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          required
+                        />
+                      </div>
                     </div>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder="John Doe"
-                      className="pl-10"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                    />
+                    <div>
+                      <Label htmlFor="last_name">Last Name</Label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                          <User className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <Input
+                          id="last_name"
+                          type="text"
+                          placeholder="Doe"
+                          className="pl-10"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -262,6 +310,31 @@ const Register = () => {
                       onChange={(e) => setEmail(e.target.value)}
                       required
                     />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <span className="text-gray-400 text-xs">+27</span>
+                    </div>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
+                      placeholder="e.g., 0812345678"
+                      className="pl-10"
+                      value={phone}
+                      onChange={(e) => setPhone(normalizePhone(e.target.value))}
+                      required
+                    />
+                    {phone && !/^0\d{9}$/.test(phone) && (
+                      <p className="text-xs text-amber-600 mt-1 pl-10">
+                        South African numbers should start with 0 and be 10 digits. Please double-check.
+                      </p>
+                    )}
                   </div>
                 </div>
 

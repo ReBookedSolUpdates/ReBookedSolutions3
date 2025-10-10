@@ -396,6 +396,23 @@ const CampusBooksSection = () => {
           </>
         )}
       </div>
+
+      <Card className="border-0 shadow-sm">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <BookOpen className="h-4 w-4 sm:h-5 sm:w-5" /> What is ReBooked Marketplace?
+          </CardTitle>
+          <CardDescription>A safe, student‑friendly marketplace to buy and sell textbooks</CardDescription>
+        </CardHeader>
+        <CardContent className="text-sm text-gray-700 space-y-2">
+          <p>ReBooked Marketplace connects students to buy and sell textbooks directly — saving money and keeping books in circulation.</p>
+          <ul className="list-disc list-inside space-y-1">
+            <li>Student‑to‑student sales with transparent pricing</li>
+            <li>Secure payments and trusted courier pickup</li>
+            <li>Search by university, course, or category</li>
+          </ul>
+        </CardContent>
+      </Card>
     </div>
   );
 };

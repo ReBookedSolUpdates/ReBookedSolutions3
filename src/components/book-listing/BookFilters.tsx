@@ -2,9 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { Filter, Search, School, GraduationCap, BookOpen, MapPin } from "lucide-react";
 import { UniversitySelector } from "@/components/ui/university-selector";
 import { UNIVERSITY_YEARS } from "@/constants/universities";
+import { CREATE_LISTING_CATEGORIES } from "@/constants/createListingCategories";
 
 interface BookFiltersProps {
   searchQuery: string;
@@ -15,6 +18,8 @@ interface BookFiltersProps {
   setSelectedCondition: (condition: string) => void;
   selectedGrade: string;
   setSelectedGrade: (grade: string) => void;
+  selectedCurriculum: string;
+  setSelectedCurriculum: (curriculum: string) => void;
   selectedUniversityYear: string;
   setSelectedUniversityYear: (year: string) => void;
   selectedUniversity: string;
@@ -41,6 +46,8 @@ const BookFilters = ({
   setSelectedCondition,
   selectedGrade,
   setSelectedGrade,
+  selectedCurriculum,
+  setSelectedCurriculum,
   selectedUniversityYear,
   setSelectedUniversityYear,
   selectedUniversity,
@@ -57,15 +64,7 @@ const BookFilters = ({
   onUpdateFilters,
   onClearFilters,
 }: BookFiltersProps) => {
-  const categories = [
-    "Computer Science",
-    "Mathematics",
-    "Biology",
-    "Chemistry",
-    "Physics",
-    "Economics",
-    "Psychology",
-  ];
+  const categories = CREATE_LISTING_CATEGORIES;
   const conditions = ["New", "Good", "Better", "Average", "Below Average"];
   const grades = [
     "Grade 1",
@@ -81,6 +80,7 @@ const BookFilters = ({
     "Grade 11",
     "Grade 12",
   ];
+  const curricula = ["CAPS", "Cambridge", "IEB"];
   const provinces = [
     "Eastern Cape",
     "Free State",
@@ -139,18 +139,32 @@ const BookFilters = ({
     }
   };
 
+  const anyActive = Boolean(
+    searchQuery ||
+    selectedCategory ||
+    selectedCondition ||
+    selectedGrade ||
+    selectedCurriculum ||
+    selectedUniversityYear ||
+    selectedUniversity ||
+    selectedProvince
+  );
+
   return (
     <>
       {/* Mobile Toggle */}
-      <div className="lg:hidden mb-4">
+      <div className="lg:hidden mb-4 flex items-center justify-between gap-2">
         <Button
           onClick={() => setShowFilters(!showFilters)}
           variant="outline"
-          className="w-full flex items-center justify-center"
+          className="flex-1 flex items-center justify-center"
         >
           <Filter className="mr-2 h-4 w-4" />
           {showFilters ? "Hide Filters" : "Show Filters"}
         </Button>
+        {!showFilters && anyActive && (
+          <Badge variant="outline" className="text-xs whitespace-nowrap">Filters active</Badge>
+        )}
       </div>
 
       {/* Filters Section */}
@@ -254,6 +268,23 @@ const BookFilters = ({
             </div>
           )}
 
+          {/* Curriculum Filter */}
+          {(bookType === "school" || bookType === "all") && (
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-700 mb-2">Curriculum</h3>
+              <Select value={selectedCurriculum} onValueChange={(value) => setSelectedCurriculum(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select curriculum" />
+                </SelectTrigger>
+                <SelectContent>
+                  {curricula.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           {/* University Selection */}
           {(bookType === "university" || bookType === "all") && (
             <div className="mb-6">
@@ -298,28 +329,22 @@ const BookFilters = ({
 
           {/* Category Filter */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">
-              Categories
-            </h3>
-            <div className="space-y-2">
-              {categories.map((category) => (
-                <div key={category} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`category-${category}`}
-                    checked={selectedCategory === category}
-                    onChange={() => handleCategoryChange(category)}
-                    className="h-4 w-4 text-book-600 focus:ring-book-500 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor={`category-${category}`}
-                    className="ml-2 text-sm text-gray-700"
-                  >
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Category</h3>
+            <Select
+              value={selectedCategory}
+              onValueChange={(value) => setSelectedCategory(value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent className="max-h-72">
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>
                     {category}
-                  </label>
-                </div>
-              ))}
-            </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Province Filter */}

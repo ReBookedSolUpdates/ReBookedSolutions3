@@ -8,6 +8,7 @@ import {
   withTimeout,
   isNetworkError,
 } from "@/utils/errorUtils";
+import { buildDisplayName } from "@/utils/profileUtils";
 
 export interface Profile {
   id: string;
@@ -224,7 +225,7 @@ export const fetchUserProfileQuick = async (
     const { data: profile, error: profileError } = (await withTimeout(
       supabase
         .from("profiles")
-        .select("id, name, email, status, profile_picture_url, bio, is_admin")
+        .select("id, first_name, last_name, name, email, status, profile_picture_url, bio, is_admin")
         .eq("id", user.id)
         .single(),
       12000, // Increased to 12 seconds
@@ -263,11 +264,7 @@ export const fetchUserProfileQuick = async (
 
     const profileData = {
       id: profile.id,
-      name:
-        profile.name ||
-        user.user_metadata?.name ||
-        user.email?.split("@")[0] ||
-        "User",
+      name: buildDisplayName({ ...profile, email: profile.email || user.email }),
       email: profile.email || user.email || "",
       isAdmin,
       status: profile.status || "active",
@@ -305,7 +302,7 @@ export const fetchUserProfile = async (user: User): Promise<Profile | null> => {
           supabase
             .from("profiles")
             .select(
-              "id, name, email, status, profile_picture_url, bio, is_admin",
+              "id, first_name, last_name, name, email, status, profile_picture_url, bio, is_admin",
             )
             .eq("id", user.id)
             .single(),
@@ -367,20 +364,17 @@ export const fetchUserProfile = async (user: User): Promise<Profile | null> => {
       }
     }
 
+    const displayName = buildDisplayName({ ...profile, email: profile.email || user.email });
     console.log(
       "Profile loaded successfully:",
-      profile.name,
+      displayName,
       "isAdmin:",
       isAdmin,
     );
 
     return {
       id: profile.id,
-      name:
-        profile.name ||
-        user.user_metadata?.name ||
-        user.email?.split("@")[0] ||
-        "User",
+      name: displayName,
       email: profile.email || user.email || "",
       isAdmin,
       status: profile.status || "active",
@@ -402,20 +396,30 @@ export const createUserProfile = async (user: User): Promise<Profile> => {
     const userEmail = user.email || "";
     const isAdmin = adminEmails.includes(userEmail.toLowerCase());
 
+    const derivedName =
+      user.user_metadata?.name ||
+      [user.user_metadata?.first_name, user.user_metadata?.last_name].filter(Boolean).join(" ") ||
+      user.email?.split("@")[0] ||
+      "User";
+
     const profileData = {
       id: user.id,
-      name: user.user_metadata?.name || user.email?.split("@")[0] || "User",
+      first_name: user.user_metadata?.first_name || null,
+      last_name: user.user_metadata?.last_name || null,
+      phone_number: (user as any)?.user_metadata?.phone_number || (user as any)?.user_metadata?.phone || null,
+      name: derivedName,
       email: user.email || "",
       status: "active",
-      is_admin: isAdmin, // Set admin flag during creation
-    };
+      is_admin: isAdmin,
+      profile_picture_url: user.user_metadata?.avatar_url || null,
+    } as any;
 
     // Use retry logic for profile creation as well
     const result = await retryWithExponentialBackoff(async () => {
       return await supabase
         .from("profiles")
-        .insert([profileData])
-        .select("id, name, email, status, profile_picture_url, bio, is_admin")
+        .upsert([profileData], { onConflict: "id" })
+        .select("id, first_name, last_name, name, email, status, profile_picture_url, bio, is_admin")
         .single();
     });
 
@@ -428,9 +432,10 @@ export const createUserProfile = async (user: User): Promise<Profile> => {
       );
     }
 
+    const createdDisplayName = buildDisplayName(newProfile);
     console.log(
       "Profile created successfully:",
-      newProfile.name,
+      createdDisplayName,
       "Admin:",
       isAdmin,
     );
@@ -439,9 +444,9 @@ export const createUserProfile = async (user: User): Promise<Profile> => {
 
     return {
       id: newProfile.id,
-      name: newProfile.name,
+      name: createdDisplayName,
       email: newProfile.email,
-      isAdmin: newProfile.is_admin || false, // Use the admin status from database
+      isAdmin: newProfile.is_admin || false,
       status: newProfile.status,
       profile_picture_url: newProfile.profile_picture_url,
       bio: newProfile.bio,

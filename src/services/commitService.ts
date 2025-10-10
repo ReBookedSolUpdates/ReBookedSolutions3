@@ -212,6 +212,11 @@ export const getCommitPendingBooks = async (): Promise<any[]> => {
       user.id,
     );
 
+    // Safety net: trigger server-side expiry check (non-blocking)
+    try {
+      supabase.functions.invoke('check-expired-orders', { body: {} }).catch(() => {});
+    } catch {}
+
     // Query orders with pending_commit status - this is the real commit system
     let orders;
     try {
@@ -223,11 +228,12 @@ export const getCommitPendingBooks = async (): Promise<any[]> => {
             amount,
             created_at,
             status,
+            payment_status,
             buyer_email,
             items
           `)
           .eq("seller_id", user.id)
-          .eq("status", "pending_commit")
+          .in("status", ["pending_commit", "pending"]) // include pending for visibility
           .order("created_at", { ascending: true });
 
         if (result.error) {

@@ -71,7 +71,7 @@ export const getSellerCheckoutData = async (sellerId: string) => {
     const hasSubaccount = profile.subaccount_code;
 
     return {
-      valid: hasAddress && hasSubaccount,
+      valid: !!hasAddress,
       profile,
       hasAddress: !!hasAddress,
       hasSubaccount: !!hasSubaccount,
@@ -123,7 +123,28 @@ export const getBuyerCheckoutData = async (userId: string) => {
       console.warn("Failed to check encrypted buyer address:", error);
     }
 
-    // No plaintext fallback allowed
+    // Fallback: legacy plaintext JSONB on profiles table
+    if (!address && (profile as any).shipping_address) {
+      try {
+        const sa: any = (profile as any).shipping_address;
+        const street = sa.streetAddress || sa.street || sa.line1 || "";
+        const city = sa.city || sa.suburb || "";
+        const province = sa.province || sa.state || "";
+        const postal = sa.postalCode || sa.postal_code || sa.zip || "";
+        if (street && city && province && postal) {
+          address = {
+            street,
+            city,
+            province,
+            postal_code: postal,
+            country: "South Africa",
+          } as CheckoutAddress;
+          console.log("✅ Using legacy profile shipping_address for buyer");
+        }
+      } catch (e) {
+        console.warn("Legacy shipping_address fallback failed:", e);
+      }
+    }
 
     return {
       valid: true,

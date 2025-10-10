@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
 import {
   User,
   BookOpen,
@@ -25,6 +26,10 @@ import {
   TrendingUp,
   Share2,
   Eye,
+  Phone,
+  Clock,
+  ShoppingBag,
+  X,
 } from "lucide-react";
 import { getUserBooks } from "@/services/book/bookQueries";
 import { deleteBook } from "@/services/book/bookMutations";
@@ -33,11 +38,14 @@ import { Book } from "@/types/book";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ModernAddressTab from "@/components/profile/ModernAddressTab";
+import OrderManagementView from "@/components/orders/OrderManagementView";
+import { useCommit } from "@/hooks/useCommit";
+import EnhancedOrderCommitButton from "@/components/orders/EnhancedOrderCommitButton";
 import BankingProfileTab from "@/components/profile/BankingProfileTab";
 import ShareProfileDialog from "@/components/ShareProfileDialog";
 import ShareReminderBanner from "@/components/ShareReminderBanner";
 import ProfileEditDialog from "@/components/ProfileEditDialog";
-import TransparencyModal from "@/components/TransparencyModal";
+// Transparency moved to standalone page
 import { UserProfile, AddressData, Address } from "@/types/address";
 import { handleAddressError, getUserFriendlyErrorMessage } from "@/utils/errorDisplayUtils";
 
@@ -53,7 +61,16 @@ const Profile = () => {
   const [deletingBooks, setDeletingBooks] = useState<Set<string>>(new Set());
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isTransparencyModalOpen, setIsTransparencyModalOpen] = useState(false);
+  // Transparency modal removed; use /transparency page instead
+  const [phone, setPhone] = useState<string>(
+    (user?.user_metadata as any)?.phone_number || (user?.user_metadata as any)?.phone || ""
+  );
+
+  useEffect(() => {
+    setPhone(((user?.user_metadata as any)?.phone_number || (user?.user_metadata as any)?.phone) || "");
+  }, [user]);
+
+  const hasSavedPhone = Boolean(((user?.user_metadata as any)?.phone_number || (user?.user_metadata as any)?.phone));
 
   const loadActiveListings = useCallback(async () => {
     if (!user?.id) return;
@@ -260,13 +277,17 @@ const Profile = () => {
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                 <Avatar className="w-20 h-20">
                   <AvatarFallback className="bg-book-100 text-book-600 text-xl font-semibold">
-                    {profile.name?.charAt(0)?.toUpperCase() || "U"}
+                    {(
+                      ([(profile as any)?.first_name, (profile as any)?.last_name].filter(Boolean).join(" ") || profile.name || "U")
+                      .charAt(0)
+                      ?.toUpperCase()
+                    )}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-3">
                   <div>
                     <h1 className="text-3xl font-bold text-gray-900">
-                      {profile.name || "Anonymous User"}
+                      {[(profile as any)?.first_name, (profile as any)?.last_name].filter(Boolean).join(" ") || profile.name || "Anonymous User"}
                     </h1>
                     <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
                       <div className="flex items-center gap-1">
@@ -303,15 +324,6 @@ const Profile = () => {
 
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => setIsTransparencyModalOpen(true)}
-                    variant="outline"
-                    className="border-blue-600 text-blue-600 hover:bg-blue-50"
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    Transparency
-                  </Button>
-
-                  <Button
                     onClick={() => navigate("/create-listing")}
                     className="bg-book-600 hover:bg-book-700"
                   >
@@ -330,7 +342,7 @@ const Profile = () => {
           onValueChange={setActiveTab}
           className="space-y-6"
         >
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <User className="w-4 h-4" />
               {!isMobile && "Overview"}
@@ -338,6 +350,10 @@ const Profile = () => {
             <TabsTrigger value="books" className="flex items-center gap-2">
               <BookOpen className="w-4 h-4" />
               {!isMobile && "My Books"}
+            </TabsTrigger>
+            <TabsTrigger value="activity" className="flex items-center gap-2">
+              <Package className="w-4 h-4" />
+              {!isMobile && "Activity"}
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
@@ -598,6 +614,104 @@ const Profile = () => {
             </Card>
           </TabsContent>
 
+          {/* Activity Tab */}
+          <TabsContent value="activity" className="space-y-6">
+            <Tabs defaultValue="commits" className="w-full">
+              <TabsList className="grid grid-cols-2 w-full">
+                <TabsTrigger value="commits" className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" /> Commits
+                </TabsTrigger>
+                <TabsTrigger value="orders" className="flex items-center gap-2">
+                  <ShoppingBag className="h-4 w-4" /> Ongoing Orders
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="commits" className="space-y-4">
+                {(() => {
+                  const ActivityCommits: React.FC = () => {
+                    const { user } = useAuth();
+                    const { pendingCommits, refreshPendingCommits, declineBook, isCommitting, isDeclining } = useCommit();
+                    const [now, setNow] = useState(new Date());
+                    useEffect(() => {
+                      refreshPendingCommits().catch(() => {});
+                      const t = setInterval(() => setNow(new Date()), 5000);
+                      return () => clearInterval(t);
+                    }, [refreshPendingCommits]);
+                    if (!pendingCommits || pendingCommits.length === 0) return (
+                      <Alert className="border-amber-200 bg-amber-50">
+                        <AlertDescription className="text-amber-800">No pending commits.</AlertDescription>
+                      </Alert>
+                    );
+                    return (
+                      <div className="space-y-4">
+                        {pendingCommits.map((c: any) => {
+                          const ms = Math.max(0, new Date(c.expiresAt).getTime() - now.getTime());
+                          const mins = Math.floor(ms / 60000);
+                          const hrs = Math.floor(mins / 60);
+                          const rem = mins % 60;
+                          const urgent = hrs < 12;
+                          return (
+                            <Card key={c.id} className={urgent ? "border-red-200 bg-red-50" : "border-amber-200 bg-amber-50"}>
+                              <CardContent className="p-4">
+                                <div className="flex flex-col md:flex-row gap-4 md:items-start">
+                                  <div className="w-16 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                                    <img src={c.imageUrl || "/placeholder.svg"} onError={(e: any) => (e.currentTarget.src = "/placeholder.svg")} className="w-full h-full object-cover" alt={c.bookTitle} />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <h3 className="font-semibold text-slate-800 line-clamp-1">{c.bookTitle}</h3>
+                                      {urgent && <Badge className="bg-red-500 text-white">URGENT</Badge>}
+                                    </div>
+                                    {c.author && <p className="text-sm text-gray-600 mb-2">by {c.author}</p>}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600 mb-3">
+                                      <div className="flex items-center gap-2"><User className="h-4 w-4" />Buyer: <span className="font-medium">{c.buyerName}</span></div>
+                                      <div className="flex items-center gap-2"><ShoppingBag className="h-4 w-4 text-emerald-600" />Price: <span className="font-bold text-emerald-700">R{c.price?.toFixed?.(2) || c.price}</span></div>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2 px-2 py-1 rounded bg-white/70">
+                                      <Clock className={urgent ? "h-4 w-4 text-red-500" : "h-4 w-4 text-amber-600"} />
+                                      <span className={urgent ? "text-red-600 font-medium" : "text-amber-700 font-medium"}>
+                                        {mins <= 0 ? "Expired" : (hrs > 0 ? `${hrs}h ${rem}m` : `${rem}m`)} remaining
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="flex gap-2 md:flex-col md:ml-4">
+                                    <EnhancedOrderCommitButton
+                                      orderId={c.id}
+                                      sellerId={user?.id || ""}
+                                      bookTitle={c.bookTitle}
+                                      buyerName={c.buyerName}
+                                      onCommitSuccess={() => refreshPendingCommits().catch(() => {})}
+                                      disabled={isCommitting || isDeclining}
+                                    />
+                                    <Button
+                                      variant="destructive"
+                                      disabled={isCommitting || isDeclining}
+                                      onClick={async (e) => {
+                                        e.preventDefault();
+                                        try { await declineBook(c.id); await refreshPendingCommits(); } catch {}
+                                      }}
+                                    >
+                                      <X className="h-4 w-4 mr-1" /> Decline
+                                    </Button>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                    );
+                  };
+                  return <ActivityCommits />;
+                })()}
+              </TabsContent>
+
+              <TabsContent value="orders">
+                <OrderManagementView />
+              </TabsContent>
+            </Tabs>
+          </TabsContent>
+
           {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
             <Card>
@@ -639,6 +753,79 @@ const Profile = () => {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex-1">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <input
+                        type="tel"
+                        inputMode="numeric"
+                        maxLength={10}
+                        value={phone}
+                        onChange={(e) => {
+                          const raw = e.target.value || "";
+                          const digits = raw.replace(/\D/g, "");
+                          let normalized = digits;
+                          if (raw.trim().startsWith("+27") || digits.startsWith("27")) {
+                            normalized = ("0" + digits.slice(2));
+                          }
+                          setPhone(normalized.slice(0, 10));
+                        }}
+                        placeholder="e.g., 0812345678"
+                        className="w-full pl-10 px-3 py-2 border border-gray-300 rounded-md"
+                        readOnly={hasSavedPhone}
+                      />
+                      {phone && !/^0\d{9}$/.test(phone) && (
+                        <p className="text-xs text-amber-600 mt-1 pl-10">
+                          South African numbers should start with 0 and be 10 digits. Please double-check.
+                        </p>
+                      )}
+                    </div>
+                    {hasSavedPhone ? (
+                      <Button asChild variant="outline" size="sm" className="cursor-not-allowed opacity-70">
+                        <a href="/contact">Contact Support to change</a>
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={async () => {
+                          try {
+                            const digits = (phone || "").replace(/\D/g, "");
+                            const normalized = digits.startsWith("27") ? ("0" + digits.slice(2)) : digits;
+                            const phoneTrim = normalized.slice(0, 10);
+                            if (phoneTrim && !/^0\d{9}$/.test(phoneTrim)) {
+                              const proceed = window.confirm(
+                                "Are you sure your number is correct? South African numbers should start with 0 and be 10 digits. It's used for delivery; if incorrect, couriers may not reach you and you may need to pay for rescheduling."
+                              );
+                              if (!proceed) return;
+                            }
+                            const { error } = await supabase.auth.updateUser({ data: { phone_number: phoneTrim || null, phone: phoneTrim || null } });
+                            if (error) throw error;
+                            if (user?.id) {
+                              const { error: profileErr } = await supabase
+                                .from('profiles')
+                                .update({ phone_number: phoneTrim || null })
+                                .eq('id', user.id)
+                                .is('phone_number', null);
+                              if (profileErr) throw profileErr;
+                            }
+                            toast.success("Phone number saved");
+                          } catch (err) {
+                            toast.error("Failed to save phone");
+                          }
+                        }}
+                      >
+                        Save
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Used for delivery updates and account security.</p>
+                </div>
+
                 <Separator />
 
                 <div className="space-y-4">
@@ -671,7 +858,7 @@ const Profile = () => {
         isOpen={isShareDialogOpen}
         onClose={() => setIsShareDialogOpen(false)}
         userId={user?.id || ""}
-        userName={profile?.name || "Anonymous User"}
+        userName={[(profile as any)?.first_name, (profile as any)?.last_name].filter(Boolean).join(" ") || profile?.name || "Anonymous User"}
         isOwnProfile={true}
       />
 
@@ -680,10 +867,7 @@ const Profile = () => {
         onClose={() => setIsEditDialogOpen(false)}
       />
 
-      <TransparencyModal
-        isOpen={isTransparencyModalOpen}
-        onClose={() => setIsTransparencyModalOpen(false)}
-      />
+      {/* Transparency modal removed; use /transparency page */}
     </Layout>
   );
 };

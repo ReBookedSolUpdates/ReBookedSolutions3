@@ -14,9 +14,10 @@ import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { logError, getErrorMessage } from "@/utils/errorUtils";
 
-interface UserProfile {
+interface UserProfileRecord {
   id: string;
-  name: string;
+  first_name: string | null;
+  last_name: string | null;
   email: string;
   created_at: string;
 }
@@ -25,7 +26,7 @@ const UserProfile = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<UserProfileRecord | null>(null);
   const [userBooks, setUserBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
@@ -43,7 +44,7 @@ const UserProfile = () => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, name, email, created_at")
+        .select("id, first_name, last_name, email, created_at")
         .eq("id", userId)
         .maybeSingle();
 
@@ -121,7 +122,7 @@ const UserProfile = () => {
 
   const userData = {
     id: profile?.id || "",
-    name: profile?.name || "Anonymous User",
+    name: [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || (profile?.email?.split("@")[0] || "Anonymous User"),
     joinDate: profile?.created_at || new Date().toISOString(),
     isVerified: false,
   };
@@ -211,7 +212,7 @@ const UserProfile = () => {
           isOpen={isShareDialogOpen}
           onClose={() => setIsShareDialogOpen(false)}
           userId={profile?.id || ""}
-          userName={profile?.name || "Anonymous User"}
+          userName={[profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || "Anonymous User"}
           isOwnProfile={false}
         />
       </div>

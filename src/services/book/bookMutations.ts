@@ -62,6 +62,8 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
     }
 
     // Create book data with all required fields (no plaintext address storage)
+    const quantity = Math.max(1, Number((bookData as any).quantity || 1));
+
     const fullBookData = {
       seller_id: user.id,
       title: bookData.title,
@@ -70,15 +72,21 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
       price: bookData.price,
       category: bookData.category,
       condition: bookData.condition,
-      image_url: bookData.imageUrl,
+      image_url: bookData.imageUrl || bookData.frontCover || bookData.backCover || bookData.insidePages,
       front_cover: bookData.frontCover,
       back_cover: bookData.backCover,
       inside_pages: bookData.insidePages,
+      additional_images: (() => { const extras = (bookData.additionalImages || []).filter(Boolean); return extras.length > 0 ? extras : null; })(),
       grade: bookData.grade,
       university_year: bookData.universityYear,
+      curriculum: (bookData as any).curriculum || null,
       province: province,
       seller_subaccount_code: paystackSubaccountCode,
-      requires_banking_setup: false, // Set to false since user passed banking requirements
+      requires_banking_setup: false,
+      // Quantity fields at creation
+      initial_quantity: quantity,
+      available_quantity: quantity,
+      sold_quantity: 0,
     };
 
     console.log("📍 Creating book with address and banking info:", {
@@ -124,7 +132,7 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
     // Fetch seller profile
     const { data: seller } = await supabase
       .from("profiles")
-      .select("id, name, email")
+      .select("id, first_name, last_name, email")
       .eq("id", user.id)
       .single();
 
@@ -133,7 +141,7 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
       profiles: seller
         ? {
             id: seller.id,
-            name: seller.name,
+            name: [seller.first_name, seller.last_name].filter(Boolean).join(" ") || (seller as any).name || (seller.email ? seller.email.split("@")[0] : ""),
             email: seller.email,
           }
         : null,
@@ -208,6 +216,8 @@ export const updateBook = async (
       updateData.category = bookData.category;
     if (bookData.condition !== undefined)
       updateData.condition = bookData.condition;
+    if ((bookData as any).curriculum !== undefined)
+      updateData.curriculum = (bookData as any).curriculum;
     if (bookData.imageUrl !== undefined)
       updateData.image_url = bookData.imageUrl;
     if (bookData.frontCover !== undefined)
@@ -216,9 +226,19 @@ export const updateBook = async (
       updateData.back_cover = bookData.backCover;
     if (bookData.insidePages !== undefined)
       updateData.inside_pages = bookData.insidePages;
+    if (bookData.additionalImages !== undefined) {
+      const extras = (bookData.additionalImages || []).filter(Boolean);
+      updateData.additional_images = extras.length > 0 ? extras : null;
+    }
     if (bookData.grade !== undefined) updateData.grade = bookData.grade;
     if (bookData.universityYear !== undefined)
       updateData.university_year = bookData.universityYear;
+    if ((bookData as any).quantity !== undefined) {
+      const qty = Math.max(1, Number((bookData as any).quantity));
+      updateData.available_quantity = qty;
+      // Do not reduce initial_quantity on edit; optionally increase if higher than initial
+      updateData.initial_quantity = updateData.initial_quantity ?? undefined;
+    }
 
     const { data: book, error } = await supabase
       .from("books")
@@ -234,7 +254,7 @@ export const updateBook = async (
     // Fetch seller profile
     const { data: seller } = await supabase
       .from("profiles")
-      .select("id, name, email")
+      .select("id, first_name, last_name, email")
       .eq("id", book.seller_id)
       .single();
 
@@ -243,7 +263,7 @@ export const updateBook = async (
       profiles: seller
         ? {
             id: seller.id,
-            name: seller.name,
+            name: [seller.first_name, seller.last_name].filter(Boolean).join(" ") || (seller as any).name || (seller.email ? seller.email.split("@")[0] : ""),
             email: seller.email,
           }
         : null,

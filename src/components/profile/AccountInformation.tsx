@@ -5,6 +5,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { validateSAPhoneNumber, normalizeZAPhoneNumber } from "@/utils/shippingUtils";
 import {
   User,
   Edit,
@@ -16,8 +21,11 @@ import {
   Settings,
   AlertTriangle,
   Info,
+  Phone,
+  CheckCircle,
 } from "lucide-react";
 import { UserProfile } from "@/types/address";
+import { useState } from "react";
 
 interface AccountInformationProps {
   profile: UserProfile | null;
@@ -32,6 +40,60 @@ const AccountInformation = ({
   setIsTemporarilyAway,
   setIsEditDialogOpen,
 }: AccountInformationProps) => {
+  const { user } = useAuth();
+  const [phoneInput, setPhoneInput] = useState("");
+  const [savingPhone, setSavingPhone] = useState(false);
+  const [lockedNumber, setLockedNumber] = useState<string | null>(null);
+
+  const hasPhone = Boolean((profile as any)?.phone_number || lockedNumber);
+
+  const handleSavePhone = async () => {
+    const value = phoneInput.trim();
+    if (!value) {
+      toast.error("Please enter your phone number");
+      return;
+    }
+    const normalized = normalizeZAPhoneNumber(value);
+    if (!validateSAPhoneNumber(normalized)) {
+      toast.error("Enter a valid South African phone number");
+      return;
+    }
+    if (!user?.id) {
+      toast.error("Not authenticated");
+      return;
+    }
+    if (hasPhone) {
+      toast.error("Phone number already set and cannot be changed");
+      return;
+    }
+
+    setSavingPhone(true);
+    try {
+      // Fire auth metadata update in background (non-blocking)
+      supabase.auth.updateUser({ data: { phone_number: normalized, phone: normalized } }).catch(() => {});
+
+      // Persist to profiles table only if empty
+      const { error } = await supabase
+        .from("profiles")
+        .update({ phone_number: normalized, updated_at: new Date().toISOString() })
+        .eq("id", user.id)
+        .is("phone_number", null);
+
+      if (error) {
+        console.error("Failed to save phone:", error);
+        toast.error("Could not save phone number. Try again.");
+        return;
+      }
+
+      // Optimistic lock without page reload
+      setLockedNumber(normalized);
+      toast.success("Phone number saved");
+      setPhoneInput("");
+    } finally {
+      setSavingPhone(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Personal Information */}
@@ -58,11 +120,16 @@ const AccountInformation = ({
                 <div className="flex items-center gap-2 mb-2">
                   <User className="h-4 w-4 text-gray-600" />
                   <span className="text-sm font-medium text-gray-700">
-                    Full Name
+                    Name
                   </span>
                 </div>
                 <p className="text-lg font-semibold text-gray-900">
-                  {profile?.name || "Not provided"}
+                  {(() => {
+                    const fn = (profile as any)?.first_name;
+                    const ln = (profile as any)?.last_name;
+                    const combined = [fn, ln].filter(Boolean).join(" ");
+                    return combined || profile?.name || profile?.email?.split("@")[0] || "Not provided";
+                  })()}
                 </p>
               </div>
 
@@ -76,6 +143,42 @@ const AccountInformation = ({
                 <p className="text-lg font-semibold text-gray-900">
                   {profile?.email || "Not provided"}
                 </p>
+              </div>
+
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Phone className="h-4 w-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">Phone Number</span>
+                </div>
+                {hasPhone ? (
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-semibold text-gray-900">{(profile as any)?.phone_number || lockedNumber}</p>
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span className="text-xs text-gray-500">Locked</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Input
+                      type="tel"
+                      inputMode="tel"
+                      autoComplete="tel"
+                      placeholder="e.g., 081 234 5678"
+                      value={phoneInput}
+                      onChange={(e) => setPhoneInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !savingPhone && phoneInput.trim()) {
+                          handleSavePhone();
+                        }
+                      }}
+                      disabled={savingPhone}
+                      className="sm:max-w-xs"
+                    />
+                    <Button onClick={handleSavePhone} disabled={savingPhone || !phoneInput.trim()} className="bg-book-600 hover:bg-book-700">
+                      {savingPhone ? "Saving..." : "Save"}
+                    </Button>
+                    <p className="text-xs text-gray-500">You can only set this once.</p>
+                  </div>
+                )}
               </div>
             </div>
 

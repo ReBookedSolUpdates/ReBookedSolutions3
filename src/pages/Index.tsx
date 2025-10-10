@@ -3,11 +3,10 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
-import { Search, BookOpen } from "lucide-react";
+import { Search, BookOpen, Laptop, Sigma, Dna, FlaskConical, Telescope, TrendingUp, GraduationCap, School } from "lucide-react";
 import FeaturedBooks from "@/components/home/FeaturedBooks";
 import HowItWorks from "@/components/home/HowItWorks";
 import ReadyToGetStarted from "@/components/home/ReadyToGetStarted";
-import GoogleAdsense from "@/components/GoogleAdsense";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,12 +36,12 @@ const Index = () => {
   };
 
   const categories = [
-    { name: "Computer Science", icon: "💻" },
-    { name: "Mathematics", icon: "📊" },
-    { name: "Biology", icon: "🧬" },
-    { name: "Chemistry", icon: "⚗️" },
-    { name: "Physics", icon: "🔭" },
-    { name: "Economics", icon: "📈" },
+    { name: "Computer Science", icon: <Laptop className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
+    { name: "Mathematics", icon: <Sigma className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
+    { name: "Biology", icon: <Dna className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
+    { name: "Chemistry", icon: <FlaskConical className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
+    { name: "Physics", icon: <Telescope className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
+    { name: "Economics", icon: <TrendingUp className="h-7 w-7 sm:h-10 sm:w-10 text-book-700" /> },
   ];
 
   return (
@@ -54,50 +53,46 @@ const Index = () => {
         url="https://www.rebookedsolutions.co.za/"
       />
 
-      {/* Mobile-Optimized Hero Section */}
-      <section className="bg-gradient-to-r from-book-100 to-book-200 py-12 sm:py-16 lg:py-20">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 mb-8 md:mb-0 text-center md:text-left">
-            <div className="mb-4">
-              <span className="inline-block bg-book-600/10 text-book-700 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium italic">
-                "Pre-Loved Pages, New Adventures"
-              </span>
+      {/* Hero Section - image right on desktop, below text on mobile/tablet */}
+      <section className="py-12 sm:py-16 bg-gradient-to-r from-book-100 to-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-12">
+            {/* Copy */}
+            <div className="order-1">
+              <div className="inline-block rounded-full bg-book-200 text-book-800 text-xs sm:text-sm px-3 py-1 mb-4">
+                Pre-Loved Pages, New Adventures
+              </div>
+              <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+                Buy and Sell Textbooks with Ease
+              </h1>
+              <p className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8 max-w-xl">
+                Buy affordable secondhand textbooks and give your old ones a new home—
+                all handled securely through ReBooked Solutions.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Button size="lg" className="bg-book-600 hover:bg-book-700" onClick={() => navigate("/books")}>
+                  Browse Books
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-book-600 text-book-700 hover:bg-book-100"
+                  onClick={() => navigate("/create-listing")}
+                >
+                  Sell Your Books
+                </Button>
+              </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-book-900 mb-4 leading-tight">
-              Buy and Sell Textbooks with Ease
-            </h1>
-            <p className="text-lg sm:text-xl text-book-700 mb-6 sm:mb-8 px-2 sm:px-0">
-              Buy affordable secondhand textbooks and give your old ones a new
-              home — all handled securely through ReBooked Solutions.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 px-4 sm:px-0">
-              <Button
-                size="lg"
-                className="bg-book-600 hover:bg-book-700 w-full sm:w-auto"
-                onClick={() => navigate("/books")}
-              >
-                Browse Books
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-book-600 text-book-700 hover:bg-book-100 w-full sm:w-auto"
-                onClick={() => navigate("/create-listing")}
-              >
-                Sell Your Books
-              </Button>
+
+            {/* Image */}
+            <div className="order-2">
+              <img
+                src="/lovable-uploads/bd1bff70-5398-480d-ab05-1a01e839c2d0.png"
+                alt="Three students smiling with textbooks"
+                className="w-full rounded-xl shadow-lg object-cover aspect-[4/3]"
+                loading="eager"
+              />
             </div>
-          </div>
-          <div className="md:w-1/2 flex justify-center">
-            <img
-              src="https://cdn.builder.io/api/v1/assets/4b236342bc954bc3a0760c75cd3f3881/pexels-yankrukov-8199706-ad0e6d?format=webp&width=800"
-              alt="Three diverse students smiling with stacks of textbooks in library"
-              width="600"
-              height="400"
-              className="rounded-lg shadow-xl max-w-full h-auto w-full max-w-sm md:max-w-full"
-              loading="eager"
-              decoding="sync"
-            />
           </div>
         </div>
       </section>
@@ -142,7 +137,7 @@ const Index = () => {
                 to={`/books?category=${encodeURIComponent(category.name)}`}
                 className="bg-white rounded-lg shadow-md p-4 sm:p-6 text-center hover:shadow-lg transition-shadow duration-200"
               >
-                <span className="text-2xl sm:text-4xl mb-2 sm:mb-4 block">
+                <span className="mb-2 sm:mb-4 block flex items-center justify-center">
                   {category.icon}
                 </span>
                 <h3 className="font-semibold text-book-800 text-xs sm:text-base leading-tight">
@@ -154,22 +149,10 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Ad Placement 1 - After Categories */}
-      <section className="py-4 bg-gray-50">
-        <div className="container mx-auto px-4 flex justify-center">
-          <GoogleAdsense />
-        </div>
-      </section>
 
       {/* Featured Books Section */}
       <FeaturedBooks />
 
-      {/* Ad Placement 2 - After Featured Books */}
-      <section className="py-4 bg-white">
-        <div className="container mx-auto px-4 flex justify-center">
-          <GoogleAdsense />
-        </div>
-      </section>
 
       {/* ReBooked Campus Promotion Section */}
       <section className="py-8 sm:py-12 bg-gradient-to-r from-book-600 to-book-700">
@@ -192,32 +175,24 @@ const Index = () => {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto text-sm sm:text-base">
               <div className="bg-white/10 rounded-lg p-3 sm:p-4">
-                <div className="text-2xl mb-2">🎓</div>
+                <GraduationCap className="h-6 w-6 sm:h-7 sm:w-7 mb-2 text-white" />
                 <div className="font-semibold">APS Calculator</div>
-                <div className="text-white/80 text-xs sm:text-sm">
-                  Calculate your score
-                </div>
+                <div className="text-white/80 text-xs sm:text-sm">Calculate your score</div>
               </div>
               <div className="bg-white/10 rounded-lg p-3 sm:p-4">
-                <div className="text-2xl mb-2">🏫</div>
-                <div className="font-semibold">23+ Universities</div>
-                <div className="text-white/80 text-xs sm:text-sm">
-                  Explore programs
-                </div>
+                <School className="h-6 w-6 sm:h-7 sm:w-7 mb-2 text-white" />
+                <div className="font-semibold">26 universities</div>
+                <div className="text-white/80 text-xs sm:text-sm">Explore programs</div>
               </div>
               <div className="bg-white/10 rounded-lg p-3 sm:p-4">
-                <div className="text-2xl mb-2">💰</div>
+                <TrendingUp className="h-6 w-6 sm:h-7 sm:w-7 mb-2 text-white" />
                 <div className="font-semibold">Find Bursaries</div>
-                <div className="text-white/80 text-xs sm:text-sm">
-                  Get funding
-                </div>
+                <div className="text-white/80 text-xs sm:text-sm">Get funding</div>
               </div>
               <div className="bg-white/10 rounded-lg p-3 sm:p-4">
-                <div className="text-2xl mb-2">📚</div>
+                <BookOpen className="h-6 w-6 sm:h-7 sm:w-7 mb-2 text-white" />
                 <div className="font-semibold">Campus Books</div>
-                <div className="text-white/80 text-xs sm:text-sm">
-                  From your university
-                </div>
+                <div className="text-white/80 text-xs sm:text-sm">From your university</div>
               </div>
             </div>
 

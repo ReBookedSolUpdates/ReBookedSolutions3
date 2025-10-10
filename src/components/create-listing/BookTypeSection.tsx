@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { School, GraduationCap } from "lucide-react";
 import { UNIVERSITY_YEARS, SOUTH_AFRICAN_UNIVERSITIES_SIMPLE } from "@/constants/universities";
+import { CREATE_LISTING_CATEGORIES } from "@/constants/createListingCategories";
 import { BookFormData } from "@/types/book";
 
 interface BookTypeSectionProps {
@@ -26,33 +27,16 @@ export const BookTypeSection = ({
   onBookTypeChange,
   onSelectChange,
 }: BookTypeSectionProps) => {
-  const categories = [
-    "Computer Science",
-    "Mathematics",
-    "Biology",
-    "Chemistry",
-    "Physics",
-    "Economics",
-    "Psychology",
-    "English",
-    "History",
-    "Geography",
-    "Business Studies",
-    "Accounting",
-    "Life Sciences",
-    "Physical Sciences",
-    "Engineering",
-    "Medicine",
-    "Law",
-    "Arts",
-    "Languages",
-    "Reader",
-    "Other",
-  ];
+  // Use shared category list across app
+  // Imported from constants to keep Create Listing and Books filters in sync
+
+
+  const categories = CREATE_LISTING_CATEGORIES.slice().sort((a, b) => a.localeCompare(b));
 
   const conditions = ["New", "Good", "Better", "Average", "Below Average"];
 
   const grades = [
+    "N/A",
     "Grade 1",
     "Grade 2",
     "Grade 3",
@@ -73,34 +57,34 @@ export const BookTypeSection = ({
         <Label className="text-base font-medium">
           Book Type <span className="text-red-500">*</span>
         </Label>
-        <RadioGroup
-          value={bookType}
-          onValueChange={(value) =>
-            onBookTypeChange(value as "school" | "university")
-          }
-          className="flex gap-6 mt-2"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="school" id="school" />
-            <Label
-              htmlFor="school"
-              className="flex items-center cursor-pointer"
-            >
-              <School className="mr-2 h-4 w-4" />
-              School Book
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="university" id="university" />
-            <Label
-              htmlFor="university"
-              className="flex items-center cursor-pointer"
-            >
-              <GraduationCap className="mr-2 h-4 w-4" />
-              University Book
-            </Label>
-          </div>
-        </RadioGroup>
+        <div className="mt-2 inline-flex rounded-lg overflow-hidden border border-gray-200">
+          <button
+            type="button"
+            onClick={() => onBookTypeChange("school")}
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all ${
+              bookType === "school"
+                ? "bg-book-600 text-white shadow-inner"
+                : "bg-white text-gray-700 hover:bg-gray-50"
+            }`}
+            aria-pressed={bookType === "school"}
+          >
+            <School className="h-4 w-4" />
+            School
+          </button>
+          <button
+            type="button"
+            onClick={() => onBookTypeChange("university")}
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all border-l ${
+              bookType === "university"
+                ? "bg-book-600 text-white shadow-inner"
+                : "bg-white text-gray-700 hover:bg-gray-50"
+            }`}
+            aria-pressed={bookType === "university"}
+          >
+            <GraduationCap className="h-4 w-4" />
+            University
+          </button>
+        </div>
       </div>
 
       <div>
@@ -125,6 +109,27 @@ export const BookTypeSection = ({
         {errors.category && (
           <p className="text-sm text-red-500 mt-1">{errors.category}</p>
         )}
+      </div>
+
+      <div>
+        <Label htmlFor="curriculum" className="text-base font-medium">
+          Curriculum <span className="text-gray-400">(Optional)</span>
+        </Label>
+        <Select
+          value={(formData as any).curriculum || ""}
+          onValueChange={(value) => onSelectChange("curriculum", value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select curriculum (optional)" />
+          </SelectTrigger>
+          <SelectContent>
+            {['CAPS', 'Cambridge', 'IEB'].map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div>

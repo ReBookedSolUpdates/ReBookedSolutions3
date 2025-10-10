@@ -60,13 +60,13 @@ const AuthCallback = () => {
         }
 
         toast.success("Email already verified! You are logged in.");
-        navigate("/", { replace: true });
+        navigate("/profile", { replace: true });
         return;
       }
 
       console.log("🔄 User already authenticated, redirecting from auth callback");
       toast.success("You are already logged in!");
-      navigate("/", { replace: true });
+      navigate("/profile", { replace: true });
       return;
     }
   }, [isAuthenticated, authLoading, navigate, searchParams]);
@@ -203,7 +203,7 @@ const AuthCallback = () => {
               toast.success("Email verified! Welcome!");
               // Redirect to dashboard/profile or home page after a delay
               setTimeout(() => {
-                navigate("/", { replace: true });
+                navigate("/profile", { replace: true });
               }, 2000);
             } else if (type === "recovery") {
               console.log("🔐 Password recovery type detected (token path) - redirecting to reset password page");
@@ -217,7 +217,7 @@ const AuthCallback = () => {
               toast.success("Successfully authenticated!");
               // Redirect to dashboard/profile or home page after a delay
               setTimeout(() => {
-                navigate("/", { replace: true });
+                navigate("/profile", { replace: true });
               }, 2000);
             }
             return;
@@ -268,7 +268,7 @@ const AuthCallback = () => {
               setMessage("Email verified successfully! Welcome to ReBooked Solutions.");
               toast.success("Email verified! Welcome!");
               setTimeout(() => {
-                navigate("/", { replace: true });
+                navigate("/profile", { replace: true });
               }, 2000);
             } else if (type === "recovery") {
               console.log("🔐 Password recovery type detected (OTP path) - redirecting to reset password page");
@@ -281,7 +281,7 @@ const AuthCallback = () => {
               setMessage("Email verification successful! You are now logged in.");
               toast.success("Email verified successfully!");
               setTimeout(() => {
-                navigate("/", { replace: true });
+                navigate("/profile", { replace: true });
               }, 2000);
             }
             return;
@@ -313,7 +313,7 @@ const AuthCallback = () => {
             setMessage("Successfully authenticated!");
             
             setTimeout(() => {
-              navigate("/", { replace: true });
+              navigate("/profile", { replace: true });
             }, 2000);
             return;
           }
@@ -401,7 +401,7 @@ const AuthCallback = () => {
   };
 
   const handleGoHome = () => {
-    navigate("/", { replace: true });
+    navigate("/profile", { replace: true });
   };
 
   return (
@@ -431,7 +431,7 @@ const AuthCallback = () => {
                   {message}
                 </p>
                 <p className="text-xs md:text-sm text-gray-500">
-                  Redirecting you to the homepage...
+                  Redirecting you to your profile...
                 </p>
               </>
             )}

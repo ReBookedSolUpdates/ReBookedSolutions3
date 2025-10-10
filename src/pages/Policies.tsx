@@ -25,40 +25,23 @@ const Policies = () => {
             Complete policy documentation for ReBooked Solutions
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 sm:p-6 mt-6 max-w-5xl mx-auto shadow-sm">
-            <div className="text-blue-800 text-xs sm:text-sm space-y-2">
-              <div className="text-center">
-                <span>
-                  <strong>Effective Date:</strong> 10 June 2025
-                </span>
-                <span className="mx-2">•</span>
-                <span>
-                  <strong>Platform:</strong>{" "}
-                  <span className="break-all">www.rebookedsolutions.co.za</span>
-                </span>
+            <div className="text-blue-900 text-xs sm:text-sm leading-snug">
+              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+                <span className="whitespace-nowrap"><strong>Effective Date:</strong> 10 June 2025</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="whitespace-nowrap"><strong>Platform:</strong> rebookedsolutions.co.za</span>
               </div>
-              <div className="text-center">
-                <span>
-                  <strong>Platform Operator:</strong> ReBooked Solutions (Pty) Ltd
-                </span>
-                <span className="mx-2">•</span>
-                <span>
-                  <strong>Support:</strong>{" "}
-                  <span className="break-all">
-                    legal@rebookedsolutions.co.za
-                  </span>
-                </span>
+              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-1">
+                <span className="whitespace-nowrap"><strong>Operator:</strong> ReBooked Solutions (Pty) Ltd</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="whitespace-nowrap break-all"><strong>Support:</strong> legal@rebookedsolutions.co.za</span>
               </div>
-              <div className="text-center">
-                <span>
-                  <strong>Jurisdiction:</strong> Republic of South Africa
-                </span>
+              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-1">
+                <span className="whitespace-nowrap"><strong>Jurisdiction:</strong> Republic of South Africa</span>
               </div>
-              <div className="text-center">
-                <span>
-                  <strong>Regulatory Compliance:</strong> Consumer Protection
-                  Act (Act 68 of 2008), Electronic Communications and
-                  Transactions Act (Act 25 of 2002), Protection of Personal
-                  Information Act (Act 4 of 2013)
+              <div className="mt-1 text-center">
+                <span className="block sm:inline break-words max-w-[62ch] mx-auto">
+                  <strong>Regulatory Compliance:</strong> Consumer Protection Act (Act 68 of 2008) • Electronic Communications and Transactions Act (Act 25 of 2002) • Protection of Personal Information Act (Act 4 of 2013)
                 </span>
               </div>
             </div>
@@ -73,87 +56,87 @@ const Policies = () => {
                 <p className="text-gray-600 text-sm">Select a policy to view details</p>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
                   <Button
                     onClick={() => setActiveTab("privacy")}
                     variant={activeTab === "privacy" ? "default" : "outline"}
                     size="lg"
-                    className="w-full justify-start font-medium px-4 py-2"
+                    className="w-full justify-start font-medium px-3 py-2 whitespace-normal break-words text-sm leading-tight min-h-[44px]"
                   >
-                    <Shield className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                    <span>Privacy Policy</span>
+                    <Shield className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0" />
+                    <span className="text-left">Privacy Policy</span>
                   </Button>
                   <Button
                     onClick={() => setActiveTab("terms")}
                     variant={activeTab === "terms" ? "default" : "outline"}
                     size="lg"
-                    className="w-full justify-start font-medium px-4 py-2"
+                    className="w-full justify-start font-medium px-3 py-2 whitespace-normal break-words text-sm leading-tight min-h-[44px]"
                   >
-                    <Scale className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                    <span>Terms & Conditions</span>
+                    <Scale className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0" />
+                    <span className="text-left">Terms & Conditions</span>
                   </Button>
                   <Button
                     onClick={() => setActiveTab("refunds")}
                     variant={activeTab === "refunds" ? "default" : "outline"}
                     size="lg"
-                    className="w-full justify-start font-medium px-4 py-2"
+                    className="w-full justify-start font-medium px-3 py-2 whitespace-normal break-words text-sm leading-tight min-h-[44px]"
                   >
-                    <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                    <span>Refund Policy</span>
+                    <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0" />
+                    <span className="text-left">Refund Policy</span>
                   </Button>
                   <Button
                     onClick={() => setActiveTab("cancellation")}
                     variant={activeTab === "cancellation" ? "default" : "outline"}
                     size="lg"
-                    className="w-full justify-start font-medium px-4 py-2"
+                    className="w-full justify-start font-medium px-3 py-2 whitespace-normal break-words text-sm leading-tight min-h-[44px]"
                   >
-                    <Gavel className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                    <span>Cancellation Policy</span>
+                    <Gavel className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0" />
+                    <span className="text-left">Cancellation Policy</span>
                   </Button>
                   <Button
                     onClick={() => setActiveTab("shipping")}
                     variant={activeTab === "shipping" ? "default" : "outline"}
                     size="lg"
-                    className="w-full justify-start font-medium px-4 py-2"
+                    className="w-full justify-start font-medium px-3 py-2 whitespace-normal break-words text-sm leading-tight min-h-[44px]"
                   >
-                    <Package className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                    <span>Shipping & Delivery</span>
+                    <Package className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0" />
+                    <span className="text-left">Shipping & Delivery</span>
                   </Button>
                   <Button
                     onClick={() => setActiveTab("returns")}
                     variant={activeTab === "returns" ? "default" : "outline"}
                     size="lg"
-                    className="w-full justify-start font-medium px-4 py-2"
+                    className="w-full justify-start font-medium px-3 py-2 whitespace-normal break-words text-sm leading-tight min-h-[44px]"
                   >
-                    <Undo2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                    <span>Return Policy</span>
+                    <Undo2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0" />
+                    <span className="text-left">Return Policy</span>
                   </Button>
                   <Button
                     onClick={() => setActiveTab("sellers")}
                     variant={activeTab === "sellers" ? "default" : "outline"}
                     size="lg"
-                    className="w-full justify-start font-medium px-4 py-2"
+                    className="w-full justify-start font-medium px-3 py-2 whitespace-normal break-words text-sm leading-tight min-h-[44px]"
                   >
-                    <Gavel className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                    <span>Seller’s Policy</span>
+                    <Gavel className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0" />
+                    <span className="text-left">Seller’s Policy</span>
                   </Button>
                   <Button
                     onClick={() => setActiveTab("buyers")}
                     variant={activeTab === "buyers" ? "default" : "outline"}
                     size="lg"
-                    className="w-full justify-start font-medium px-4 py-2"
+                    className="w-full justify-start font-medium px-3 py-2 whitespace-normal break-words text-sm leading-tight min-h-[44px]"
                   >
-                    <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                    <span>Buyer’s Policy</span>
+                    <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0" />
+                    <span className="text-left">Buyer’s Policy</span>
                   </Button>
                   <Button
                     onClick={() => setActiveTab("disputes")}
                     variant={activeTab === "disputes" ? "default" : "outline"}
                     size="lg"
-                    className="w-full justify-start font-medium px-4 py-2"
+                    className="w-full justify-start font-medium px-3 py-2 whitespace-normal break-words text-sm leading-tight min-h-[44px]"
                   >
-                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
-                    <span>Dispute Resolution</span>
+                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0" />
+                    <span className="text-left">Dispute Resolution</span>
                   </Button>
                 </div>
               </CardContent>

@@ -30,7 +30,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const shippingSchema = z.object({
   recipient_name: z.string().min(1, "Recipient name is required"),
-  phone: z.string().min(8, "Valid phone number is required"),
+  phone: z.string().min(10, "Enter a 10-digit phone number").max(10, "Enter a 10-digit phone number").refine((v) => /^\d{10}$/.test(v), { message: "Enter a 10-digit phone number" }),
   street_address: z.string().min(3, "Street address is required"),
   apartment: z.string().optional(),
   city: z.string().min(1, "City is required"),
@@ -125,6 +125,22 @@ const EnhancedShippingForm: React.FC<EnhancedShippingFormProps> = ({
   });
 
   const watchedValues = watch();
+  const phoneRaw = watch("phone") || "";
+  const normalizePhone = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (value.trim().startsWith("+27")) {
+      return ("0" + digits.slice(2)).slice(0, 10);
+    }
+    if (digits.startsWith("27")) {
+      return ("0" + digits.slice(2)).slice(0, 10);
+    }
+    return digits.slice(0, 10);
+  };
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const normalized = normalizePhone(e.target.value);
+    setValue("phone", normalized, { shouldValidate: true });
+  };
+  const showPhoneHint = phoneRaw.length > 0 && !/^0\d{9}$/.test(phoneRaw);
 
   useEffect(() => {
     loadSavedAddress();
@@ -138,10 +154,13 @@ const EnhancedShippingForm: React.FC<EnhancedShippingFormProps> = ({
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (user && user.user_metadata?.full_name) {
-        setValue("recipient_name", user.user_metadata.full_name, {
-          shouldValidate: true,
-        });
+      if (user) {
+        const fn = user.user_metadata?.first_name;
+        const ln = user.user_metadata?.last_name;
+        const display = [fn, ln].filter(Boolean).join(" ") || user.user_metadata?.name || (user.email?.split("@")[0] || "");
+        if (display) {
+          setValue("recipient_name", display, { shouldValidate: true });
+        }
       }
       setHasAutofilled(true);
     } catch (error) {
@@ -339,6 +358,16 @@ const EnhancedShippingForm: React.FC<EnhancedShippingFormProps> = ({
     try {
       setIsLoading(true);
 
+      if (!/^0\d{9}$/.test(data.phone)) {
+        const proceed = window.confirm(
+          "Are you sure your number is correct? South African numbers should start with 0 and be 10 digits. It's used for delivery; if incorrect, couriers may not reach you and you may need to pay for rescheduling."
+        );
+        if (!proceed) {
+          setIsLoading(false);
+          return;
+        }
+      }
+
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -499,10 +528,19 @@ const EnhancedShippingForm: React.FC<EnhancedShippingFormProps> = ({
                     <Label htmlFor="phone">Phone Number *</Label>
                     <Input
                       id="phone"
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
                       {...register("phone")}
-                      placeholder="e.g., 081 234 5678"
+                      onChange={handlePhoneChange}
+                      placeholder="e.g., 0812345678"
                       className={errors.phone ? "border-red-500" : ""}
                     />
+                    {showPhoneHint && !errors.phone && (
+                      <p className="text-xs text-amber-600 mt-1">
+                        South African numbers should start with 0 and be 10 digits. Please double-check.
+                      </p>
+                    )}
                     {errors.phone && (
                       <p className="text-sm text-red-600 mt-1">
                         {errors.phone.message}

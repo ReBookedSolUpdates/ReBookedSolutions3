@@ -101,7 +101,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ book }) => {
       // Get seller profile separately
       const { data: sellerProfile, error: sellerError } = await supabase
         .from("profiles")
-        .select("id, name, email")
+        .select("id, first_name, last_name, email")
         .eq("id", bookData.seller_id)
         .maybeSingle();
 
@@ -116,27 +116,26 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ book }) => {
         console.log("⚠️ Book has no seller_subaccount_code, fetching from seller profile...");
 
         // Fallback: check seller's profile for subaccount
-        const { data: sellerProfile, error: sellerProfileError } = await supabase
-          .from("profiles")
+        const { data: subaccount, error: subError } = await supabase
+          .from("banking_subaccounts")
           .select("subaccount_code")
-          .eq("id", bookData.seller_id)
+          .eq("user_id", bookData.seller_id)
           .maybeSingle();
 
-        if (sellerProfileError) {
-          console.error("Error fetching seller profile:", sellerProfileError);
+        if (subError) {
+          console.error("Error fetching seller subaccount:", subError);
           throw new Error(
             "Unable to verify seller information. Please try again or contact support if the issue persists.",
           );
         }
 
-        if (!sellerProfile?.subaccount_code) {
-          // More user-friendly error message
+        if (!subaccount?.subaccount_code) {
           throw new Error(
             "This seller hasn't completed their payment setup yet. Please try again later or choose a different book.",
           );
         }
 
-        sellerSubaccountCode = sellerProfile.subaccount_code;
+        sellerSubaccountCode = subaccount.subaccount_code;
 
         // Update the book with the subaccount code for future purchases (non-blocking)
         try {
@@ -185,7 +184,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ book }) => {
         // Check if seller has encrypted address setup
         const { data: profiles, error: profileError } = await supabase
           .from("profiles")
-          .select("id, name, email, encryption_status")
+          .select("id, first_name, last_name, email, encryption_status")
           .eq("id", bookData.seller_id);
 
         const profile = profiles && profiles.length > 0 ? profiles[0] : null;
@@ -372,12 +371,53 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ book }) => {
         },
       };
 
-      // Get buyer address (optional initially)
-      const buyerData = await getBuyerCheckoutData(user.id).catch(() => null);
+      // Get buyer address (try multiple sources, prefer encrypted)
+      let buyerAddress: CheckoutAddress | null = null;
 
-      console.log("📦 Checkout data loaded from books table:", {
+      // 1) Standard checkout data helper (encrypted + legacy JSONB fallback)
+      const buyerData = await getBuyerCheckoutData(user.id).catch(() => null);
+      if (buyerData?.address) buyerAddress = buyerData.address;
+
+      // 2) Direct encrypted fetch as a second attempt
+      if (!buyerAddress) {
+        try {
+          const { getSimpleUserAddresses } = await import("@/services/simplifiedAddressService");
+          const addrData = await getSimpleUserAddresses(user.id);
+          const sa: any = addrData?.shipping_address || addrData?.pickup_address;
+          if (sa?.streetAddress && sa?.city && sa?.province && (sa?.postalCode || sa?.postal_code)) {
+            buyerAddress = {
+              street: sa.streetAddress || sa.street,
+              city: sa.city,
+              province: sa.province,
+              postal_code: sa.postalCode || sa.postal_code,
+              country: "South Africa",
+            };
+          }
+        } catch {}
+      }
+
+      // 3) Comprehensive address service as final fallback
+      if (!buyerAddress) {
+        try {
+          const { getUserAddresses } = await import("@/services/addressService");
+          const full = await getUserAddresses(user.id);
+          const sa: any = full?.shipping_address || full?.pickup_address;
+          if (sa?.street && sa?.city && sa?.province && (sa?.postalCode || sa?.postal_code)) {
+            buyerAddress = {
+              street: sa.street || sa.streetAddress,
+              city: sa.city,
+              province: sa.province,
+              postal_code: sa.postalCode || sa.postal_code,
+              country: sa.country || "South Africa",
+            } as CheckoutAddress;
+          }
+        } catch {}
+      }
+
+      console.log("📦 Checkout data loaded:", {
         seller_address: sellerAddress,
         buyer_data: buyerData,
+        buyer_address_resolved: buyerAddress,
         book: updatedBook,
       });
 
@@ -385,14 +425,12 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ book }) => {
         ...prev,
         book: updatedBook,
         seller_address: sellerAddress,
-        buyer_address: buyerData?.address || null,
+        buyer_address: buyerAddress,
         loading: false,
       }));
 
-      if (!buyerData) {
-        toast.info(
-          "Please add your delivery address to continue with checkout",
-        );
+      if (!buyerAddress) {
+        toast.info("Please add your delivery address to continue with checkout");
       }
     } catch (error) {
       console.error("�� Checkout initialization error:", error);

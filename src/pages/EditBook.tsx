@@ -27,7 +27,7 @@ import Layout from "@/components/Layout";
 import EnhancedMobileImageUpload from "@/components/EnhancedMobileImageUpload";
 import { getBookById } from "@/services/book/bookQueries";
 import { updateBook } from "@/services/book/bookMutations";
-import { categories } from "@/constants/categories";
+import { CREATE_LISTING_CATEGORIES } from "@/constants/createListingCategories";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -46,10 +46,13 @@ const EditBook = () => {
       author: "",
       description: "",
       price: 0,
-      categoryId: "",
+      category: "",
+      curriculum: undefined,
+      quantity: 1,
       frontCover: "",
       backCover: "",
       insidePages: "",
+      additionalImages: [],
     },
     mode: "onChange",
   });
@@ -92,10 +95,13 @@ const EditBook = () => {
             author: bookData.author,
             description: bookData.description,
             price: bookData.price,
-            categoryId: bookData.category,
+            category: bookData.category,
+            curriculum: bookData.curriculum,
+            quantity: bookData.availableQuantity || 1,
             frontCover: bookData.frontCover || "",
             backCover: bookData.backCover || "",
             insidePages: bookData.insidePages || "",
+            additionalImages: Array.isArray(bookData.additionalImages) ? bookData.additionalImages : [],
           };
 
           form.reset(formattedData);
@@ -207,10 +213,13 @@ const EditBook = () => {
     );
   }
 
+  const watchedAdditional = form.watch("additionalImages") || [];
   const currentImages = {
     frontCover: form.watch("frontCover") || "",
     backCover: form.watch("backCover") || "",
     insidePages: form.watch("insidePages") || "",
+    extra1: watchedAdditional[0] || "",
+    extra2: watchedAdditional[1] || "",
   };
 
   return (
@@ -296,7 +305,7 @@ const EditBook = () => {
 
               <FormField
                 control={form.control}
-                name="categoryId"
+                name="category"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
@@ -307,9 +316,9 @@ const EditBook = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
+                        {CREATE_LISTING_CATEGORIES.map((cat) => (
+                          <SelectItem key={cat} value={cat}>
+                            {cat}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -320,6 +329,50 @@ const EditBook = () => {
               />
             </div>
 
+            <FormField
+              control={form.control}
+              name="curriculum"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Curriculum (Optional)</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select curriculum (optional)" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {['CAPS', 'Cambridge', 'IEB'].map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="quantity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Quantity</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      {...field}
+                      onChange={(e) => field.onChange(Math.max(1, parseInt(e.target.value) || 1))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="space-y-4">
               <EnhancedMobileImageUpload
                 images={currentImages}
@@ -328,13 +381,18 @@ const EditBook = () => {
                     frontCover: string;
                     backCover: string;
                     insidePages: string;
+                    extra1?: string;
+                    extra2?: string;
                   };
                   form.setValue("frontCover", bookImages.frontCover || "");
                   form.setValue("backCover", bookImages.backCover || "");
                   form.setValue("insidePages", bookImages.insidePages || "");
+                  const extras = [bookImages.extra1 || "", bookImages.extra2 || ""].filter(Boolean);
+                  form.setValue("additionalImages", extras);
                 }}
                 variant="object"
                 currentImages={currentImages}
+                maxImages={5}
               />
             </div>
 

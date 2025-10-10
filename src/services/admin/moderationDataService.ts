@@ -38,7 +38,7 @@ export const loadModerationData = async (limit: number = 100): Promise<Moderatio
       .limit(limit),
     supabase
       .from("profiles")
-      .select("id, name, email, status, suspended_at, suspension_reason")
+      .select("id, first_name, last_name, email, status, suspended_at, suspension_reason")
       .in("status", ["suspended", "banned"])
       .order("created_at", { ascending: false }),
   ]);
@@ -67,7 +67,7 @@ export const loadModerationData = async (limit: number = 100): Promise<Moderatio
   if (reporterUserIds.length > 0) {
     reporterProfilesResponse = await supabase
       .from("profiles")
-      .select("id, name, email")
+      .select("id, first_name, last_name, email")
       .in("id", reporterUserIds);
   }
 
@@ -82,8 +82,9 @@ export const loadModerationData = async (limit: number = 100): Promise<Moderatio
   // Create a map of profiles for quick lookup
   const profilesMap = new Map();
   if (reporterProfilesResponse.data) {
-    reporterProfilesResponse.data.forEach((profile) => {
-      profilesMap.set(profile.id, profile);
+    reporterProfilesResponse.data.forEach((profile: any) => {
+      const displayName = [profile.first_name, profile.last_name].filter(Boolean).join(" ") || profile.name || (profile.email ? profile.email.split("@")[0] : undefined);
+      profilesMap.set(profile.id, { ...profile, name: displayName });
     });
   }
 
@@ -100,7 +101,10 @@ export const loadModerationData = async (limit: number = 100): Promise<Moderatio
     },
   );
 
-  const typedUsers: SuspendedUser[] = usersResponse.data || [];
+  const typedUsers: SuspendedUser[] = (usersResponse.data || []).map((u: any) => ({
+    ...u,
+    name: [u.first_name, u.last_name].filter(Boolean).join(" ") || u.name || (u.email ? u.email.split("@")[0] : "Anonymous"),
+  }));
 
   return {
     reports: typedReports,

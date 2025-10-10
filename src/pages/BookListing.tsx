@@ -11,9 +11,7 @@ import { useCommit } from "@/hooks/useCommit";
 import { useAuth } from "@/contexts/AuthContext";
 import { clearAllBrowseBooks } from "@/utils/clearBrowseBooks";
 import { Button } from "@/components/ui/button";
-import GoogleAdsense from "@/components/GoogleAdsense";
 import { debugBookFetching, fixBooksWithMissingAddresses } from "@/utils/debugBooks";
-import { emergencyBookTest } from "@/utils/emergencyBookTest";
 
 
 const BookListing = () => {
@@ -43,6 +41,7 @@ const BookListing = () => {
   );
   const [selectedCondition, setSelectedCondition] = useState("");
   const [selectedGrade, setSelectedGrade] = useState("");
+  const [selectedCurriculum, setSelectedCurriculum] = useState("");
   const [selectedUniversityYear, setSelectedUniversityYear] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState("");
   const [selectedProvince, setSelectedProvince] = useState(
@@ -63,6 +62,7 @@ const BookListing = () => {
       const searchQuery = searchParams.get("search") || "";
       const category = searchParams.get("category") || "";
       const grade = searchParams.get("grade") || "";
+      const curriculum = searchParams.get("curriculum") || "";
       const universityYear = searchParams.get("universityYear") || "";
       const province = searchParams.get("province") || "";
 
@@ -71,6 +71,7 @@ const BookListing = () => {
         category?: string;
         condition?: string;
         grade?: string;
+        curriculum?: 'CAPS' | 'Cambridge' | 'IEB';
         universityYear?: string;
         university?: string;
         province?: string;
@@ -82,6 +83,7 @@ const BookListing = () => {
       if (category) filters.category = category;
       if (selectedCondition) filters.condition = selectedCondition;
       if (grade) filters.grade = grade;
+      if (curriculum || selectedCurriculum) filters.curriculum = (curriculum || selectedCurriculum) as any;
       if (universityYear) filters.universityYear = universityYear;
       if (selectedUniversity) filters.university = selectedUniversity;
       if (province || selectedProvince) filters.province = province || selectedProvince;
@@ -109,7 +111,7 @@ const BookListing = () => {
       console.log("✅ BookListing: Books loaded successfully, displaying:", paginatedBooks.length, "books");
 
       if (booksArray.length === 0) {
-        console.log("⚠️ BookListing: No books found with current filters");
+        console.log("��️ BookListing: No books found with current filters");
       }
     } catch (error) {
       const errorDetails = {
@@ -134,7 +136,7 @@ const BookListing = () => {
       setIsLoading(false);
       console.log("🏁 BookListing: Loading complete, isLoading set to false");
     }
-  }, [searchParams, selectedCondition, selectedUniversity, selectedProvince, priceRange, currentPage]);
+  }, [searchParams, selectedCondition, selectedUniversity, selectedProvince, selectedCurriculum, priceRange, currentPage]);
 
   // Initial load
   useEffect(() => {
@@ -162,6 +164,9 @@ const BookListing = () => {
     if (selectedUniversityYear) {
       newSearchParams.set("universityYear", selectedUniversityYear);
     }
+    if (selectedCurriculum) {
+      newSearchParams.set("curriculum", selectedCurriculum);
+    }
     if (selectedProvince) {
       newSearchParams.set("province", selectedProvince);
     }
@@ -183,6 +188,7 @@ const BookListing = () => {
     setSelectedCondition("");
     setSelectedGrade("");
     setSelectedUniversityYear("");
+    setSelectedCurriculum("");
     setSelectedUniversity("");
     setSelectedProvince("");
     setPriceRange([0, 1000]);
@@ -276,15 +282,6 @@ const BookListing = () => {
     }
   };
 
-  const handleEmergencyTest = async () => {
-    console.log("🆘 Running emergency book database test...");
-    const result = await emergencyBookTest();
-    if (result.success) {
-      toast.success(`Emergency test complete! Found ${result.totalBooks} total books, ${result.availableBooks} available`);
-    } else {
-      toast.error(`Emergency test failed: ${result.error}`);
-    }
-  };
 
   return (
     <Layout>
@@ -302,14 +299,6 @@ const BookListing = () => {
           </h1>
           {user?.email === "admin@rebookedsolutions.co.za" && (
             <div className="flex gap-2 flex-wrap">
-              <Button
-                onClick={handleEmergencyTest}
-                variant="default"
-                size="sm"
-                className="bg-red-600 hover:bg-red-700"
-              >
-                ��� Emergency Test
-              </Button>
               <Button
                 onClick={handleDebugBooks}
                 variant="outline"
@@ -334,11 +323,6 @@ const BookListing = () => {
               </Button>
             </div>
           )}
-        </div>
-
-        {/* Ad Placement - Top of Books Page */}
-        <div className="mb-4 sm:mb-8 flex justify-center">
-          <GoogleAdsense />
         </div>
 
 

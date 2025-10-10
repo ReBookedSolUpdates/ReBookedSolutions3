@@ -1,5 +1,5 @@
 import React, { lazy } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -8,12 +8,6 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./utils/suppressResizeObserverError";
 // Loading state manager to prevent white screens
 import "./utils/loadingStateManager";
-// Test Supabase connection in development
-import "./utils/testSupabaseConnection";
-// Debug contact messages
-import "./utils/debugContactMessages";
-// Test notifications
-import "./utils/testNotifications";
 
 import { ThemeProvider } from "next-themes";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -39,8 +33,7 @@ import Checkout from "./pages/Checkout";
 // University Pages
 import UniversityInfo from "./pages/UniversityInfo";
 import UniversityProfile from "./pages/UniversityProfile";
-import StudyResources from "./pages/StudyResources";
-import UniversityDataTest from "./components/UniversityDataTest";
+import PrivateInstitutionProfile from "./pages/PrivateInstitutionProfile";
 
 // Auth Pages
 import Login from "./pages/Login";
@@ -49,18 +42,15 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyEmail from "./pages/VerifyEmail";
 import Verify from "./pages/Verify";
-import VerifyDebug from "./pages/VerifyDebug";
 import AuthCallback from "./pages/AuthCallback";
 import EnvironmentConfigHelper from "./components/EnvironmentConfigHelper";
 
 // Admin Pages
 import Admin from "./pages/Admin";
 import AdminReports from "./pages/AdminReports";
-import PhotoUploadDemo from "./pages/PhotoUploadDemo";
 
 // Support Pages
 import ContactUs from "./pages/ContactUs";
-import ContactTest from "./pages/ContactTest";
 import FAQ from "./pages/FAQ";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -68,17 +58,16 @@ import Policies from "./pages/Policies";
 import Shipping from "./pages/Shipping";
 import Report from "./pages/Report";
 import SellerProfile from "./pages/SellerProfile";
+import GettingStarted from "./pages/GettingStarted";
 
 // Other Pages
 import NotificationsNew from "./pages/NotificationsNew";
-import NotificationTest from "./pages/NotificationTest";
 import ClearNotifications from "./pages/ClearNotifications";
 import RestoreBooks from "./pages/RestoreBooks";
-import TestAuth from "./pages/TestAuth";
-import TestEmailSystem from "./pages/TestEmailSystem";
 import ActivityLog from "./pages/ActivityLog";
 import BankingSetup from "./pages/BankingSetup";
 import UserProfile from "./pages/UserProfile";
+import Transparency from "./pages/Transparency";
 // import LockerSearchPage from "./pages/LockerSearchPage"; // DISABLED - Locker functionality removed
 
 
@@ -153,16 +142,8 @@ function App() {
                         element={<UniversityProfile />}
                       />
                       <Route
-                        path="/study-resources"
-                        element={<StudyResources />}
-                      />
-                      <Route
-                        path="/university-test"
-                        element={<UniversityDataTest />}
-                      />
-                      <Route
-                        path="/study-tips"
-                        element={<Navigate to="/study-resources" replace />}
+                        path="/private-institution/:id"
+                        element={<PrivateInstitutionProfile />}
                       />
                       <Route
                         path="/seller/:sellerId"
@@ -182,10 +163,7 @@ function App() {
                       />
                       <Route path="/verify" element={<Verify />} />
                       <Route path="/verify/*" element={<VerifyEmail />} />
-                      {import.meta.env.DEV && (
-                        <Route path="/verify-debug" element={<VerifyDebug />} />
-                      )}
-                      <Route path="/auth/callback" element={<AuthCallback />} />
+                                            <Route path="/auth/callback" element={<AuthCallback />} />
 
                       {/* Protected User Routes */}
                       <Route
@@ -244,17 +222,7 @@ function App() {
                           </ProtectedRoute>
                         }
                       />
-                      {import.meta.env.DEV && (
-                        <Route
-                          path="/notification-test"
-                          element={
-                            <ProtectedRoute>
-                              <NotificationTest />
-                            </ProtectedRoute>
-                          }
-                        />
-                      )}
-                      <Route
+                                            <Route
                         path="/clear-notifications"
                         element={
                           <ProtectedRoute>
@@ -270,19 +238,7 @@ function App() {
                           </ProtectedRoute>
                         }
                       />
-                      {import.meta.env.DEV && (
-                        <Route
-                          path="/test-auth"
-                          element={<TestAuth />}
-                        />
-                      )}
-                      {import.meta.env.DEV && (
-                        <Route
-                          path="/test-email"
-                          element={<TestEmailSystem />}
-                        />
-                      )}
-                      <Route
+                                                                  <Route
                         path="/activity"
                         element={
                           <ProtectedRoute>
@@ -346,19 +302,16 @@ function App() {
                         }
                       />
 
-                      <Route
-                        path="/photo-upload-demo"
-                        element={<PhotoUploadDemo />}
-                      />
-
+                      
                       {/* Support Routes */}
                       <Route path="/contact" element={<ContactUs />} />
-                      <Route path="/contact-test" element={<ContactTest />} />
-                      <Route path="/faq" element={<FAQ />} />
+                                            <Route path="/faq" element={<FAQ />} />
                       <Route path="/privacy" element={<Privacy />} />
                       <Route path="/terms" element={<Terms />} />
                       <Route path="/policies" element={<Policies />} />
                       <Route path="/shipping" element={<Shipping />} />
+                      <Route path="/getting-started" element={<GettingStarted />} />
+                      <Route path="/transparency" element={<Transparency />} />
                                             <Route path="/report" element={<Report />} />
 
 

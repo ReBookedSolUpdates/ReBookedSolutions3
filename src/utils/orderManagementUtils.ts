@@ -55,7 +55,7 @@ export async function getUserOrderSummary(userId: string): Promise<OrderSummary>
 
     const summary: OrderSummary = {
       totalOrders: orders?.length || 0,
-      pendingCommits: orders?.filter(o => o.status === "pending_commit").length || 0,
+      pendingCommits: orders?.filter(o => ["pending_commit", "pending"].includes(o.status)).length || 0,
       activeOrders: orders?.filter(o => ["committed", "pending_delivery", "in_transit"].includes(o.status)).length || 0,
       completedOrders: orders?.filter(o => o.status === "completed").length || 0,
       cancelledOrders: orders?.filter(o => o.status === "cancelled").length || 0,
@@ -102,7 +102,7 @@ export async function getUserOrdersWithDetails(
 
     if (statusFilter && statusFilter !== "all") {
       if (statusFilter === "pending") {
-        query = query.eq("status", "pending_commit");
+        query = query.in("status", ["pending_commit", "pending"]);
       } else if (statusFilter === "active") {
         query = query.in("status", ["committed", "pending_delivery", "in_transit"]);
       } else if (statusFilter === "completed") {

@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import AuthVerificationTester from "@/components/AuthVerificationTester";
 import VerificationTroubleshootingGuide from "@/components/VerificationTroubleshootingGuide";
 import { EmailVerificationService } from "@/services/emailVerificationService";
 import { supabase } from "@/integrations/supabase/client";
@@ -362,15 +361,7 @@ const Verify = () => {
                 </Card>
 
                 {/* Debug Tools for Development */}
-                {process.env.NODE_ENV === "development" && (
-                  <Card className="mb-6">
-                    <CardContent className="p-4">
-                      <h4 className="font-semibold mb-4">Debug Tools</h4>
-                      <AuthVerificationTester />
-                    </CardContent>
-                  </Card>
-                )}
-
+                
                 <div className="space-y-3">
                   <Button
                     onClick={() => navigate("/login")}

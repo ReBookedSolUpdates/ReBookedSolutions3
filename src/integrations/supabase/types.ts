@@ -45,7 +45,8 @@ export type Database = {
           grade: string | null;
           id: string;
           image_url: string;
-                    inside_pages: string | null;
+          inside_pages: string | null;
+          additional_images: string[] | null;
           seller_subaccount_code: string | null;
           pickup_address: Json | null;
           price: number;
@@ -69,7 +70,8 @@ export type Database = {
           grade?: string | null;
           id?: string;
           image_url: string;
-                    inside_pages?: string | null;
+          inside_pages?: string | null;
+          additional_images?: string[] | null;
           seller_subaccount_code?: string | null;
           pickup_address?: Json | null;
           price: number;
@@ -93,7 +95,8 @@ export type Database = {
           grade?: string | null;
           id?: string;
           image_url?: string;
-                    inside_pages?: string | null;
+          inside_pages?: string | null;
+          additional_images?: string[] | null;
           seller_subaccount_code?: string | null;
           pickup_address?: Json | null;
           price?: number;

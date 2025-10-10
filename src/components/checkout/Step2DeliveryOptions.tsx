@@ -85,6 +85,9 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
         zone_type: buyerAddress.province === sellerAddress.province
           ? (buyerAddress.city === sellerAddress.city ? "local" : "provincial")
           : "national",
+        provider_name: q.provider_name,
+        provider_slug: q.provider_slug,
+        service_level_code: q.service_level_code,
       }));
 
       if (options.length === 0) {
@@ -250,6 +253,9 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
                           ? "local"
                           : "provincial"
                         : "national",
+                    provider_name: q.provider_name,
+                    provider_slug: q.provider_slug,
+                    service_level_code: q.service_level_code,
                   };
                   const isSelected = !!selectedDelivery &&
                     selectedDelivery.service_name === option.service_name &&
@@ -298,6 +304,14 @@ const Step2DeliveryOptions: React.FC<Step2DeliveryOptionsProps> = ({
           </AccordionItem>
         ))}
       </Accordion>
+
+      {/* Disclaimer about same-day delivery */}
+      <Alert className="bg-amber-50 border-amber-200">
+        <AlertTriangle className="h-4 w-4 text-amber-600" />
+        <AlertDescription className="text-amber-800">
+          Note: “Same day delivery” refers to the courier service level. The seller must first confirm/commit the order before pickup can be scheduled.
+        </AlertDescription>
+      </Alert>
 
       {!selectedDelivery && (
         <Alert>
