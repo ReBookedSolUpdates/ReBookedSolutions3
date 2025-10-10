@@ -1,5 +1,4 @@
 import { supabase } from "@/integrations/supabase/client";
-import { supabase } from "@/integrations/supabase/client";
 import { logError, logDatabaseError, logQueryDebug } from "@/utils/errorUtils";
 
 export interface AdminStats {
