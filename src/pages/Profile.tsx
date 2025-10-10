@@ -70,6 +70,8 @@ const Profile = () => {
     setPhone(((user?.user_metadata as any)?.phone_number || (user?.user_metadata as any)?.phone) || "");
   }, [user]);
 
+  const hasSavedPhone = Boolean(((user?.user_metadata as any)?.phone_number || (user?.user_metadata as any)?.phone));
+
   const loadActiveListings = useCallback(async () => {
     if (!user?.id) return;
 
@@ -763,10 +765,18 @@ const Profile = () => {
                         inputMode="numeric"
                         maxLength={10}
                         value={phone}
-                        onChange={(e) => setPhone((e.target.value || "").replace(/\D/g, "").slice(0, 10))}
+                        onChange={(e) => {
+                          const raw = e.target.value || "";
+                          const digits = raw.replace(/\D/g, "");
+                          let normalized = digits;
+                          if (raw.trim().startsWith("+27") || digits.startsWith("27")) {
+                            normalized = ("0" + digits.slice(2));
+                          }
+                          setPhone(normalized.slice(0, 10));
+                        }}
                         placeholder="e.g., 0812345678"
                         className="w-full pl-10 px-3 py-2 border border-gray-300 rounded-md"
-                        readOnly={Boolean(phone)}
+                        readOnly={hasSavedPhone}
                       />
                       {phone && !/^0\d{9}$/.test(phone) && (
                         <p className="text-xs text-amber-600 mt-1 pl-10">
@@ -774,7 +784,7 @@ const Profile = () => {
                         </p>
                       )}
                     </div>
-                    {phone ? (
+                    {hasSavedPhone ? (
                       <Button asChild variant="outline" size="sm" className="cursor-not-allowed opacity-70">
                         <a href="/contact">Contact Support to change</a>
                       </Button>
@@ -784,7 +794,9 @@ const Profile = () => {
                         size="sm"
                         onClick={async () => {
                           try {
-                            const phoneTrim = (phone || "").replace(/\D/g, "").slice(0, 10);
+                            const digits = (phone || "").replace(/\D/g, "");
+                            const normalized = digits.startsWith("27") ? ("0" + digits.slice(2)) : digits;
+                            const phoneTrim = normalized.slice(0, 10);
                             if (phoneTrim && !/^0\d{9}$/.test(phoneTrim)) {
                               const proceed = window.confirm(
                                 "Are you sure your number is correct? South African numbers should start with 0 and be 10 digits. It's used for delivery; if incorrect, couriers may not reach you and you may need to pay for rescheduling."
