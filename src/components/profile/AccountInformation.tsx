@@ -39,6 +39,62 @@ const AccountInformation = ({
   setIsTemporarilyAway,
   setIsEditDialogOpen,
 }: AccountInformationProps) => {
+  const { user } = useAuth();
+  const [phoneInput, setPhoneInput] = useState("");
+  const [savingPhone, setSavingPhone] = useState(false);
+
+  const hasPhone = Boolean((profile as any)?.phone_number);
+
+  const handleSavePhone = async () => {
+    const value = phoneInput.trim();
+    if (!value) {
+      toast.error("Please enter your phone number");
+      return;
+    }
+    if (!validateSAPhoneNumber(value)) {
+      toast.error("Enter a valid South African phone number");
+      return;
+    }
+    if (!user?.id) {
+      toast.error("Not authenticated");
+      return;
+    }
+    if (hasPhone) {
+      toast.error("Phone number already set and cannot be changed");
+      return;
+    }
+
+    setSavingPhone(true);
+    try {
+      // Update auth metadata (non-blocking)
+      try {
+        await supabase.auth.updateUser({ data: { phone_number: value, phone: value } });
+      } catch (e) {
+        console.warn("Auth metadata phone update failed (non-fatal)", e);
+      }
+
+      // Persist to profiles table only if empty
+      const { error } = await supabase
+        .from("profiles")
+        .update({ phone_number: value, updated_at: new Date().toISOString() })
+        .eq("id", user.id)
+        .is("phone_number", null);
+
+      if (error) {
+        console.error("Failed to save phone:", error);
+        toast.error("Could not save phone number. Try again.");
+        return;
+      }
+
+      toast.success("Phone number saved");
+      setPhoneInput("");
+      // Refresh UI – simplest: reload profile
+      setTimeout(() => window.location.reload(), 500);
+    } finally {
+      setSavingPhone(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Personal Information */}
@@ -88,6 +144,35 @@ const AccountInformation = ({
                 <p className="text-lg font-semibold text-gray-900">
                   {profile?.email || "Not provided"}
                 </p>
+              </div>
+
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Phone className="h-4 w-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">Phone Number</span>
+                </div>
+                {hasPhone ? (
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-semibold text-gray-900">{(profile as any)?.phone_number}</p>
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span className="text-xs text-gray-500">Locked</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Input
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="e.g., 081 234 5678"
+                      value={phoneInput}
+                      onChange={(e) => setPhoneInput(e.target.value)}
+                      className="sm:max-w-xs"
+                    />
+                    <Button onClick={handleSavePhone} disabled={savingPhone || !phoneInput.trim()} className="bg-book-600 hover:bg-book-700">
+                      {savingPhone ? "Saving..." : "Save"}
+                    </Button>
+                    <p className="text-xs text-gray-500">You can only set this once.</p>
+                  </div>
+                )}
               </div>
             </div>
 
