@@ -53,50 +53,46 @@ const Index = () => {
         url="https://www.rebookedsolutions.co.za/"
       />
 
-      {/* Mobile-Optimized Hero Section */}
-      <section className="bg-gradient-to-r from-book-100 to-book-200 py-12 sm:py-16 lg:py-20">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 mb-8 md:mb-0 text-center md:text-left">
-            <div className="mb-4">
-              <span className="inline-block bg-book-600/10 text-book-700 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium italic">
-                "Pre-Loved Pages, New Adventures"
-              </span>
+      {/* Hero Section - image right, copy left */}
+      <section className="py-12 sm:py-16 bg-gradient-to-r from-book-100 to-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12">
+            {/* Copy */}
+            <div className="order-2 md:order-1">
+              <div className="inline-block rounded-full bg-book-200 text-book-800 text-xs sm:text-sm px-3 py-1 mb-4">
+                Pre-Loved Pages, New Adventures
+              </div>
+              <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+                Buy and Sell Textbooks with Ease
+              </h1>
+              <p className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8 max-w-xl">
+                Buy affordable secondhand textbooks and give your old ones a new home—
+                all handled securely through ReBooked Solutions.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Button size="lg" className="bg-book-600 hover:bg-book-700" onClick={() => navigate("/books")}>
+                  Browse Books
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-book-600 text-book-700 hover:bg-book-100"
+                  onClick={() => navigate("/create-listing")}
+                >
+                  Sell Your Books
+                </Button>
+              </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-book-900 mb-4 leading-tight">
-              Buy and Sell Textbooks with Ease
-            </h1>
-            <p className="text-lg sm:text-xl text-book-700 mb-6 sm:mb-8 px-2 sm:px-0">
-              Buy affordable secondhand textbooks and give your old ones a new
-              home — all handled securely through ReBooked Solutions.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 px-4 sm:px-0">
-              <Button
-                size="lg"
-                className="bg-book-600 hover:bg-book-700 w-full sm:w-auto"
-                onClick={() => navigate("/books")}
-              >
-                Browse Books
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-book-600 text-book-700 hover:bg-book-100 w-full sm:w-auto"
-                onClick={() => navigate("/create-listing")}
-              >
-                Sell Your Books
-              </Button>
+
+            {/* Image */}
+            <div className="order-1 md:order-2">
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2Fbe2ca462026542bf80e06aef7423f7d8%2F0706bd9bd9b14b388ee7a2110e2756b2?format=webp&width=800"
+                alt="Smiling students with textbooks in a library"
+                className="w-full rounded-xl shadow-lg object-cover aspect-[4/3]"
+                loading="eager"
+              />
             </div>
-          </div>
-          <div className="md:w-1/2 flex justify-center">
-            <img
-              src="https://cdn.builder.io/api/v1/assets/4b236342bc954bc3a0760c75cd3f3881/pexels-yankrukov-8199706-ad0e6d?format=webp&width=800"
-              alt="Three diverse students smiling with stacks of textbooks in library"
-              width="600"
-              height="400"
-              className="rounded-lg shadow-xl max-w-full h-auto w-full max-w-sm md:max-w-full"
-              loading="eager"
-              decoding="sync"
-            />
           </div>
         </div>
       </section>

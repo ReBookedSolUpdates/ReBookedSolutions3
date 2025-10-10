@@ -18,6 +18,8 @@ interface BookFiltersProps {
   setSelectedCondition: (condition: string) => void;
   selectedGrade: string;
   setSelectedGrade: (grade: string) => void;
+  selectedCurriculum: string;
+  setSelectedCurriculum: (curriculum: string) => void;
   selectedUniversityYear: string;
   setSelectedUniversityYear: (year: string) => void;
   selectedUniversity: string;
@@ -44,6 +46,8 @@ const BookFilters = ({
   setSelectedCondition,
   selectedGrade,
   setSelectedGrade,
+  selectedCurriculum,
+  setSelectedCurriculum,
   selectedUniversityYear,
   setSelectedUniversityYear,
   selectedUniversity,
@@ -76,6 +80,7 @@ const BookFilters = ({
     "Grade 11",
     "Grade 12",
   ];
+  const curricula = ["CAPS", "Cambridge", "IEB"];
   const provinces = [
     "Eastern Cape",
     "Free State",
@@ -139,6 +144,7 @@ const BookFilters = ({
     selectedCategory ||
     selectedCondition ||
     selectedGrade ||
+    selectedCurriculum ||
     selectedUniversityYear ||
     selectedUniversity ||
     selectedProvince
@@ -259,6 +265,23 @@ const BookFilters = ({
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Curriculum Filter */}
+          {(bookType === "school" || bookType === "all") && (
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-700 mb-2">Curriculum</h3>
+              <Select value={selectedCurriculum} onValueChange={(value) => setSelectedCurriculum(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select curriculum" />
+                </SelectTrigger>
+                <SelectContent>
+                  {curricula.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
 
