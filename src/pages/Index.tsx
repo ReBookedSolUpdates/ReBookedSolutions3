@@ -53,12 +53,12 @@ const Index = () => {
         url="https://www.rebookedsolutions.co.za/"
       />
 
-      {/* Hero Section - image right, copy left */}
+      {/* Hero Section - image right on desktop, below text on mobile/tablet */}
       <section className="py-12 sm:py-16 bg-gradient-to-r from-book-100 to-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-12">
             {/* Copy */}
-            <div className="order-2 md:order-1">
+            <div className="order-1">
               <div className="inline-block rounded-full bg-book-200 text-book-800 text-xs sm:text-sm px-3 py-1 mb-4">
                 Pre-Loved Pages, New Adventures
               </div>
@@ -85,10 +85,10 @@ const Index = () => {
             </div>
 
             {/* Image */}
-            <div className="order-1 md:order-2">
+            <div className="order-2">
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2Fbe2ca462026542bf80e06aef7423f7d8%2F0706bd9bd9b14b388ee7a2110e2756b2?format=webp&width=800"
-                alt="Smiling students with textbooks in a library"
+                src="/lovable-uploads/bd1bff70-5398-480d-ab05-1a01e839c2d0.png"
+                alt="Three students smiling with textbooks"
                 className="w-full rounded-xl shadow-lg object-cover aspect-[4/3]"
                 loading="eager"
               />
