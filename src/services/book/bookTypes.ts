@@ -6,6 +6,7 @@ export interface BookFilters {
   universityYear?: string;
   university?: string;
   province?: string;
+  curriculum?: 'CAPS' | 'Cambridge' | 'IEB';
   minPrice?: number;
   maxPrice?: number;
 }
@@ -34,6 +35,7 @@ export interface BookQueryResult {
   grade?: string;
   university_year?: string;
   university?: string;
+  curriculum?: 'CAPS' | 'Cambridge' | 'IEB';
   province?: string;
   // Quantity fields from DB
   initial_quantity?: number | null;
