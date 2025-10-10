@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { validateSAPhoneNumber } from "@/utils/shippingUtils";
+import { validateSAPhoneNumber, normalizeZAPhoneNumber } from "@/utils/shippingUtils";
 import {
   User,
   Edit,
@@ -43,8 +43,9 @@ const AccountInformation = ({
   const { user } = useAuth();
   const [phoneInput, setPhoneInput] = useState("");
   const [savingPhone, setSavingPhone] = useState(false);
+  const [lockedNumber, setLockedNumber] = useState<string | null>(null);
 
-  const hasPhone = Boolean((profile as any)?.phone_number);
+  const hasPhone = Boolean((profile as any)?.phone_number || lockedNumber);
 
   const handleSavePhone = async () => {
     const value = phoneInput.trim();
@@ -52,7 +53,8 @@ const AccountInformation = ({
       toast.error("Please enter your phone number");
       return;
     }
-    if (!validateSAPhoneNumber(value)) {
+    const normalized = normalizeZAPhoneNumber(value);
+    if (!validateSAPhoneNumber(normalized)) {
       toast.error("Enter a valid South African phone number");
       return;
     }
@@ -67,17 +69,13 @@ const AccountInformation = ({
 
     setSavingPhone(true);
     try {
-      // Update auth metadata (non-blocking)
-      try {
-        await supabase.auth.updateUser({ data: { phone_number: value, phone: value } });
-      } catch (e) {
-        console.warn("Auth metadata phone update failed (non-fatal)", e);
-      }
+      // Fire auth metadata update in background (non-blocking)
+      supabase.auth.updateUser({ data: { phone_number: normalized, phone: normalized } }).catch(() => {});
 
       // Persist to profiles table only if empty
       const { error } = await supabase
         .from("profiles")
-        .update({ phone_number: value, updated_at: new Date().toISOString() })
+        .update({ phone_number: normalized, updated_at: new Date().toISOString() })
         .eq("id", user.id)
         .is("phone_number", null);
 
@@ -87,10 +85,10 @@ const AccountInformation = ({
         return;
       }
 
+      // Optimistic lock without page reload
+      setLockedNumber(normalized);
       toast.success("Phone number saved");
       setPhoneInput("");
-      // Refresh UI – simplest: reload profile
-      setTimeout(() => window.location.reload(), 500);
     } finally {
       setSavingPhone(false);
     }
@@ -154,7 +152,7 @@ const AccountInformation = ({
                 </div>
                 {hasPhone ? (
                   <div className="flex items-center gap-2">
-                    <p className="text-lg font-semibold text-gray-900">{(profile as any)?.phone_number}</p>
+                    <p className="text-lg font-semibold text-gray-900">{(profile as any)?.phone_number || lockedNumber}</p>
                     <CheckCircle className="h-4 w-4 text-green-600" />
                     <span className="text-xs text-gray-500">Locked</span>
                   </div>
@@ -163,9 +161,16 @@ const AccountInformation = ({
                     <Input
                       type="tel"
                       inputMode="tel"
+                      autoComplete="tel"
                       placeholder="e.g., 081 234 5678"
                       value={phoneInput}
                       onChange={(e) => setPhoneInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !savingPhone && phoneInput.trim()) {
+                          handleSavePhone();
+                        }
+                      }}
+                      disabled={savingPhone}
                       className="sm:max-w-xs"
                     />
                     <Button onClick={handleSavePhone} disabled={savingPhone || !phoneInput.trim()} className="bg-book-600 hover:bg-book-700">
