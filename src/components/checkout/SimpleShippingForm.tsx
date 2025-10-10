@@ -75,6 +75,23 @@ const SimpleShippingForm: React.FC<SimpleShippingFormProps> = ({
     watch,
   } = useForm<ShippingData>();
 
+  const phoneValue = watch("phone") || "";
+  const normalizePhone = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (value.trim().startsWith("+27")) {
+      return ("0" + digits.slice(2)).slice(0, 10);
+    }
+    if (digits.startsWith("27")) {
+      return ("0" + digits.slice(2)).slice(0, 10);
+    }
+    return digits.slice(0, 10);
+  };
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const normalized = normalizePhone(e.target.value);
+    setValue("phone", normalized, { shouldValidate: true });
+  };
+  const showPhoneHint = phoneValue.length > 0 && !/^0\d{9}$/.test(phoneValue);
+
   const generateDeliveryOptions = (shippingData: ShippingData) => {
     const baseOptions = [
       {
@@ -125,6 +142,16 @@ const SimpleShippingForm: React.FC<SimpleShippingFormProps> = ({
   const onSubmit = async (data: ShippingData) => {
     setIsLoading(true);
     console.log("🚀 Simple shipping form submit:", data);
+
+    if (!/^0\d{9}$/.test(data.phone)) {
+      const proceed = window.confirm(
+        "Are you sure your number is correct? South African numbers should start with 0 and be 10 digits. It's used for delivery; if incorrect, couriers may not reach you and you may need to pay for rescheduling."
+      );
+      if (!proceed) {
+        setIsLoading(false);
+        return;
+      }
+    }
 
     try {
       // Add province from select
@@ -188,12 +215,23 @@ const SimpleShippingForm: React.FC<SimpleShippingFormProps> = ({
                 <Label htmlFor="phone">Phone Number *</Label>
                 <Input
                   id="phone"
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={10}
                   {...register("phone", {
                     required: "Phone number is required",
-                    minLength: { value: 8, message: "Phone number too short" },
+                    validate: {
+                      isTenDigits: (v) => /^\d{10}$/.test(v || "") || "Enter a 10-digit phone number",
+                    },
                   })}
-                  placeholder="e.g., 081 234 5678"
+                  onChange={handlePhoneChange}
+                  placeholder="e.g., 0812345678"
                 />
+                {showPhoneHint && !errors.phone && (
+                  <p className="text-xs text-amber-600 mt-1">
+                    South African numbers should start with 0 and be 10 digits. Please double-check.
+                  </p>
+                )}
                 {errors.phone && (
                   <p className="text-sm text-red-600 mt-1">
                     {errors.phone.message}
