@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShoppingCart, CreditCard, Edit, User, Clock, Share2 } from "lucide-react";
+import FeatureUpdateDialog from "@/components/FeatureUpdateDialog";
 import { Book } from "@/types/book";
 import { UserProfile } from "@/types/address"; // UserProfile includes id
 import { toast } from "sonner";
@@ -90,16 +91,12 @@ const BookActions = ({
             </Button>
           ) : (
             <div className="space-y-3">
-              <Button
-                onClick={onBuyNow}
-                className="w-full bg-book-600 hover:bg-book-700 disabled:bg-gray-400"
+              <FeatureUpdateDialog
+                label="Buy Now"
+                muted
                 size="lg"
-                disabled={typeof book.availableQuantity === 'number' && book.availableQuantity <= 0}
-                title={typeof book.availableQuantity === 'number' && book.availableQuantity <= 0 ? 'Out of stock' : undefined}
-              >
-                <CreditCard className="mr-2 h-4 w-4" />
-                {typeof book.availableQuantity === 'number' && book.availableQuantity <= 0 ? 'Out of stock' : 'Buy Now'}
-              </Button>
+                icon={<CreditCard className="h-4 w-4" />}
+              />
               <Button
                 onClick={onAddToCart}
                 variant="outline"
