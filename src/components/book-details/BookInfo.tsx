@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Book } from '@/types/book';
 
 interface BookInfoProps {
@@ -48,6 +49,12 @@ const BookInfo = ({ book }: BookInfoProps) => {
               <div>
                 <span className="font-medium">Grade:</span>
                 <p className="text-gray-600">{book.grade}</p>
+              </div>
+            )}
+            {book.curriculum && (
+              <div>
+                <span className="font-medium">Curriculum:</span>
+                <p className="text-gray-600">{book.curriculum}</p>
               </div>
             )}
           </div>
