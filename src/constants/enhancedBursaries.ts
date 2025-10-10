@@ -1609,15 +1609,22 @@ export const HIGH_SCHOOL_BURSARIES: Bursary[] = [
   },
 ];
 
-// Combine all bursaries
+// Combine all bursaries (deduplicated by id)
 import { EXTRA_BURSARIES } from "@/constants/bursaries-extra";
-export const ALL_BURSARIES: Bursary[] = [
+import { EXTRA_BURSARIES_2 } from "@/constants/bursaries-extra-2";
+
+const ALL_BURSARIES_RAW: Bursary[] = [
   ...ENHANCED_BURSARIES,
   ...ADDITIONAL_BURSARIES,
   ...ADDITIONAL_VALID_BURSARIES,
   ...HIGH_SCHOOL_BURSARIES,
   ...EXTRA_BURSARIES,
+  ...EXTRA_BURSARIES_2,
 ];
+
+export const ALL_BURSARIES: Bursary[] = Array.from(
+  new Map(ALL_BURSARIES_RAW.map((b) => [b.id, b])).values(),
+);
 
 // Export as BURSARIES for backward compatibility
 export const BURSARIES = ALL_BURSARIES;
