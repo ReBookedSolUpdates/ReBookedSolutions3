@@ -760,12 +760,19 @@ const Profile = () => {
                       <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <input
                         type="tel"
+                        inputMode="numeric"
+                        maxLength={10}
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="0821234567 or +27821234567"
+                        onChange={(e) => setPhone((e.target.value || "").replace(/\D/g, "").slice(0, 10))}
+                        placeholder="e.g., 0812345678"
                         className="w-full pl-10 px-3 py-2 border border-gray-300 rounded-md"
                         readOnly={Boolean(phone)}
                       />
+                      {phone && !/^0\d{9}$/.test(phone) && (
+                        <p className="text-xs text-amber-600 mt-1 pl-10">
+                          South African numbers should start with 0 and be 10 digits. Please double-check.
+                        </p>
+                      )}
                     </div>
                     {phone ? (
                       <Button asChild variant="outline" size="sm" className="cursor-not-allowed opacity-70">
@@ -777,10 +784,12 @@ const Profile = () => {
                         size="sm"
                         onClick={async () => {
                           try {
-                            const phoneTrim = phone.trim();
-                            if (phoneTrim && !/^(\+27|0)[1-9]\d{8}$/.test(phoneTrim)) {
-                              toast.error("Enter a valid South African phone number");
-                              return;
+                            const phoneTrim = (phone || "").replace(/\D/g, "").slice(0, 10);
+                            if (phoneTrim && !/^0\d{9}$/.test(phoneTrim)) {
+                              const proceed = window.confirm(
+                                "Are you sure your number is correct? South African numbers should start with 0 and be 10 digits. It's used for delivery; if incorrect, couriers may not reach you and you may need to pay for rescheduling."
+                              );
+                              if (!proceed) return;
                             }
                             const { error } = await supabase.auth.updateUser({ data: { phone_number: phoneTrim || null, phone: phoneTrim || null } });
                             if (error) throw error;
