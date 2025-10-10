@@ -53,19 +53,45 @@ const Index = () => {
         url="https://www.rebookedsolutions.co.za/"
       />
 
-      {/* Hero Section - simple, clean */}
-      <section className="py-12 sm:py-16">
+      {/* Hero Section - image right, copy left */}
+      <section className="py-12 sm:py-16 bg-gradient-to-r from-book-100 to-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-              Buy and sell textbooks simply
-            </h1>
-            <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8">
-              Affordable secondhand textbooks from real students across South Africa.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-              <Button size="lg" className="bg-book-600 hover:bg-book-700" onClick={() => navigate("/books")}>Browse Books</Button>
-              <Button size="lg" variant="outline" className="border-book-600 text-book-700 hover:bg-book-100" onClick={() => navigate("/create-listing")}>Sell Your Books</Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12">
+            {/* Copy */}
+            <div className="order-2 md:order-1">
+              <div className="inline-block rounded-full bg-book-200 text-book-800 text-xs sm:text-sm px-3 py-1 mb-4">
+                Pre-Loved Pages, New Adventures
+              </div>
+              <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+                Buy and Sell Textbooks with Ease
+              </h1>
+              <p className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8 max-w-xl">
+                Buy affordable secondhand textbooks and give your old ones a new home—
+                all handled securely through ReBooked Solutions.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Button size="lg" className="bg-book-600 hover:bg-book-700" onClick={() => navigate("/books")}>
+                  Browse Books
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-book-600 text-book-700 hover:bg-book-100"
+                  onClick={() => navigate("/create-listing")}
+                >
+                  Sell Your Books
+                </Button>
+              </div>
+            </div>
+
+            {/* Image */}
+            <div className="order-1 md:order-2">
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2Fbe2ca462026542bf80e06aef7423f7d8%2F0706bd9bd9b14b388ee7a2110e2756b2?format=webp&width=800"
+                alt="Smiling students with textbooks in a library"
+                className="w-full rounded-xl shadow-lg object-cover aspect-[4/3]"
+                loading="eager"
+              />
             </div>
           </div>
         </div>
