@@ -18,6 +18,16 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const normalizePhone = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (value.trim().startsWith("+27")) {
+      return ("0" + digits.slice(2)).slice(0, 10);
+    }
+    if (digits.startsWith("27")) {
+      return ("0" + digits.slice(2)).slice(0, 10);
+    }
+    return digits.slice(0, 10);
+  };
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -63,14 +73,21 @@ const Register = () => {
         throw new Error("Password must be at least 6 characters long");
       }
 
-      // Basic ZA phone validation (e.g., 0XXXXXXXXX or +27XXXXXXXXX)
-      const phoneTrim = phone.trim();
-      if (!/^(\+27|0)[1-9]\d{8}$/.test(phoneTrim)) {
-        throw new Error("Enter a valid South African phone number (e.g., 0821234567 or +27821234567)");
+      // Normalize to 0XXXXXXXXX format and validate length
+      const normalizedPhone = normalizePhone(phone);
+      setPhone(normalizedPhone);
+      if (!/^0\d{9}$/.test(normalizedPhone)) {
+        const proceed = window.confirm(
+          "Are you sure your number is correct? South African numbers should start with 0 and be 10 digits. It's used for delivery; if incorrect, couriers may not reach you and you may need to pay for rescheduling."
+        );
+        if (!proceed) {
+          setIsLoading(false);
+          return;
+        }
       }
 
       console.log("🔄 Calling register function...");
-      const result = await register(email, password, firstName, lastName, phoneTrim);
+      const result = await register(email, password, firstName, lastName, normalizedPhone);
       console.log("✅ Register function returned:", result);
 
       // Handle different registration outcomes
@@ -305,13 +322,19 @@ const Register = () => {
                     <Input
                       id="phone"
                       type="tel"
-                      inputMode="tel"
-                      placeholder="0821234567 or +27821234567"
+                      inputMode="numeric"
+                      maxLength={10}
+                      placeholder="e.g., 0812345678"
                       className="pl-10"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => setPhone(normalizePhone(e.target.value))}
                       required
                     />
+                    {phone && !/^0\d{9}$/.test(phone) && (
+                      <p className="text-xs text-amber-600 mt-1 pl-10">
+                        South African numbers should start with 0 and be 10 digits. Please double-check.
+                      </p>
+                    )}
                   </div>
                 </div>
 
