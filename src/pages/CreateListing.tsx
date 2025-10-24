@@ -259,6 +259,14 @@ const CreateListing = () => {
         throw new Error("Please enter a valid price greater than R0");
       }
 
+      // Validate ISBN if provided
+      if (bookData.isbn) {
+        const isbnDigitsOnly = bookData.isbn.replace(/\D/g, '');
+        if (isbnDigitsOnly.length !== 13) {
+          throw new Error("ISBN must be exactly 13 digits");
+        }
+      }
+
       const createdBook = await createBook({
         ...bookData,
         quantity: formData.quantity || 1,
