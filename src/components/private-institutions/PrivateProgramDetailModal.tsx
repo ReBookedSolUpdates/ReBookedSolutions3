@@ -171,11 +171,39 @@ const PrivateProgramDetailModal: React.FC<PrivateProgramDetailModalProps> = ({ p
 
           <TabsContent value="accreditation" className="mt-6">
             <div className="space-y-6">
+              {program.accreditation && program.accreditation.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Award className="h-5 w-5 mr-2 text-book-500" />
+                      Program Accreditation
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {program.accreditation.map((acc, idx) => (
+                        <div key={idx} className="flex items-start p-3 bg-green-50 rounded-lg border border-green-200">
+                          <CheckCircle className="h-4 w-4 text-green-600 mr-2 mt-0.5" />
+                          <div>
+                            <div className="font-medium text-green-900">{acc.body}</div>
+                            {acc.accreditationId && (
+                              <div className="text-sm text-green-700">Accreditation ID: {acc.accreditationId}</div>
+                            )}
+                            {acc.status && (
+                              <div className="text-sm text-green-700">Status: {acc.status}</div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Award className="h-5 w-5 mr-2 text-book-500" />
-                    Accreditation
+                    Institution Accreditation
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
