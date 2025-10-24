@@ -19,6 +19,18 @@ export const BookInformationForm = ({
 }: BookInformationFormProps) => {
   const isMobile = useIsMobile();
 
+  const handleISBNChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow digits
+    const digitsOnly = value.replace(/\D/g, '');
+    // Limit to 13 digits
+    const limited = digitsOnly.slice(0, 13);
+
+    // Create a new event with the modified value
+    const newEvent = { ...e, target: { ...e.target, value: limited, name: 'isbn' } };
+    onInputChange(newEvent as React.ChangeEvent<HTMLInputElement>);
+  };
+
   return (
     <div className="space-y-3 md:space-y-4">
       <div>
