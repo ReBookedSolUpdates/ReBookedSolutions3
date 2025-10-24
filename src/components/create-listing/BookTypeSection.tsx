@@ -148,26 +148,28 @@ export const BookTypeSection = ({
         )}
       </div>
 
-      <div>
-        <Label htmlFor="curriculum" className="text-base font-medium">
-          Curriculum <span className="text-gray-400">(Optional)</span>
-        </Label>
-        <Select
-          value={(formData as any).curriculum || ""}
-          onValueChange={(value) => onSelectChange("curriculum", value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select curriculum (optional)" />
-          </SelectTrigger>
-          <SelectContent>
-            {['CAPS', 'Cambridge', 'IEB'].map((c) => (
-              <SelectItem key={c} value={c}>
-                {c}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {bookType === "school" && (
+        <div>
+          <Label htmlFor="curriculum" className="text-base font-medium">
+            Curriculum <span className="text-gray-400">(Optional)</span>
+          </Label>
+          <Select
+            value={(formData as any).curriculum || ""}
+            onValueChange={(value) => onSelectChange("curriculum", value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select curriculum (optional)" />
+            </SelectTrigger>
+            <SelectContent>
+              {['CAPS', 'Cambridge', 'IEB'].map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       <div>
         <Label htmlFor="condition" className="text-base font-medium">
