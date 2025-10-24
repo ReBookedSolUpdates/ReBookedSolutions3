@@ -180,6 +180,17 @@ const CreateListing = () => {
       newErrors.sellerPolicy =
         "You must accept the Seller Policy and platform rules";
 
+    // Validate ISBN if provided
+    if (formData.isbn) {
+      const isbnDigitsOnly = formData.isbn.replace(/\D/g, '');
+      if (isbnDigitsOnly.length !== 13) {
+        newErrors.isbn = "ISBN must be exactly 13 digits";
+      }
+      if (!/^\d{13}$/.test(isbnDigitsOnly)) {
+        newErrors.isbn = "ISBN must contain only numbers";
+      }
+    }
+
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
