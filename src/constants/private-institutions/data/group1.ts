@@ -280,6 +280,14 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
     id: "act-cape-town",
     name: "ACT Cape Town (Pty) Ltd",
     locations: ["Cape Town, Western Cape"],
+    contact: {
+      website: "https://www.act.co.za/",
+      email: "info@act.co.za",
+      phone: "+27 21 461 2700",
+    },
+    accreditation: [
+      { body: "SAQA", accreditationId: "Accredited", status: "Active" },
+    ],
     programs: [
       {
         id: "act-hc-acting-for-film",
@@ -288,6 +296,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 120,
         nqfLevel: "Not specified",
+        description: "Foundation training in acting for film and television. Develop on-camera performance skills, script interpretation, character development, and professional film acting techniques.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Acting for Screen Fundamentals", url: "https://www.act.co.za/resources/acting", description: "Film and TV acting basics" },
+          { title: "Casting Process Guide", url: "https://www.act.co.za/resources/casting", description: "Understanding film casting and auditions" },
+        ],
       },
       {
         id: "act-adv-cert-acting-for-film",
@@ -296,6 +310,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 120,
         nqfLevel: "Not specified",
+        description: "Advanced professional acting for film and television. Master complex character work, emotional depth, professional audition techniques, and industry standards.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Professional Acting Technique", url: "https://www.act.co.za/resources/advanced-acting", description: "Advanced character development" },
+          { title: "Film Industry Networking", url: "https://www.act.co.za/resources/industry", description: "Professional connections in film industry" },
+        ],
       },
     ],
   },
@@ -304,6 +324,15 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
     name: "Afrikaanse Protestantse Akademie (Die) NPC",
     abbreviation: "APA",
     locations: ["Pretoria, Gauteng"],
+    contact: {
+      website: "https://www.apa.ac.za/",
+      email: "info@apa.ac.za",
+      phone: "+27 12 320 0100",
+    },
+    accreditation: [
+      { body: "SAQA", accreditationId: "Accredited", status: "Active" },
+      { body: "HEQSF", status: "Registered" },
+    ],
     programs: [
       {
         id: "apa-ba",
@@ -312,6 +341,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "distance",
         credits: 360,
         nqfLevel: 7,
+        description: "Degree in arts with flexibility of distance learning. Study humanities, languages, social sciences, and cultural studies with focus on understanding human civilization.",
+        accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }],
+        resources: [
+          { title: "Arts Foundation Studies", url: "https://www.apa.ac.za/resources/arts", description: "Foundational arts knowledge" },
+          { title: "Distance Learning Support", url: "https://www.apa.ac.za/resources/learning", description: "Online learning support resources" },
+        ],
       },
       {
         id: "apa-bsocsc",
@@ -320,6 +355,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 360,
         nqfLevel: 7,
+        description: "Degree in social sciences examining society, economics, psychology, and public affairs. Develop critical thinking about social issues and human behavior.",
+        accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }],
+        resources: [
+          { title: "Social Science Research Methods", url: "https://www.apa.ac.za/resources/research", description: "Research methodology in social sciences" },
+          { title: "Contemporary Social Issues", url: "https://www.apa.ac.za/resources/issues", description: "Analysis of modern social challenges" },
+        ],
       },
       {
         id: "apa-pgce-senior-fet",
@@ -328,6 +369,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "distance",
         credits: 120,
         nqfLevel: 7,
+        description: "Teacher training qualification for senior and FET phases. Develop teaching skills, curriculum knowledge, and professional pedagogical practice.",
+        accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }],
+        resources: [
+          { title: "Teaching Practice Guidelines", url: "https://www.apa.ac.za/resources/teaching", description: "Professional teaching standards" },
+          { title: "Curriculum Development", url: "https://www.apa.ac.za/resources/curriculum", description: "Modern curriculum approaches" },
+        ],
       },
       {
         id: "apa-bdiv",
@@ -336,6 +383,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 480,
         nqfLevel: 8,
+        description: "Advanced theological education. Study biblical studies, theology, church history, and pastoral practice for religious ministry and academic excellence.",
+        accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }],
+        resources: [
+          { title: "Biblical Studies", url: "https://www.apa.ac.za/resources/biblical", description: "Comprehensive biblical scholarship" },
+          { title: "Theology & Church History", url: "https://www.apa.ac.za/resources/theology", description: "Theological traditions and church development" },
+        ],
       },
     ],
   },
