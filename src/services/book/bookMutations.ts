@@ -15,6 +15,17 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
       throw new Error("User not authenticated");
     }
 
+    // Validate ISBN if provided
+    if (bookData.isbn) {
+      const isbnDigitsOnly = bookData.isbn.replace(/\D/g, '');
+      if (isbnDigitsOnly.length !== 13) {
+        throw new Error("ISBN must be exactly 13 digits");
+      }
+      if (!/^\d{13}$/.test(isbnDigitsOnly)) {
+        throw new Error("ISBN must contain only numbers");
+      }
+    }
+
     // Fetch province, pickup address, and banking info from user profile
     let province = null;
     let pickupAddress = null;
@@ -77,6 +88,7 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
       back_cover: bookData.backCover,
       inside_pages: bookData.insidePages,
       additional_images: (() => { const extras = (bookData.additionalImages || []).filter(Boolean); return extras.length > 0 ? extras : null; })(),
+      isbn: bookData.isbn || null,
       grade: bookData.grade,
       university_year: bookData.universityYear,
       curriculum: (bookData as any).curriculum || null,

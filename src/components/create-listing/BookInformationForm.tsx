@@ -19,6 +19,18 @@ export const BookInformationForm = ({
 }: BookInformationFormProps) => {
   const isMobile = useIsMobile();
 
+  const handleISBNChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow digits
+    const digitsOnly = value.replace(/\D/g, '');
+    // Limit to 13 digits
+    const limited = digitsOnly.slice(0, 13);
+
+    // Create a new event with the modified value
+    const newEvent = { ...e, target: { ...e.target, value: limited, name: 'isbn' } };
+    onInputChange(newEvent as React.ChangeEvent<HTMLInputElement>);
+  };
+
   return (
     <div className="space-y-3 md:space-y-4">
       <div>
@@ -96,6 +108,41 @@ export const BookInformationForm = ({
             className={`${isMobile ? "text-xs" : "text-sm"} text-red-500 mt-1`}
           >
             {errors.description}
+          </p>
+        )}
+      </div>
+
+      <div>
+        <Label
+          htmlFor="isbn"
+          className={`${isMobile ? "text-sm" : "text-base"} font-medium`}
+        >
+          ISBN Number{" "}
+          <span className="text-gray-500 font-normal text-xs sm:text-sm">(recommended)</span>
+        </Label>
+        <Input
+          id="isbn"
+          name="isbn"
+          value={formData.isbn || ""}
+          onChange={handleISBNChange}
+          placeholder="e.g., 9780123456789"
+          maxLength={13}
+          inputMode="numeric"
+          className={`${errors.isbn ? "border-red-500" : ""} ${isMobile ? "h-12 text-base" : ""}`}
+          style={{ fontSize: isMobile ? "16px" : undefined }}
+        />
+        {errors.isbn ? (
+          <p
+            className={`${isMobile ? "text-xs" : "text-sm"} text-red-500 mt-1`}
+          >
+            {errors.isbn}
+          </p>
+        ) : (
+          <p
+            className={`${isMobile ? "text-xs" : "text-sm"} text-gray-500 mt-1`}
+          >
+            13-digit number • Helps readers identify the exact edition of your book
+            {formData.isbn && formData.isbn.length < 13 && ` (${formData.isbn.length}/13 digits)`}
           </p>
         )}
       </div>

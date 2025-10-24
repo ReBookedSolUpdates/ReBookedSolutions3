@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -7,8 +8,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { School, GraduationCap } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { School, GraduationCap, Search } from "lucide-react";
 import { UNIVERSITY_YEARS, SOUTH_AFRICAN_UNIVERSITIES_SIMPLE } from "@/constants/universities";
+import { PRIVATE_INSTITUTIONS } from "@/constants/private-institutions";
 import { CREATE_LISTING_CATEGORIES } from "@/constants/createListingCategories";
 import { BookFormData } from "@/types/book";
 
@@ -27,10 +30,10 @@ export const BookTypeSection = ({
   onBookTypeChange,
   onSelectChange,
 }: BookTypeSectionProps) => {
+  const [universitySearchQuery, setUniversitySearchQuery] = useState("");
+
   // Use shared category list across app
   // Imported from constants to keep Create Listing and Books filters in sync
-
-
   const categories = CREATE_LISTING_CATEGORIES.slice().sort((a, b) => a.localeCompare(b));
 
   const conditions = ["New", "Good", "Better", "Average", "Below Average"];
@@ -49,7 +52,41 @@ export const BookTypeSection = ({
     "Grade 10",
     "Grade 11",
     "Grade 12",
+    "Study Guides",
   ];
+
+  // Combine public universities and private institutions
+  const allUniversities = useMemo(() => {
+    const publicUnis = SOUTH_AFRICAN_UNIVERSITIES_SIMPLE.map((uni) => ({
+      id: uni.id,
+      name: uni.name,
+      abbreviation: uni.abbreviation,
+      type: "public" as const,
+    }));
+
+    const privateUnis = PRIVATE_INSTITUTIONS.map((inst) => ({
+      id: inst.id,
+      name: inst.name,
+      abbreviation: inst.abbreviation || inst.name.substring(0, 3).toUpperCase(),
+      type: "private" as const,
+    }));
+
+    return [...publicUnis, ...privateUnis].sort((a, b) => a.name.localeCompare(b.name));
+  }, []);
+
+  // Filter universities based on search query
+  const filteredUniversities = useMemo(() => {
+    if (!universitySearchQuery.trim()) {
+      return allUniversities;
+    }
+
+    const query = universitySearchQuery.toLowerCase();
+    return allUniversities.filter(
+      (uni) =>
+        uni.name.toLowerCase().includes(query) ||
+        uni.abbreviation.toLowerCase().includes(query)
+    );
+  }, [universitySearchQuery, allUniversities]);
 
   return (
     <div className="space-y-4">
@@ -111,26 +148,28 @@ export const BookTypeSection = ({
         )}
       </div>
 
-      <div>
-        <Label htmlFor="curriculum" className="text-base font-medium">
-          Curriculum <span className="text-gray-400">(Optional)</span>
-        </Label>
-        <Select
-          value={(formData as any).curriculum || ""}
-          onValueChange={(value) => onSelectChange("curriculum", value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select curriculum (optional)" />
-          </SelectTrigger>
-          <SelectContent>
-            {['CAPS', 'Cambridge', 'IEB'].map((c) => (
-              <SelectItem key={c} value={c}>
-                {c}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {bookType === "school" && (
+        <div>
+          <Label htmlFor="curriculum" className="text-base font-medium">
+            Curriculum <span className="text-gray-400">(Optional)</span>
+          </Label>
+          <Select
+            value={(formData as any).curriculum || ""}
+            onValueChange={(value) => onSelectChange("curriculum", value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select curriculum (optional)" />
+            </SelectTrigger>
+            <SelectContent>
+              {['CAPS', 'Cambridge', 'IEB'].map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       <div>
         <Label htmlFor="condition" className="text-base font-medium">
@@ -207,26 +246,46 @@ export const BookTypeSection = ({
             )}
           </div>
 
-          {/* University Selection - Optional */}
+          {/* University Selection - Optional with Search */}
           <div>
             <Label htmlFor="university" className="text-base font-medium">
               University <span className="text-gray-400">(Optional)</span>
             </Label>
-            <Select
-              value={formData.university || ""}
-              onValueChange={(value) => onSelectChange("university", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select university (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                {SOUTH_AFRICAN_UNIVERSITIES_SIMPLE.map((university) => (
-                  <SelectItem key={university.id} value={university.id}>
-                    {university.abbreviation} - {university.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="space-y-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                <Input
+                  placeholder="Search university or private institution..."
+                  value={universitySearchQuery}
+                  onChange={(e) => setUniversitySearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select
+                value={formData.university || ""}
+                onValueChange={(value) => onSelectChange("university", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select university (optional)" />
+                </SelectTrigger>
+                <SelectContent className="max-h-80">
+                  {filteredUniversities.length > 0 ? (
+                    filteredUniversities.map((university) => (
+                      <SelectItem key={university.id} value={university.id}>
+                        {university.abbreviation} - {university.name}
+                        <span className="text-xs text-gray-500 ml-2">
+                          ({university.type === "private" ? "Private" : "Public"})
+                        </span>
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="p-2 text-sm text-gray-500 text-center">
+                      No institutions found
+                    </div>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </>
       )}

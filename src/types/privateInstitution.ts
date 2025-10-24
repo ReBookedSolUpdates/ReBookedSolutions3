@@ -14,6 +14,18 @@ export type ProgramType =
   | "masters"
   | "phd";
 
+export interface ProgramAccreditation {
+  body: string;
+  accreditationId?: string;
+  status?: string;
+}
+
+export interface ProgramResource {
+  title: string;
+  url: string;
+  description?: string;
+}
+
 export interface Program {
   id: string;
   name: string;
@@ -27,6 +39,8 @@ export interface Program {
   website?: string;
   credits?: number;
   nqfLevel?: number | string;
+  accreditation?: ProgramAccreditation[];
+  resources?: ProgramResource[];
 }
 
 export interface AccreditationInfo {

@@ -171,11 +171,39 @@ const PrivateProgramDetailModal: React.FC<PrivateProgramDetailModalProps> = ({ p
 
           <TabsContent value="accreditation" className="mt-6">
             <div className="space-y-6">
+              {program.accreditation && program.accreditation.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Award className="h-5 w-5 mr-2 text-book-500" />
+                      Program Accreditation
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {program.accreditation.map((acc, idx) => (
+                        <div key={idx} className="flex items-start p-3 bg-green-50 rounded-lg border border-green-200">
+                          <CheckCircle className="h-4 w-4 text-green-600 mr-2 mt-0.5" />
+                          <div>
+                            <div className="font-medium text-green-900">{acc.body}</div>
+                            {acc.accreditationId && (
+                              <div className="text-sm text-green-700">Accreditation ID: {acc.accreditationId}</div>
+                            )}
+                            {acc.status && (
+                              <div className="text-sm text-green-700">Status: {acc.status}</div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Award className="h-5 w-5 mr-2 text-book-500" />
-                    Accreditation
+                    Institution Accreditation
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -206,6 +234,33 @@ const PrivateProgramDetailModal: React.FC<PrivateProgramDetailModalProps> = ({ p
 
           <TabsContent value="resources" className="mt-6">
             <div className="space-y-6">
+              {program.resources && program.resources.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <BookOpen className="h-5 w-5 mr-2 text-book-500" />
+                      Program Resources
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {program.resources.map((resource, idx) => (
+                        <div key={idx} className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                          <div className="font-medium text-blue-900 mb-1">{resource.title}</div>
+                          {resource.description && (
+                            <p className="text-sm text-blue-800 mb-2">{resource.description}</p>
+                          )}
+                          <Button variant="outline" size="sm" className="border-blue-300 text-blue-700 hover:bg-blue-100" asChild>
+                            <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-3 w-3 mr-1" /> Visit Resource
+                            </a>
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
