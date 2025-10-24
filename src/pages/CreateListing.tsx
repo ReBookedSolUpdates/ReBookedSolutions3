@@ -53,6 +53,7 @@ const CreateListing = () => {
     grade: "",
     universityYear: "",
     university: "",
+    isbn: "",
     imageUrl: "",
     frontCover: "",
     backCover: "",
