@@ -463,8 +463,17 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
     id: "the-animation-school",
     name: "Animation School (Pty) Ltd (The)",
     locations: ["Cape Town, Western Cape", "Johannesburg, Gauteng"],
+    contact: {
+      website: "https://www.animationschool.co.za/",
+      email: "info@animationschool.co.za",
+      phone: "+27 21 423 5800",
+    },
+    accreditation: [
+      { body: "SAQA", accreditationId: "Accredited", status: "Active" },
+      { body: "HEQSF", status: "Registered" },
+    ],
     programs: [
-      { id: "tas-dip-digital-animation", name: "Diploma in Digital Animation", type: "diploma", mode: "contact", credits: 360, nqfLevel: 6 },
+      { id: "tas-dip-digital-animation", name: "Diploma in Digital Animation", type: "diploma", mode: "contact", credits: 360, nqfLevel: 6, description: "Comprehensive animation diploma covering 2D/3D animation, visual effects, and character design. Develop professional animation skills using industry-standard software.", accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }], resources: [{ title: "Animation Software Training", url: "https://www.animationschool.co.za/resources/software", description: "Industry standard tools" }, { title: "Animation Portfolio", url: "https://www.animationschool.co.za/resources/portfolio", description: "Career preparation" }] },
     ],
   },
   {
