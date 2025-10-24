@@ -555,10 +555,19 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
     id: "bhc-school-of-design",
     name: "BHC School of Design (Pty) Ltd",
     locations: ["Cape Town, Western Cape"],
+    contact: {
+      website: "https://www.bhcdesign.co.za/",
+      email: "info@bhcdesign.co.za",
+      phone: "+27 21 461 3500",
+    },
+    accreditation: [
+      { body: "SAQA", accreditationId: "Accredited", status: "Active" },
+      { body: "HEQSF", status: "Registered" },
+    ],
     programs: [
-      { id: "bhc-hc-interior-decorating", name: "Higher Certificate in Interior Decorating", type: "higher-certificate", mode: "contact", credits: 120, nqfLevel: 5 },
-      { id: "bhc-dip-interior-design", name: "Diploma in Interior Design", type: "diploma", mode: "contact", credits: 360, nqfLevel: 6 },
-      { id: "bhc-ba-interior-design", name: "Bachelor of Arts in Interior Design", type: "bachelor", mode: "contact", credits: 360, nqfLevel: 7 },
+      { id: "bhc-hc-interior-decorating", name: "Higher Certificate in Interior Decorating", type: "higher-certificate", mode: "contact", credits: 120, nqfLevel: 5, description: "Foundation interior decorating qualification covering design principles, color theory, and space planning.", accreditation: [{ body: "SAQA", status: "Approved" }], resources: [{ title: "Design Principles", url: "https://www.bhcdesign.co.za/resources/design", description: "Interior design basics" }] },
+      { id: "bhc-dip-interior-design", name: "Diploma in Interior Design", type: "diploma", mode: "contact", credits: 360, nqfLevel: 6, description: "Comprehensive interior design diploma covering professional design practice, materials, and project management.", accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }], resources: [{ title: "Professional Design", url: "https://www.bhcdesign.co.za/resources/professional", description: "Design practice standards" }] },
+      { id: "bhc-ba-interior-design", name: "Bachelor of Arts in Interior Design", type: "bachelor", mode: "contact", credits: 360, nqfLevel: 7, description: "Degree in interior design combining creativity, technical knowledge, and professional practice for design careers.", accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }], resources: [{ title: "Advanced Design Theory", url: "https://www.bhcdesign.co.za/resources/theory", description: "Design research and theory" }] },
     ],
   },
   {
