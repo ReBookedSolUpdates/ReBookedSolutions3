@@ -6,6 +6,15 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
     name: "AAA School of Advertising (Pty) Ltd",
     abbreviation: "AAA",
     locations: ["Johannesburg, Gauteng", "Cape Town, Western Cape"],
+    contact: {
+      website: "https://www.aaatschool.co.za/",
+      email: "info@aaatschool.co.za",
+      phone: "+27 11 622 1600",
+    },
+    accreditation: [
+      { body: "SAQA", accreditationId: "Accredited", status: "Active" },
+      { body: "Department of Higher Education and Training", status: "Registered" },
+    ],
     programs: [
       {
         id: "aaa-hc-digital-marketing",
@@ -14,6 +23,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "distance",
         credits: 120,
         nqfLevel: 5,
+        description: "Equip yourself with digital marketing skills to succeed in the modern advertising industry. Learn SEO, social media marketing, content creation, analytics, and digital campaign management.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Digital Marketing Guide", url: "https://www.aaatschool.co.za/resources/digital-marketing", description: "Comprehensive guide to digital marketing fundamentals" },
+          { title: "Google Analytics Certification", url: "https://analytics.google.com/", description: "Industry-recognized analytics training" },
+        ],
       },
       {
         id: "aaa-hc-marketing-communication",
@@ -22,6 +37,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 120,
         nqfLevel: 5,
+        description: "Master strategic communication approaches to market products and services. Develop expertise in brand messaging, advertising campaigns, public relations, and integrated marketing communications.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Marketing Communication Handbook", url: "https://www.aaatschool.co.za/resources/marketing-comm", description: "Essential marketing communication strategies and tools" },
+          { title: "Advertising Standards South Africa", url: "https://www.asasa.org.za/", description: "Learn current advertising regulations" },
+        ],
       },
       {
         id: "aaa-hc-visual-communications",
@@ -30,6 +51,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 120,
         nqfLevel: 5,
+        description: "Learn to communicate visually through design principles, typography, color theory, and visual storytelling. Develop skills in graphic design, photography, and digital media design.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Design Fundamentals", url: "https://www.aaatschool.co.za/resources/visual-design", description: "Core principles of visual communication design" },
+          { title: "Adobe Creative Suite Training", url: "https://www.adobe.com/", description: "Industry-standard design software training" },
+        ],
       },
       {
         id: "aaa-dip-marketing-communications",
@@ -38,6 +65,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 360,
         nqfLevel: 6,
+        description: "Advanced diploma developing comprehensive marketing communication expertise. Combine strategic thinking with practical campaign execution, market research, and consumer psychology.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Campaign Management Guide", url: "https://www.aaatschool.co.za/resources/campaigns", description: "Strategic marketing campaign planning and execution" },
+          { title: "Market Research Methods", url: "https://www.aaatschool.co.za/resources/research", description: "Consumer and market research techniques" },
+        ],
       },
       {
         id: "aaa-dip-visual-communication",
@@ -46,6 +79,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 360,
         nqfLevel: 6,
+        description: "Comprehensive diploma in visual communication arts. Create compelling visual narratives through advanced design, illustration, photography, and multimedia production.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Professional Design Portfolio Guide", url: "https://www.aaatschool.co.za/resources/portfolio", description: "Building professional design portfolios" },
+          { title: "Creative Industry Trends", url: "https://www.aaatschool.co.za/resources/trends", description: "Latest trends in visual communication and design" },
+        ],
       },
       {
         id: "aaa-ba-marketing-communication",
@@ -54,6 +93,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 360,
         nqfLevel: 7,
+        description: "Degree-level qualification in marketing communication. Develop advanced skills in strategic communication, integrated marketing, brand management, digital strategy, and business communication.",
+        accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }],
+        resources: [
+          { title: "Strategic Marketing & Communications", url: "https://www.aaatschool.co.za/resources/strategy", description: "Strategic planning in marketing and corporate communications" },
+          { title: "Business Communication Skills", url: "https://www.aaatschool.co.za/resources/business-comm", description: "Professional communication in business contexts" },
+        ],
       },
       {
         id: "aaa-ba-creative-brand-communication",
@@ -62,6 +107,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 360,
         nqfLevel: 7,
+        description: "Degree focusing on brand identity and creative expression. Master brand strategy, brand positioning, creative campaigns, and cross-media communication for brand development.",
+        accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }],
+        resources: [
+          { title: "Brand Strategy & Development", url: "https://www.aaatschool.co.za/resources/branding", description: "Building and managing strong brand identities" },
+          { title: "Creative Campaign Execution", url: "https://www.aaatschool.co.za/resources/campaigns-creative", description: "Creating award-winning campaigns" },
+        ],
       },
     ],
   },
