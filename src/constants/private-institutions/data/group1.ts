@@ -180,6 +180,15 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
     name: "Academy of Sound Engineering (Pty) Ltd",
     abbreviation: "ASE",
     locations: ["Johannesburg, Gauteng", "Cape Town, Western Cape"],
+    contact: {
+      website: "https://www.ase.co.za/",
+      email: "info@ase.co.za",
+      phone: "+27 11 482 1700",
+    },
+    accreditation: [
+      { body: "SAQA", accreditationId: "Accredited", status: "Active" },
+      { body: "Recording Industry Association", status: "Partner" },
+    ],
     programs: [
       {
         id: "ase-hc-audio-technology",
@@ -188,6 +197,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 120,
         nqfLevel: 5,
+        description: "Foundation in audio technology and sound engineering. Learn recording techniques, audio mixing, signal processing, and sound design for music and media production.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Audio Engineering Basics", url: "https://www.ase.co.za/resources/audio-basics", description: "Fundamentals of audio technology" },
+          { title: "Pro Tools Certification", url: "https://www.avid.com/", description: "Industry standard DAW training" },
+        ],
       },
       {
         id: "ase-hc-television-screen-media",
@@ -196,6 +211,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 120,
         nqfLevel: 5,
+        description: "Introduction to television and screen media production. Develop skills in video production, editing, cinematography, and broadcast technologies.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Video Production Fundamentals", url: "https://www.ase.co.za/resources/video-basics", description: "Essential video production techniques" },
+          { title: "Broadcast Standards", url: "https://www.ase.co.za/resources/broadcast", description: "Current broadcast production standards" },
+        ],
       },
       {
         id: "ase-dip-audio-technology",
@@ -204,6 +225,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 360,
         nqfLevel: 6,
+        description: "Advanced diploma in audio technology. Master recording studio operations, advanced mixing techniques, mastering, and audio post-production for music and film.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Advanced Recording Techniques", url: "https://www.ase.co.za/resources/advanced-recording", description: "Professional recording studio practices" },
+          { title: "Mastering and Distribution", url: "https://www.ase.co.za/resources/mastering", description: "Audio mastering and delivery formats" },
+        ],
       },
       {
         id: "ase-dip-television-screen-media",
@@ -212,6 +239,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 360,
         nqfLevel: 6,
+        description: "Comprehensive diploma in television and screen media production. Develop professional-level skills in film production, post-production, and multimedia storytelling.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Film Production Workflow", url: "https://www.ase.co.za/resources/filmwork", description: "Complete film production process" },
+          { title: "Post-Production Mastery", url: "https://www.ase.co.za/resources/postprod", description: "Advanced editing and visual effects" },
+        ],
       },
       {
         id: "ase-ba-hons-contemporary-art",
@@ -220,6 +253,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 120,
         nqfLevel: 8,
+        description: "Honours degree in contemporary art. Explore artistic practices, theory, and creative innovation in contemporary visual and media arts.",
+        accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }],
+        resources: [
+          { title: "Contemporary Art Theory", url: "https://www.ase.co.za/resources/art-theory", description: "Modern and contemporary art movements" },
+          { title: "Artist Portfolio Development", url: "https://www.ase.co.za/resources/portfolio", description: "Building professional art portfolios" },
+        ],
       },
       {
         id: "ase-ba-hons-visual-communication",
@@ -228,6 +267,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "contact",
         credits: 120,
         nqfLevel: 8,
+        description: "Honours degree specializing in visual communication. Develop advanced expertise in communication design, visual aesthetics, and digital media narratives.",
+        accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }],
+        resources: [
+          { title: "Advanced Visual Communication Theory", url: "https://www.ase.co.za/resources/vis-theory", description: "Theories of visual communication" },
+          { title: "Digital Media Narratives", url: "https://www.ase.co.za/resources/narratives", description: "Storytelling in digital media" },
+        ],
       },
     ],
   },
