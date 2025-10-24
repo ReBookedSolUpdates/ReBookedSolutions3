@@ -502,10 +502,19 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
     id: "belgium-campus-itversity",
     name: "Belgium Campus ITVERSITY NPC",
     locations: ["Akasia, Gauteng", "Kempton Park, Gauteng"],
+    contact: {
+      website: "https://www.itversity.ac.za/",
+      email: "info@itversity.ac.za",
+      phone: "+27 12 329 6000",
+    },
+    accreditation: [
+      { body: "SAQA", accreditationId: "Accredited", status: "Active" },
+      { body: "HEQSF", status: "Registered" },
+    ],
     programs: [
-      { id: "bc-dip-it", name: "Diploma in Information Technology", type: "diploma", mode: "contact", credits: 360, nqfLevel: 6 },
-      { id: "bc-bit-software-development", name: "Bachelor of Information Technology Software Development", type: "bachelor", mode: "contact", credits: 360, nqfLevel: 7 },
-      { id: "bc-bachelor-computing", name: "Bachelor of Computing", type: "bachelor", mode: "contact", credits: 480, nqfLevel: 8 },
+      { id: "bc-dip-it", name: "Diploma in Information Technology", type: "diploma", mode: "contact", credits: 360, nqfLevel: 6, description: "IT diploma covering systems, networks, programming, and technology infrastructure.", accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }], resources: [{ title: "IT Fundamentals", url: "https://www.itversity.ac.za/resources/it", description: "Core IT concepts" }] },
+      { id: "bc-bit-software-development", name: "Bachelor of Information Technology Software Development", type: "bachelor", mode: "contact", credits: 360, nqfLevel: 7, description: "Degree specializing in software development with programming and systems design expertise.", accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }], resources: [{ title: "Software Development", url: "https://www.itversity.ac.za/resources/software", description: "Development frameworks and languages" }] },
+      { id: "bc-bachelor-computing", name: "Bachelor of Computing", type: "bachelor", mode: "contact", credits: 480, nqfLevel: 8, description: "Comprehensive computing degree covering computer systems, programming, and technology applications.", accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }], resources: [{ title: "Computer Science", url: "https://www.itversity.ac.za/resources/computing", description: "Computing theory and practice" }] },
     ],
   },
   {
