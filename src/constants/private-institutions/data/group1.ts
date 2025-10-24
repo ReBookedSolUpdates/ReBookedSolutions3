@@ -121,6 +121,15 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
     name: "Academy for Facility Management (Pty) Ltd (A4FM)",
     abbreviation: "A4FM",
     locations: ["Pretoria, Gauteng", "Centurion, Gauteng"],
+    contact: {
+      website: "https://www.a4fm.co.za/",
+      email: "info@a4fm.co.za",
+      phone: "+27 12 663 9600",
+    },
+    accreditation: [
+      { body: "SAQA", accreditationId: "Accredited", status: "Active" },
+      { body: "IFMA", status: "Partner" },
+    ],
     programs: [
       {
         id: "a4fm-hc-facilities-management",
@@ -129,6 +138,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "distance",
         credits: 120,
         nqfLevel: 5,
+        description: "Introduction to facilities management principles and practices. Learn maintenance planning, asset management, space planning, and operational efficiency in facility environments.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Facilities Management Best Practices", url: "https://www.a4fm.co.za/resources/bestpractices", description: "International standards in facilities management" },
+          { title: "IFMA Foundation Certification", url: "https://www.ifma.org/", description: "Industry certification in facility management" },
+        ],
       },
       {
         id: "a4fm-adv-cert-facility-management",
@@ -137,6 +152,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "distance",
         credits: 120,
         nqfLevel: 6,
+        description: "Advanced skills in facilities management with focus on strategic planning. Develop expertise in facility operations, maintenance programs, cost control, and performance management.",
+        accreditation: [{ body: "SAQA", status: "Approved" }],
+        resources: [
+          { title: "Strategic FM Planning", url: "https://www.a4fm.co.za/resources/strategy", description: "Strategic facilities management approach" },
+          { title: "FM Software Solutions", url: "https://www.a4fm.co.za/resources/software", description: "Facility management system training" },
+        ],
       },
       {
         id: "a4fm-adv-dip-facility-management",
@@ -145,6 +166,12 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
         mode: "distance",
         credits: 120,
         nqfLevel: 7,
+        description: "Comprehensive diploma preparing facility management professionals. Master integrated facility services, sustainable building management, technology systems, and organizational leadership in FM.",
+        accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }],
+        resources: [
+          { title: "Sustainable Facilities Management", url: "https://www.a4fm.co.za/resources/sustainability", description: "Green facility management practices" },
+          { title: "Advanced Leadership in FM", url: "https://www.a4fm.co.za/resources/leadership", description: "Leadership and management in facility operations" },
+        ],
       },
     ],
   },
