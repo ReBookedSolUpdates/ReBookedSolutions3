@@ -77,6 +77,7 @@ export const createBook = async (bookData: BookFormData): Promise<Book> => {
       back_cover: bookData.backCover,
       inside_pages: bookData.insidePages,
       additional_images: (() => { const extras = (bookData.additionalImages || []).filter(Boolean); return extras.length > 0 ? extras : null; })(),
+      isbn: bookData.isbn || null,
       grade: bookData.grade,
       university_year: bookData.universityYear,
       curriculum: (bookData as any).curriculum || null,
