@@ -30,10 +30,10 @@ export const BookTypeSection = ({
   onBookTypeChange,
   onSelectChange,
 }: BookTypeSectionProps) => {
+  const [universitySearchQuery, setUniversitySearchQuery] = useState("");
+
   // Use shared category list across app
   // Imported from constants to keep Create Listing and Books filters in sync
-
-
   const categories = CREATE_LISTING_CATEGORIES.slice().sort((a, b) => a.localeCompare(b));
 
   const conditions = ["New", "Good", "Better", "Average", "Below Average"];
@@ -52,7 +52,41 @@ export const BookTypeSection = ({
     "Grade 10",
     "Grade 11",
     "Grade 12",
+    "Study Guides",
   ];
+
+  // Combine public universities and private institutions
+  const allUniversities = useMemo(() => {
+    const publicUnis = SOUTH_AFRICAN_UNIVERSITIES_SIMPLE.map((uni) => ({
+      id: uni.id,
+      name: uni.name,
+      abbreviation: uni.abbreviation,
+      type: "public" as const,
+    }));
+
+    const privateUnis = PRIVATE_INSTITUTIONS.map((inst) => ({
+      id: inst.id,
+      name: inst.name,
+      abbreviation: inst.abbreviation || inst.name.substring(0, 3).toUpperCase(),
+      type: "private" as const,
+    }));
+
+    return [...publicUnis, ...privateUnis].sort((a, b) => a.name.localeCompare(b.name));
+  }, []);
+
+  // Filter universities based on search query
+  const filteredUniversities = useMemo(() => {
+    if (!universitySearchQuery.trim()) {
+      return allUniversities;
+    }
+
+    const query = universitySearchQuery.toLowerCase();
+    return allUniversities.filter(
+      (uni) =>
+        uni.name.toLowerCase().includes(query) ||
+        uni.abbreviation.toLowerCase().includes(query)
+    );
+  }, [universitySearchQuery, allUniversities]);
 
   return (
     <div className="space-y-4">
