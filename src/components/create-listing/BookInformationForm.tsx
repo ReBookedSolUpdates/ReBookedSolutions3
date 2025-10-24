@@ -99,6 +99,30 @@ export const BookInformationForm = ({
           </p>
         )}
       </div>
+
+      <div>
+        <Label
+          htmlFor="isbn"
+          className={`${isMobile ? "text-sm" : "text-base"} font-medium`}
+        >
+          ISBN Number{" "}
+          <span className="text-gray-500 font-normal text-xs sm:text-sm">(recommended)</span>
+        </Label>
+        <Input
+          id="isbn"
+          name="isbn"
+          value={formData.isbn || ""}
+          onChange={onInputChange}
+          placeholder="e.g., 978-0-123456-78-9"
+          className={`${isMobile ? "h-12 text-base" : ""}`}
+          style={{ fontSize: isMobile ? "16px" : undefined }} // Prevents zoom on iOS
+        />
+        <p
+          className={`${isMobile ? "text-xs" : "text-sm"} text-gray-500 mt-1`}
+        >
+          Helps readers identify the exact edition of your book
+        </p>
+      </div>
     </div>
   );
 };
