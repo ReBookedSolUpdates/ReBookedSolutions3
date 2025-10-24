@@ -196,6 +196,26 @@ const EnhancedBursaryListing = () => {
         matchesRuralBackground &&
         matchesFirstGeneration
       );
+    }).sort((a, b) => {
+      // Sort by application status (open first, then closing, then closed)
+      const statusA = getApplicationStatus(a.applicationDeadline).status;
+      const statusB = getApplicationStatus(b.applicationDeadline).status;
+
+      const statusOrder = { open: 0, closing: 1, closed: 2 };
+      const statusDiff = (statusOrder[statusA as keyof typeof statusOrder] || 2) -
+                         (statusOrder[statusB as keyof typeof statusOrder] || 2);
+
+      if (statusDiff !== 0) return statusDiff;
+
+      // Within same status, sort by priority (high > medium > low)
+      const priorityOrder = { high: 0, medium: 1, low: 2 };
+      const priorityA = priorityOrder[a.priority as keyof typeof priorityOrder] || 3;
+      const priorityB = priorityOrder[b.priority as keyof typeof priorityOrder] || 3;
+
+      if (priorityA !== priorityB) return priorityA - priorityB;
+
+      // Finally, sort alphabetically by name
+      return a.name.localeCompare(b.name);
     });
   }, [searchTerm, filters]);
 
