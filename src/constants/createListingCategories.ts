@@ -19,6 +19,7 @@ export const BASE_CATEGORIES = [
   "Arts",
   "Languages",
   "Reader",
+  "Study Guides",
   "Other",
 ];
 
