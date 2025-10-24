@@ -11,6 +11,7 @@ export interface Book {
   backCover?: string;
   insidePages?: string;
   additionalImages?: string[];
+  isbn?: string;
   sold: boolean;
   createdAt: string;
   grade?: string;
