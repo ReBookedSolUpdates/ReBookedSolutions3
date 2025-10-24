@@ -124,16 +124,27 @@ export const BookInformationForm = ({
           id="isbn"
           name="isbn"
           value={formData.isbn || ""}
-          onChange={onInputChange}
-          placeholder="e.g., 978-0-123456-78-9"
-          className={`${isMobile ? "h-12 text-base" : ""}`}
-          style={{ fontSize: isMobile ? "16px" : undefined }} // Prevents zoom on iOS
+          onChange={handleISBNChange}
+          placeholder="e.g., 9780123456789"
+          maxLength={13}
+          inputMode="numeric"
+          className={`${errors.isbn ? "border-red-500" : ""} ${isMobile ? "h-12 text-base" : ""}`}
+          style={{ fontSize: isMobile ? "16px" : undefined }}
         />
-        <p
-          className={`${isMobile ? "text-xs" : "text-sm"} text-gray-500 mt-1`}
-        >
-          Helps readers identify the exact edition of your book
-        </p>
+        {errors.isbn ? (
+          <p
+            className={`${isMobile ? "text-xs" : "text-sm"} text-red-500 mt-1`}
+          >
+            {errors.isbn}
+          </p>
+        ) : (
+          <p
+            className={`${isMobile ? "text-xs" : "text-sm"} text-gray-500 mt-1`}
+          >
+            13-digit number • Helps readers identify the exact edition of your book
+            {formData.isbn && formData.isbn.length < 13 && ` (${formData.isbn.length}/13 digits)`}
+          </p>
+        )}
       </div>
     </div>
   );
