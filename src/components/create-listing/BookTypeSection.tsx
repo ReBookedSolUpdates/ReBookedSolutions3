@@ -246,26 +246,46 @@ export const BookTypeSection = ({
             )}
           </div>
 
-          {/* University Selection - Optional */}
+          {/* University Selection - Optional with Search */}
           <div>
             <Label htmlFor="university" className="text-base font-medium">
               University <span className="text-gray-400">(Optional)</span>
             </Label>
-            <Select
-              value={formData.university || ""}
-              onValueChange={(value) => onSelectChange("university", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select university (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                {SOUTH_AFRICAN_UNIVERSITIES_SIMPLE.map((university) => (
-                  <SelectItem key={university.id} value={university.id}>
-                    {university.abbreviation} - {university.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="space-y-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                <Input
+                  placeholder="Search university or private institution..."
+                  value={universitySearchQuery}
+                  onChange={(e) => setUniversitySearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select
+                value={formData.university || ""}
+                onValueChange={(value) => onSelectChange("university", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select university (optional)" />
+                </SelectTrigger>
+                <SelectContent className="max-h-80">
+                  {filteredUniversities.length > 0 ? (
+                    filteredUniversities.map((university) => (
+                      <SelectItem key={university.id} value={university.id}>
+                        {university.abbreviation} - {university.name}
+                        <span className="text-xs text-gray-500 ml-2">
+                          ({university.type === "private" ? "Private" : "Public"})
+                        </span>
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="p-2 text-sm text-gray-500 text-center">
+                      No institutions found
+                    </div>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </>
       )}
