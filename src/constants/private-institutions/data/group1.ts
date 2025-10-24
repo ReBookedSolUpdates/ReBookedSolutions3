@@ -480,13 +480,22 @@ export const PRIVATE_GROUP_1: PrivateInstitution[] = [
     id: "baptist-theological-college-sa",
     name: "Baptist Theological College of Southern Africa (The) NPC",
     locations: ["Randburg, Gauteng"],
+    contact: {
+      website: "https://www.btc.ac.za/",
+      email: "info@btc.ac.za",
+      phone: "+27 11 787 4500",
+    },
+    accreditation: [
+      { body: "SAQA", accreditationId: "Accredited", status: "Active" },
+      { body: "HEQSF", status: "Registered" },
+    ],
     programs: [
-      { id: "btc-hc-theology", name: "Higher Certificate in Theology", type: "higher-certificate", mode: "distance", credits: 120, nqfLevel: 5 },
-      { id: "btc-hc-ministry", name: "Higher Certificate in Ministry", type: "higher-certificate", mode: "distance", credits: 120, nqfLevel: 5 },
-      { id: "btc-bachelor-biblical-studies", name: "Bachelor of Biblical Studies", type: "bachelor", mode: "distance", credits: 360, nqfLevel: 7 },
-      { id: "btc-bth", name: "Bachelor of Theology", type: "bachelor", mode: "contact", credits: 480, nqfLevel: 8 },
-      { id: "btc-bth-hons", name: "Bachelor of Theology (Honours)", type: "honours", mode: "distance", credits: 120, nqfLevel: 8 },
-      { id: "btc-mth", name: "Master of Theology", type: "masters", mode: ["contact", "distance"], credits: 180, nqfLevel: 9 },
+      { id: "btc-hc-theology", name: "Higher Certificate in Theology", type: "higher-certificate", mode: "distance", credits: 120, nqfLevel: 5, description: "Foundation theology qualification covering biblical studies, church history, and religious thought.", accreditation: [{ body: "SAQA", status: "Approved" }], resources: [{ title: "Biblical Studies", url: "https://www.btc.ac.za/resources/biblical", description: "Scripture study" }] },
+      { id: "btc-hc-ministry", name: "Higher Certificate in Ministry", type: "higher-certificate", mode: "distance", credits: 120, nqfLevel: 5, description: "Ministry qualification focusing on pastoral care, church leadership, and community ministry.", accreditation: [{ body: "SAQA", status: "Approved" }], resources: [{ title: "Ministry Practice", url: "https://www.btc.ac.za/resources/ministry", description: "Pastoral leadership" }] },
+      { id: "btc-bachelor-biblical-studies", name: "Bachelor of Biblical Studies", type: "bachelor", mode: "distance", credits: 360, nqfLevel: 7, description: "Degree in biblical studies examining scriptures, theology, and religious understanding.", accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }], resources: [{ title: "Biblical Scholarship", url: "https://www.btc.ac.za/resources/scholarship", description: "Academic biblical studies" }] },
+      { id: "btc-bth", name: "Bachelor of Theology", type: "bachelor", mode: "contact", credits: 480, nqfLevel: 8, description: "Comprehensive theology degree with intensive contact teaching for theological expertise.", accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }], resources: [{ title: "Theology & Church", url: "https://www.btc.ac.za/resources/church", description: "Theological education" }] },
+      { id: "btc-bth-hons", name: "Bachelor of Theology (Honours)", type: "honours", mode: "distance", credits: 120, nqfLevel: 8, description: "Honours specialization in theology with research focus and advanced theological study.", accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }], resources: [{ title: "Theological Research", url: "https://www.btc.ac.za/resources/research", description: "Research methodology in theology" }] },
+      { id: "btc-mth", name: "Master of Theology", type: "masters", mode: ["contact", "distance"], credits: 180, nqfLevel: 9, description: "Master's degree in theology offering advanced research and specialization in theological studies.", accreditation: [{ body: "SAQA", status: "Approved" }, { body: "HEQSF", status: "Registered" }], resources: [{ title: "Advanced Theology", url: "https://www.btc.ac.za/resources/advanced", description: "Master's level theology" }] },
     ],
   },
   {
