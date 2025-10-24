@@ -42,6 +42,7 @@ export interface BookFormData {
   backCover?: string;
   insidePages?: string;
   additionalImages?: string[];
+  isbn?: string;
   grade?: string;
   universityYear?: string;
   university?: string;
